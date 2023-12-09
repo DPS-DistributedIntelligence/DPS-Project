@@ -21,6 +21,10 @@ Group project.
   > > Parallelism
   > > 
   > > > CUDA
+- [ ] Simulation model
+  > refer [our diagram](https://drive.google.com/file/d/1gNeNTzplQIQAvc6RsRsR8JvbSZtf4c4z/view)
+  > [!Note]
+  > Some suggestions are added 
 
 > [!Note]
 > Add notes important for the project
@@ -38,8 +42,8 @@ Group project.
 > 
 > Matriculation Number: 7217912.
 
-> Name: Sheikh Adib
+> Name: Sheikh Muhammad Adib
 >
-> Matriculation Number:
+> Matriculation Number: 7219310
 >
 
