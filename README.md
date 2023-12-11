@@ -47,3 +47,6 @@ Group project.
 > Matriculation Number: 7219310
 >
 
+> Name: Mykyta Konakh
+>
+> Matriculation Number: 7219011
