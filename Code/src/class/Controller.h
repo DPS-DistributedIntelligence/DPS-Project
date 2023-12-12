@@ -1,5 +1,5 @@
 /*
- * Controller.h
+ * controller.h
  *
  *  Created on: 11 Dec 2023
  *      Author: Luis Fernando Rodriguez Gutierrez
@@ -16,15 +16,13 @@ typedef struct
 	float lontgitudGPS_float;
 }currentGPS_st;
 
-class Controller {
+class controller {
 private:
 	currentGPS_st l_currentGPS_st;
-protected:
-	uint32_t timespamp_u32 = 0;
-
+    uint32_t timespamp_u32 = 0;
 
 public:
-	Controller(currentGPS_st varGPS, uint32_t varTimestamp);
+	controller(currentGPS_st varGPS, uint32_t varTimestamp);
 
 	/*
 	 * Description:

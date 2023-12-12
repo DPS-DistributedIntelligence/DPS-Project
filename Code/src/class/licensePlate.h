@@ -16,7 +16,12 @@ private:
 	string plateNumber_str;
 public:
 	licensePlate(string varCityCode, string varPlateNumber);
-
+    /*
+     * Description:
+     * Parameters:
+     * 	[in]
+     * 	[out]
+     */
 	string getLicensePlate_str();
 };
 
