@@ -57,9 +57,40 @@ Group project.
 > blah labh
 > blah
 
+> Workload:
+> - [ ] Task 1
+> > - [x] Task 1.1
+> > - [ ] Task 1.2 
 
+## Mykyta
+
+> [!Note]
+> blah labh
+> blah
 
 > Workload:
-> - [ ] Communication
-> > - [x] Rx
-> > - [ ] Tx 
+> - [ ] Task 1
+> > - [x] Task 1.1
+> > - [ ] Task 1.2 
+
+## Sheikh
+
+> [!Note]
+> blah labh
+> blah
+
+> Workload:
+> - [ ] Task 1
+> > - [x] Task 1.1
+> > - [ ] Task 1.2
+
+## Luis
+
+> [!Note]
+> blah labh
+> blah
+
+> Workload:
+> - [ ] Task 1
+> > - [x] Task 1.1
+> > - [ ] Task 1.2
