@@ -41,6 +41,19 @@ Group project.
 > Name: Leander Hackmann
 > 
 > Matriculation Number: 7217912.
+>
+> Workload:
+>
+> 
+> 
+> [ ] Communication
+> 
+> [!Note]
+> 
+> > [ ] Rx
+> > 
+> > [ ] Tx
+> > 
 
 > Name: Sheikh Muhammad Adib
 >
