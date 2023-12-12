@@ -60,10 +60,6 @@ Group project.
 
 
 > Workload:
-> 
-> [ ] Communication
-> 
-> [x] Rx
-> 
-> [ ] Tx
->  
+> - [ ] Communication
+> > - [x] Rx
+> > - [ ] Tx 
