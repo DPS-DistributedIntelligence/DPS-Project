@@ -63,7 +63,7 @@ Group project.
 > 
 > [ ] Communication
 > 
-> > [x] Rx
-> > 
-> > [ ] Tx
-> > 
+> [x] Rx
+> 
+> [ ] Tx
+>  
