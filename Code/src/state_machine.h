@@ -7,8 +7,6 @@
 #include <stdlib.h>
 #include <stdint.h>
 
-using namespace std;
-
 typedef enum
 {
     next_state_0,
@@ -80,6 +78,6 @@ next_state_e SM_System_Stop(void);
 * 	[in]
 * 	[out]
 */
-void SM_start_state_machine(void);
+void SM_state_machine(void);
 
 #endif /* STATE_MACHINE_H_ */
