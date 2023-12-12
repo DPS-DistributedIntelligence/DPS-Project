@@ -41,19 +41,6 @@ Group project.
 > Name: Leander Hackmann
 > 
 > Matriculation Number: 7217912.
->
-> Workload:
->
-> 
-> 
-> [ ] Communication
-> 
-> [!Note]
-> 
-> > [ ] Rx
-> > 
-> > [ ] Tx
-> > 
 
 > Name: Sheikh Muhammad Adib
 >
@@ -63,3 +50,20 @@ Group project.
 > Name: Mykyta Konakh
 >
 > Matriculation Number: 7219011
+
+## Leander
+
+> [!Note]
+> blah labh
+> blah
+
+
+
+> Workload:
+> 
+> [ ] Communication
+> 
+> > [x] Rx
+> > 
+> > [ ] Tx
+> > 
