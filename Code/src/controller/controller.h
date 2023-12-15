@@ -10,37 +10,28 @@
 
 #include "commonLib.h"
 
-typedef struct
-{
-	float latitudGPS_float;
-	float lontgitudGPS_float;
-}currentGPS_st;
-
-typedef enum
-{
-    sm_init_state,          //0
-    sm_waiting_state,       //1
-    sm_moving_state,        //2
-    sm_aligning_state,      //3
-    sm_stop_state,          //4
-    sm_emergencyStop_state, //5
-    sm_errorHandling_state, //6
-    sm_systemStop_state     //7
-}stateMachine_e;
-typedef enum
-{
-	leader,
-	follower
-}truckRole_e;
-
 class controller {
 private:
 	currentGPS_st l_currentGPS_st;
     uint32_t timespamp_u32 = 0;
     stateMachine_e currentState_enum;
+    truckRole_e role;
+    int truck_id;
+    int leader_id;
+
+    // TODO: request this functionality from communication component and other component (refer diagram)
+    // required service or input
+    Truck* (*getNearbyTruck)();
+    Location* (*getSelfLocation)();
+
+    /*
+     * connect to a leader is finding a available channel in a channel list (provided by the simulation to te communication ) then try to access it(able to edit the array)
+     */
+    void  (*connectToLeader)(int leaderId);
+    void  (*openNewChannel)(int truck_id);
 
 public:
-	controller(currentGPS_st varGPS, uint32_t varTimestamp);
+    controller(currentGPS_st varGPS, uint32_t varTimestamp, Truck* (*getNearbyTruck)(), Location (*getSelfLocation)(), void  (*connectToLeader)(int leaderId), void  (*openNewChannel)(int truck_id));
 
 
 	/*
@@ -79,7 +70,7 @@ public:
 	 * 	[in] null
 	 * 	[out] null
 	 */
-	stateMachine_e sm_waiting_state(void);
+    stateMachine_e waiting_state(void);
 	/*
 	 * Description:
 	 * 	- If no LEADER was found keep role as LEADER.
@@ -160,7 +151,10 @@ public:
 	 */
 	uint32_t getTimespamp_U32();
 
-
+    /*
+     * this function is used to find nearest truck, and its position to be considered to be a leader
+     */
+    bool find_leader();
 };
 
 #endif /* CONTROLLER_H_ */
