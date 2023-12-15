@@ -49,7 +49,7 @@ public:
 	 * 	[in] var
 	 * 	[out] null
 	 */
-	stateMachine_e getCurrentState(currentGPS_st var);
+	stateMachine_e getCurrentState(void);
 
 	/*
 	 * Description:
@@ -64,7 +64,7 @@ public:
 	 * 	[in] null
 	 * 	[out] null
 	 */
-	void sm_init_state(void);
+	stateMachine_e sm_init_state(void);
 
 	/*
 	 * Description:
@@ -79,7 +79,7 @@ public:
 	 * 	[in] null
 	 * 	[out] null
 	 */
-	void sm_waiting_state(void);
+	stateMachine_e sm_waiting_state(void);
 	/*
 	 * Description:
 	 * 	- If no LEADER was found keep role as LEADER.
@@ -87,7 +87,7 @@ public:
 	 * 	[in] null
 	 * 	[out] null
 	 */
-	truckRole_e sm_leader_state(void);
+	stateMachine_e sm_leader_state(void);
 	/*
 	 * Description:
 	 * 	- If LEADER was found set role as FOLLOWER.
@@ -95,16 +95,16 @@ public:
 	 * 	[in] null
 	 * 	[out] null
 	 */
-	truckRole_e sm_follower_state(void);
+	stateMachine_e sm_follower_state(void);
 	/*
 	 * Description:
 	 * 	- If the role is LEADER, set the pace of the speed.
 	 * 	- If the role is FOLLOWER, keep the speed & distance of the LEADER.
 	 * Parameters:
-	 * 	[in] null
+	 * 	[in] truckRole_e varRole
 	 * 	[out] null
 	 */
-	void sm_moving_state(truckRole_e varRole);
+	stateMachine_e sm_moving_state(void);
 	/*
 	 * Description:
 	 * 	- Re-couple logic in case the leader was lost.
@@ -112,14 +112,14 @@ public:
 	 * 	[in] null
 	 * 	[out] null
 	 */
-	void sm_aligning_state(void);
+	stateMachine_e sm_aligning_state(void);
 	/*
 	 * Description:
 	 * Parameters:
 	 * 	[in] null
 	 * 	[out] null
 	 */
-	void sm_stop_state(void);
+	stateMachine_e sm_stop_state(void);
 	/*
 	 * Description:
 	 * 	- Finish state machine
@@ -127,7 +127,7 @@ public:
 	 * 	[in] null
 	 * 	[out] null
 	 */
-	void sm_systemStop_state(void);
+	stateMachine_e sm_systemStop_state(void);
 
 
 
