@@ -33,3 +33,8 @@ void controller::setTimespamp_U32(uint32_t timespampU32) {
 uint32_t controller::getTimespamp_U32() {
 	return timespamp_u32;
 }
+
+
+void controller::sm_waiting_state() {
+    
+}
