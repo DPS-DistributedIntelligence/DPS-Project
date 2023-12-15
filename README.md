@@ -76,21 +76,22 @@ Group project.
 ## Sheikh
 
 > [!Note]
-> blah labh
-> blah
+> Moving state will be in pseudo code as in the current state we dont know what we will need
 
 > Workload:
-> - [ ] Task 1
-> > - [x] Task 1.1
-> > - [ ] Task 1.2
+> - [ ] Controller
+> > - [ ] Waiting state in controller.h
+> > - [ ] Waiting state in controller.cpp
+> > - [ ] Moving state
 
 ## Luis
 
 > [!Note]
-> blah labh
-> blah
+> Leader and Follower state will be in pseudo code as in the current state we dont know what we will need.
 
 > Workload:
-> - [ ] Task 1
-> > - [x] Task 1.1
-> > - [ ] Task 1.2
+> - [ ] Controller
+> > - [ ] Init state in controller.h
+> > - [ ] Init state in controller.cpp
+> > - [ ] Follower state
+> > - [ ] Leader state
