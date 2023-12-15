@@ -13,7 +13,7 @@
 
 using namespace std;
 //TODO: set function/service provider
-controller::controller(currentGPS_st varGPS, uint32_t varTimestamp, Truck* (*getNearbyTruck)(), Location (*getSelfLocation)(), void  (*connectToLeader)(int leaderId), void  (*openNewChannel)(int truck_id))
+controller::controller(int truck_id, currentGPS_st varGPS, uint32_t varTimestamp, Truck* (*getNearbyTruck)(), Location (*getSelfLocation)(), void  (*connectToLeader)(int leaderId), void  (*openNewChannel)(int truck_id))
 {
 	l_currentGPS_st.latitudGPS_float = varGPS.latitudGPS_float;
 	l_currentGPS_st.lontgitudGPS_float = varGPS.lontgitudGPS_float;
@@ -21,6 +21,7 @@ controller::controller(currentGPS_st varGPS, uint32_t varTimestamp, Truck* (*get
     this->getSelfLocation = getSelfLocation;
     this->connectToLeader = connectToLeader;
     this->openNewChannel = openNewChannel;
+    truck_id = truck_id;
 
 	timespamp_u32 = varTimestamp;
 }
