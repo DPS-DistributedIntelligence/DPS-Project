@@ -36,5 +36,7 @@ uint32_t controller::getTimespamp_U32() {
 
 
 void controller::sm_waiting_state() {
-    
+    /*
+     * 
+     */
 }
