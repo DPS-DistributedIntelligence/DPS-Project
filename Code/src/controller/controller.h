@@ -8,7 +8,8 @@
 #ifndef CONTROLLER_H_
 #define CONTROLLER_H_
 
-#include "commonLib.h"
+#include "class/commonLib.h"
+#include <time.h>
 
 typedef struct
 {
@@ -18,14 +19,14 @@ typedef struct
 
 typedef enum
 {
-    sm_init_state,          //0
-    sm_waiting_state,       //1
-    sm_moving_state,        //2
-    sm_aligning_state,      //3
-    sm_stop_state,          //4
-    sm_emergencyStop_state, //5
-    sm_errorHandling_state, //6
-    sm_systemStop_state     //7
+    sm_initState,          //0
+    sm_waitingState,       //1
+    sm_movingState,        //2
+    sm_aligningState,      //3
+    sm_stopState,          //4
+    sm_emergencyStopState, //5
+    sm_errorHandlingState, //6
+    sm_systemStopState     //7
 }stateMachine_e;
 typedef enum
 {
@@ -36,11 +37,17 @@ typedef enum
 class controller {
 private:
 	currentGPS_st l_currentGPS_st;
-    uint32_t timespamp_u32 = 0;
+    uint64_t timeStpamp_u64 = 0;
     stateMachine_e currentState_enum;
+    truckRole_e role;
+    uint16_t truckid_u16;
+    uint16_t leaderid_u16;
+
+    uint8_t vehicleSpeed_u8;
+    uint8_t steerAngle_u8;
 
 public:
-	controller(currentGPS_st varGPS, uint32_t varTimestamp);
+    controller(uint16_t varTruckId, currentGPS_st varGPS);
 
 
 	/*
@@ -62,7 +69,7 @@ public:
 	 *		+ Set default values.
 	 * Parameters:
 	 * 	[in] null
-	 * 	[out] null
+	 * 	[out] stateMachine_e
 	 */
 	stateMachine_e sm_init_state(void);
 
@@ -77,7 +84,7 @@ public:
 	 *			-> truckRole_e sm_follower_state(void)
 	 * Parameters:
 	 * 	[in] null
-	 * 	[out] null
+	 * 	[out] stateMachine_e
 	 */
 	stateMachine_e sm_waiting_state(void);
 	/*
@@ -149,17 +156,46 @@ public:
 	 * Description:
 	 * Parameters:
 	 * 	[in] null
-	 * 	[out] l_currentGPS_st
+	 * 	[out] timespampU32
 	 */
-	void setTimespamp_U32(uint32_t timespampU32);
-	/*
-	 * Description:
-	 * Parameters:
-	 * 	[in] timespampU32
-	 * 	[out] null
-	 */
-	uint32_t getTimespamp_U32();
+	uint64_t getTimespamp();
+    /*
+     * Description:
+     * Parameters:
+     * 	[in] vehicleSpeed
+     * 	[out] null
+     */
+    void setVehicleSpeed(uint8_t varSpeed);
+    /*
+     * Description:
+     * Parameters:
+     * 	[in] null
+     * 	[out] vehicleSpeed
+     */
+    uint8_t getVehicleSpeed();
 
+    /*
+     * Description:
+     *  - Angle can only be from 0-180
+     *  - We consider a value of 90 as center
+     *  - 0-90 is turning left
+     *  - 91-180 is turning right
+     * Parameters:
+     * 	[in] varSteerAngle
+     * 	[out] null
+     */
+    void setSteerAngle(uint8_t varSteerAngle);
+    /*
+     * Description:
+     *  - Angle can only be from 0-180
+     *  - We consider a value of 90 as center
+     *  - 0-90 is turning left
+     *  - 91-180 is turning right
+     * Parameters:
+     * 	[in] null
+     * 	[out] varSteerAngle
+     */
+    uint8_t getSteerAngle();
 
 };
 
