@@ -70,19 +70,19 @@
 			[
 				{
 					"backtrace" : 2,
-					"path" : "D:/OneDrive/FH Dortmund/Sem1/Distributed and Parallel Systems/Projects/DPS-Project/Code/."
+					"path" : "/cygdrive/d/OneDrive/FH Dortmund/Sem1/Distributed and Parallel Systems/Projects/DPS-Project/Code/."
 				},
 				{
 					"backtrace" : 3,
-					"path" : "D:/OneDrive/FH Dortmund/Sem1/Distributed and Parallel Systems/Projects/DPS-Project/Code/src"
+					"path" : "/cygdrive/d/OneDrive/FH Dortmund/Sem1/Distributed and Parallel Systems/Projects/DPS-Project/Code/src"
 				},
 				{
 					"backtrace" : 4,
-					"path" : "D:/OneDrive/FH Dortmund/Sem1/Distributed and Parallel Systems/Projects/DPS-Project/Code/src/class"
+					"path" : "/cygdrive/d/OneDrive/FH Dortmund/Sem1/Distributed and Parallel Systems/Projects/DPS-Project/Code/src/class"
 				},
 				{
 					"backtrace" : 5,
-					"path" : "D:/OneDrive/FH Dortmund/Sem1/Distributed and Parallel Systems/Projects/DPS-Project/Code/src/controller"
+					"path" : "/cygdrive/d/OneDrive/FH Dortmund/Sem1/Distributed and Parallel Systems/Projects/DPS-Project/Code/src/controller"
 				}
 			],
 			"language" : "CXX",
@@ -114,19 +114,19 @@
 			[
 				{
 					"backtrace" : 2,
-					"path" : "D:/OneDrive/FH Dortmund/Sem1/Distributed and Parallel Systems/Projects/DPS-Project/Code/."
+					"path" : "/cygdrive/d/OneDrive/FH Dortmund/Sem1/Distributed and Parallel Systems/Projects/DPS-Project/Code/."
 				},
 				{
 					"backtrace" : 3,
-					"path" : "D:/OneDrive/FH Dortmund/Sem1/Distributed and Parallel Systems/Projects/DPS-Project/Code/src"
+					"path" : "/cygdrive/d/OneDrive/FH Dortmund/Sem1/Distributed and Parallel Systems/Projects/DPS-Project/Code/src"
 				},
 				{
 					"backtrace" : 4,
-					"path" : "D:/OneDrive/FH Dortmund/Sem1/Distributed and Parallel Systems/Projects/DPS-Project/Code/src/class"
+					"path" : "/cygdrive/d/OneDrive/FH Dortmund/Sem1/Distributed and Parallel Systems/Projects/DPS-Project/Code/src/class"
 				},
 				{
 					"backtrace" : 5,
-					"path" : "D:/OneDrive/FH Dortmund/Sem1/Distributed and Parallel Systems/Projects/DPS-Project/Code/src/controller"
+					"path" : "/cygdrive/d/OneDrive/FH Dortmund/Sem1/Distributed and Parallel Systems/Projects/DPS-Project/Code/src/controller"
 				}
 			],
 			"language" : "C",
@@ -146,12 +146,8 @@
 				"role" : "flags"
 			},
 			{
-				"fragment" : "",
+				"fragment" : "-Wl,--enable-auto-import",
 				"role" : "flags"
-			},
-			{
-				"fragment" : "-lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32",
-				"role" : "libraries"
 			}
 		],
 		"language" : "CXX"

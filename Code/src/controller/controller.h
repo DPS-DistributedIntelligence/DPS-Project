@@ -30,6 +30,9 @@ private:
     void  (*connectToLeader)(int leaderId);
     void  (*openNewChannel)(int truck_id);
 
+    //
+    movement current_movement = {MOVE_STOP, 0};
+
 public:
     controller(int truck_id, currentGPS_st varGPS, uint32_t varTimestamp, Truck* (*getNearbyTruck)(), Location (*getSelfLocation)(), void  (*connectToLeader)(int leaderId), void  (*openNewChannel)(int truck_id));
 
@@ -95,10 +98,11 @@ public:
 	 * 	[in] truckRole_e varRole
 	 * 	[out] null
 	 */
-	stateMachine_e sm_moving_state(void);
+	stateMachine_e moving_state(movement* signal);
 	/*
 	 * Description:
 	 * 	- Re-couple logic in case the leader was lost.
+	 * 	- moving state have dependency with the movement signal. this signal is either received from the leader or self produce if the truck is leader
 	 * Parameters:
 	 * 	[in] null
 	 * 	[out] null
@@ -155,6 +159,12 @@ public:
      * this function is used to find nearest truck, and its position to be considered to be a leader
      */
     bool find_leader();
+
+
+    /*
+     * forward the received/created signal to the follower by sending the signal to truck channel
+     */
+    void forwardSignal(movement signal);
 };
 
 #endif /* CONTROLLER_H_ */

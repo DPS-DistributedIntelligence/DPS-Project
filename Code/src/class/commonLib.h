@@ -36,11 +36,31 @@ typedef enum
     sm_leader_state,        //8
     sm_follower_state,      //9
 }stateMachine_e;
+
+
 typedef enum
 {
     LEADER,
     FOLLOWER
 }truckRole_e;
+
+
+typedef enum
+{
+    MOVE_FOWARD,
+    MOVE_BACK,
+    MOVE_LEFT,
+    MOVE_RIGHT,
+    MOVE_EMERGENCY_STOP,
+    MOVE_STOP,
+}movement_direction;
+
+
+struct movement{
+    movement_direction direction;
+    int speed;
+};
+
 
 
 #endif /* COMMONLIB_H_ */

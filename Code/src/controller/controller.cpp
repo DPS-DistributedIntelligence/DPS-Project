@@ -11,6 +11,7 @@
 #include <ctime>
 #include <iostream>
 
+
 using namespace std;
 //TODO: set function/service provider
 controller::controller(int truck_id, currentGPS_st varGPS, uint32_t varTimestamp, Truck* (*getNearbyTruck)(), Location (*getSelfLocation)(), void  (*connectToLeader)(int leaderId), void  (*openNewChannel)(int truck_id))
@@ -63,10 +64,11 @@ stateMachine_e controller::waiting_state() {
     // if follower connect to leader
     if(role == FOLLOWER){
         this->connectToLeader;
+        openNewChannel(truck_id); // for next follower
         return sm_follower_state;
     }else{
     // if follower open for connection
-        openNewChannel();
+        openNewChannel(truck_id);
         return sm_leader_state;
     }
 }
@@ -108,3 +110,58 @@ bool controller::find_leader(){
     }
     return found_leader;
 }
+
+stateMachine_e controller::moving_state(movement* signal){
+
+    // set movement (direction and speed ) based on signal
+    if (role == FOLLOWER){
+        while(true){
+            // validity check (should stay in move state or exit): the current movement can be overwrite by other subsystem for safety (e.g. emergency stop)
+            if (signal->direction == MOVE_EMERGENCY_STOP){
+                return sm_emergencyStop_state;
+            }
+
+            // change the movement of the truck if the current movement is not equal to the received signal
+            if (signal->direction != current_movement.direction || signal->speed != current_movement.speed) {
+                current_movement.direction = signal->direction;
+                current_movement.speed = signal->speed;
+                // forward message
+                forwardSignal({signal->direction, signal->speed});
+            }
+        }
+
+    }else{
+        // as leader
+        while(true){
+            // validity check (should stay in move state or exit): the current movement can be overwrite by other subsystem for safety (e.g. emergency stop)
+            if (current_movement.direction==MOVE_EMERGENCY_STOP){
+                forwardSignal(current_movement);
+                return sm_emergencyStop_state;
+            }
+
+            // drive and produce signal
+            // TODO: make this fix variable dynamic base on the behaviour of the driver (driver can be human or machine)
+            // these variable are depending on the behaviour of the driver (driver can be human or machine)
+            movement_direction direction = MOVE_STOP;
+            int speed = 0;
+            current_movement={direction, speed};
+
+            // forward
+            forwardSignal(current_movement);
+        }
+
+
+    }
+
+
+
+}
+
+void controller::forwardSignal(movement signal){
+    /*
+     * for the received/created signal to the follower by sending the signal to truck channel
+     */
+    //TODO: forward message to communication component
+
+}
+
