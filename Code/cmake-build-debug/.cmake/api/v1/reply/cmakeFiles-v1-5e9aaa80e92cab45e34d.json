@@ -1,0 +1,155 @@
+{
+	"inputs" : 
+	[
+		{
+			"path" : "CMakeLists.txt"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "cmake-build-debug/CMakeFiles/3.27.0/CMakeSystem.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/cygdrive/c/Users/sheik/AppData/Local/JetBrains/CLion2023.3/cygwin_cmake/share/cmake-3.27.0/Modules/CMakeSystemSpecificInitialize.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/cygdrive/c/Users/sheik/AppData/Local/JetBrains/CLion2023.3/cygwin_cmake/share/cmake-3.27.0/Modules/Platform/CYGWIN-Initialize.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "cmake-build-debug/CMakeFiles/3.27.0/CMakeCCompiler.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "cmake-build-debug/CMakeFiles/3.27.0/CMakeCXXCompiler.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/cygdrive/c/Users/sheik/AppData/Local/JetBrains/CLion2023.3/cygwin_cmake/share/cmake-3.27.0/Modules/CMakeSystemSpecificInformation.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/cygdrive/c/Users/sheik/AppData/Local/JetBrains/CLion2023.3/cygwin_cmake/share/cmake-3.27.0/Modules/CMakeGenericSystem.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/cygdrive/c/Users/sheik/AppData/Local/JetBrains/CLion2023.3/cygwin_cmake/share/cmake-3.27.0/Modules/CMakeInitializeConfigs.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/cygdrive/c/Users/sheik/AppData/Local/JetBrains/CLion2023.3/cygwin_cmake/share/cmake-3.27.0/Modules/Platform/CYGWIN.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/cygdrive/c/Users/sheik/AppData/Local/JetBrains/CLion2023.3/cygwin_cmake/share/cmake-3.27.0/Modules/Platform/UnixPaths.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/cygdrive/c/Users/sheik/AppData/Local/JetBrains/CLion2023.3/cygwin_cmake/share/cmake-3.27.0/Modules/CMakeCInformation.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/cygdrive/c/Users/sheik/AppData/Local/JetBrains/CLion2023.3/cygwin_cmake/share/cmake-3.27.0/Modules/CMakeLanguageInformation.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/cygdrive/c/Users/sheik/AppData/Local/JetBrains/CLion2023.3/cygwin_cmake/share/cmake-3.27.0/Modules/Compiler/GNU-C.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/cygdrive/c/Users/sheik/AppData/Local/JetBrains/CLion2023.3/cygwin_cmake/share/cmake-3.27.0/Modules/Compiler/GNU.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/cygdrive/c/Users/sheik/AppData/Local/JetBrains/CLion2023.3/cygwin_cmake/share/cmake-3.27.0/Modules/Compiler/CMakeCommonCompilerMacros.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/cygdrive/c/Users/sheik/AppData/Local/JetBrains/CLion2023.3/cygwin_cmake/share/cmake-3.27.0/Modules/Platform/CYGWIN-GNU-C.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/cygdrive/c/Users/sheik/AppData/Local/JetBrains/CLion2023.3/cygwin_cmake/share/cmake-3.27.0/Modules/Platform/CYGWIN-GNU.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "cmake-build-debug/CMakeFiles/3.27.0/CMakeRCCompiler.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/cygdrive/c/Users/sheik/AppData/Local/JetBrains/CLion2023.3/cygwin_cmake/share/cmake-3.27.0/Modules/CMakeRCInformation.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/cygdrive/c/Users/sheik/AppData/Local/JetBrains/CLion2023.3/cygwin_cmake/share/cmake-3.27.0/Modules/Platform/CYGWIN-windres.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/cygdrive/c/Users/sheik/AppData/Local/JetBrains/CLion2023.3/cygwin_cmake/share/cmake-3.27.0/Modules/CMakeCommonLanguageInclude.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/cygdrive/c/Users/sheik/AppData/Local/JetBrains/CLion2023.3/cygwin_cmake/share/cmake-3.27.0/Modules/CMakeCXXInformation.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/cygdrive/c/Users/sheik/AppData/Local/JetBrains/CLion2023.3/cygwin_cmake/share/cmake-3.27.0/Modules/CMakeLanguageInformation.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/cygdrive/c/Users/sheik/AppData/Local/JetBrains/CLion2023.3/cygwin_cmake/share/cmake-3.27.0/Modules/Compiler/GNU-CXX.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/cygdrive/c/Users/sheik/AppData/Local/JetBrains/CLion2023.3/cygwin_cmake/share/cmake-3.27.0/Modules/Compiler/GNU.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/cygdrive/c/Users/sheik/AppData/Local/JetBrains/CLion2023.3/cygwin_cmake/share/cmake-3.27.0/Modules/Platform/CYGWIN-GNU-CXX.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/cygdrive/c/Users/sheik/AppData/Local/JetBrains/CLion2023.3/cygwin_cmake/share/cmake-3.27.0/Modules/Platform/CYGWIN-GNU.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/cygdrive/c/Users/sheik/AppData/Local/JetBrains/CLion2023.3/cygwin_cmake/share/cmake-3.27.0/Modules/CMakeCommonLanguageInclude.cmake"
+		}
+	],
+	"kind" : "cmakeFiles",
+	"paths" : 
+	{
+		"build" : "/cygdrive/d/OneDrive/FH Dortmund/Sem1/Distributed and Parallel Systems/Projects/DPS-Project/Code/cmake-build-debug",
+		"source" : "/cygdrive/d/OneDrive/FH Dortmund/Sem1/Distributed and Parallel Systems/Projects/DPS-Project/Code"
+	},
+	"version" : 
+	{
+		"major" : 1,
+		"minor" : 0
+	}
+}

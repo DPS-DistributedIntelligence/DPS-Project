@@ -8,7 +8,7 @@
 #ifndef DRIVERINTERFACE_H_
 #define DRIVERINTERFACE_H_
 
-#include "commonLib.h"
+#include "src/lib/commonLib.h"
 
 enum protocolResponse
 {

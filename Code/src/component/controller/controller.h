@@ -8,7 +8,7 @@
 #ifndef CONTROLLER_H_
 #define CONTROLLER_H_
 
-#include "commonLib.h"
+#include "src/lib/commonLib.h"
 
 class controller {
 private:

@@ -5,7 +5,7 @@
 #ifndef DPS_PLATOON_TIME_H
 #define DPS_PLATOON_TIME_H
 
-#include "commonLib.h"
+#include "src/lib/commonLib.h"
 
 class time {
 private:

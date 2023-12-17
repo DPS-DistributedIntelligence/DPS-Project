@@ -5,7 +5,7 @@
 #ifndef DPS_PLATOON_ANTICOLLISIONSYSTEM_H
 #define DPS_PLATOON_ANTICOLLISIONSYSTEM_H
 
-#include "commonLib.h"
+#include "src/lib/commonLib.h"
 
 class antiCollisionSystem {
 

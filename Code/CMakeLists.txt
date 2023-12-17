@@ -9,15 +9,15 @@ include_directories(src/class)
 include_directories(src/controller)
 
 add_executable(Code
-        src/class/antiCollisionSystem.cpp
-        src/class/antiCollisionSystem.h
-        src/class/commonLib.h
-        src/class/driverInterface.cpp
-        src/class/driverInterface.h
-        src/class/licensePlate.cpp
-        src/class/licensePlate.h
+        src/component/subsystem/antiCollisionSystem.cpp
+        src/component/subsystem/antiCollisionSystem.h
+        src/lib/commonLib.h
+        src/component/subsystem/driverInterface.cpp
+        src/component/subsystem/driverInterface.h
+        src/lib/licensePlate.cpp
+        src/lib/licensePlate.h
         src/class/trash/time.cpp
         src/class/trash/time.h
-        src/controller/controller.cpp
-        src/controller/controller.h
+        src/component/controller/controller.cpp
+        src/component/controller/controller.h
         src/main.c)

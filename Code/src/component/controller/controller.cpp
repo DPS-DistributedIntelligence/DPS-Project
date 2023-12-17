@@ -7,7 +7,7 @@
 
 
 #include "controller.h"
-#include "global_variable/global_variable.h"
+#include "src/lib/global_variable.h"
 #include <ctime>
 #include <iostream>
 

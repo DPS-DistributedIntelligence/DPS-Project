@@ -8,7 +8,7 @@
 #ifndef LICENSEPLATE_H_
 #define LICENSEPLATE_H_
 
-#include "commonLib.h"
+#include "src/lib/commonLib.h"
 
 class licensePlate {
 private:
