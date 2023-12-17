@@ -5,6 +5,7 @@
 #ifndef DPS_PLATOON_TIME_H
 #define DPS_PLATOON_TIME_H
 
+#include <cstdint>
 #include "src/lib/commonLib.h"
 
 class time {

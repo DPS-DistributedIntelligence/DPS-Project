@@ -20,4 +20,8 @@ add_executable(Code
         src/class/trash/time.h
         src/component/controller/controller.cpp
         src/component/controller/controller.h
-        src/main.c)
+        src/main.c
+        src/component/communication/communication.h
+        src/component/truck/truck.h
+        src/component/truck/truck.cpp
+        src/component/communication/communication.cpp)

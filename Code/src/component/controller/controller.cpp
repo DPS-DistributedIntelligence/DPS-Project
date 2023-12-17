@@ -13,24 +13,23 @@
 
 
 using namespace std;
-//TODO: set function/service provider
-controller::controller(int truck_id, currentGPS_st varGPS, uint32_t varTimestamp, Truck* (*getNearbyTruck)(), Location (*getSelfLocation)(), void  (*connectToLeader)(int leaderId), void  (*openNewChannel)(int truck_id))
-{
-	l_currentGPS_st.latitudGPS_float = varGPS.latitudGPS_float;
-	l_currentGPS_st.lontgitudGPS_float = varGPS.lontgitudGPS_float;
-    this->getNearbyTruck = getNearbyTruck;
-    this->getSelfLocation = getSelfLocation;
-    this->connectToLeader = connectToLeader;
-    this->openNewChannel = openNewChannel;
-    truck_id = truck_id;
+//controller::controller(int truck_id, currentGPS_st varGPS, uint32_t varTimestamp, Truck* (*getNearbyTruck)(), Location (*getSelfLocation)(), void  (*connectToLeader)(int leaderId), void  (*openNewChannel)(int truck_id))
 
-	timespamp_u32 = varTimestamp;
+controller::controller(int* truck_id,int* leader_id, Location *location, communication *comComponent, currentGPS_st varGPS,  uint32_t varTimestamp) {
+	l_currentGPS_st.latitudeGPS_float = varGPS.latitudeGPS_float;
+	l_currentGPS_st.longitudeGPS_float = varGPS.longitudeGPS_float;
+    this->location = location;
+    this->truck_id = truck_id;
+    this->comComponent = comComponent;
+    this->leader_id = leader_id;
+
+	timestamp_u32 = varTimestamp;
 }
 
 void controller::setGps_ST(currentGPS_st var)
 {
-	l_currentGPS_st.latitudGPS_float = (var).latitudGPS_float;
-	l_currentGPS_st.lontgitudGPS_float = (var).lontgitudGPS_float;
+	l_currentGPS_st.latitudeGPS_float = (var).latitudeGPS_float;
+	l_currentGPS_st.longitudeGPS_float = (var).longitudeGPS_float;
 }
 
 currentGPS_st controller::getGPS_ST()
@@ -38,14 +37,13 @@ currentGPS_st controller::getGPS_ST()
 	return l_currentGPS_st;
 }
 
-void controller::setTimespamp_U32(uint32_t timespampU32) {
-	timespamp_u32 = timespampU32;
+void controller::setTimestamp_U32(uint32_t timestampU32) {
+	timestamp_u32 = timestampU32;
 }
 
-uint32_t controller::getTimespamp_U32() {
-	return timespamp_u32;
+uint32_t controller::getTimestamp_U32() {
+	return timestamp_u32;
 }
-
 
 stateMachine_e controller::waiting_state() {
     // find leader
@@ -63,12 +61,12 @@ stateMachine_e controller::waiting_state() {
 
     // if follower connect to leader
     if(role == FOLLOWER){
-        this->connectToLeader;
-        openNewChannel(truck_id); // for next follower
+        comComponent->connectToLeader(*leader_id);
+        comComponent->openNewChannel(*truck_id); // for next follower
         return sm_follower_state;
     }else{
     // if follower open for connection
-        openNewChannel(truck_id);
+        comComponent->openNewChannel(*truck_id);
         return sm_leader_state;
     }
 }
@@ -80,22 +78,25 @@ bool controller::find_leader(){
         // find leader
 
         // get nearby truck list
-        Truck* nearbyTruck = this->getNearbyTruck();
+        nearbyTruck* nearbyTruckList = comComponent->getNearbyTruckList();
 
         // calculate relative position (can be done on gpu)
-        int self_x = getSelfLocation()[0];
-        int self_y = getSelfLocation()[1];
+        int self_x = location->x;
+        int self_y = location->y;
         int nearest = MAX_LEADER_RANGE;
 
         // set the leader if the truck is infront
-        for (int i = 0;*(Truck+i) != NULL;i++){
-            // decide base on x position
-            if (*(Truck+i).location[0]>self_x){
-                found_leader =  true;
-                // get the nearest truck
-                if (*(Truck+i).location[0]-self_x<nearest) {
-                    nearest = *(Truck + i).location[0] - self_x;
-                    leader_id = *(Truck + i).id;
+        for (int i = 0; i < MAX_NEARBY_TRUCK ;i++){
+            //check valid truck
+            if((nearbyTruckList+i)->truck_id > -1 ){
+                // decide base on x position
+                if((nearbyTruckList+i)->location.x>self_x){
+                    found_leader =  true;
+                    // get the nearest truck
+                    if ((nearbyTruckList+i)->location.x-self_x<nearest) {
+                        nearest = (nearbyTruckList+i)->location.x - self_x;
+                        *leader_id = (nearbyTruckList+i)->truck_id;
+                    }
                 }
             }
         }
@@ -149,19 +150,13 @@ stateMachine_e controller::moving_state(movement* signal){
             // forward
             forwardSignal(current_movement);
         }
-
-
     }
-
-
-
 }
 
 void controller::forwardSignal(movement signal){
     /*
      * for the received/created signal to the follower by sending the signal to truck channel
      */
-    //TODO: forward message to communication component
+    comComponent->sendMessageSelfChannel(signal);
 
 }
-

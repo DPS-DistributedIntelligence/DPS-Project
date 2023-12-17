@@ -91,6 +91,20 @@ build CMakeFiles/Code.dir/src/main.c.o: C_COMPILER__Code_unscanned_Debug /cygdri
   OBJECT_DIR = CMakeFiles/Code.dir
   OBJECT_FILE_DIR = CMakeFiles/Code.dir/src
 
+build CMakeFiles/Code.dir/src/component/truck/truck.cpp.o: CXX_COMPILER__Code_unscanned_Debug /cygdrive/d/OneDrive/FH$ Dortmund/Sem1/Distributed$ and$ Parallel$ Systems/Projects/DPS-Project/Code/src/component/truck/truck.cpp || cmake_object_order_depends_target_Code
+  DEP_FILE = CMakeFiles/Code.dir/src/component/truck/truck.cpp.o.d
+  FLAGS = -g -std=gnu++14 -fdiagnostics-color=always
+  INCLUDES = -I"/cygdrive/d/OneDrive/FH Dortmund/Sem1/Distributed and Parallel Systems/Projects/DPS-Project/Code/." -I"/cygdrive/d/OneDrive/FH Dortmund/Sem1/Distributed and Parallel Systems/Projects/DPS-Project/Code/src" -I"/cygdrive/d/OneDrive/FH Dortmund/Sem1/Distributed and Parallel Systems/Projects/DPS-Project/Code/src/class" -I"/cygdrive/d/OneDrive/FH Dortmund/Sem1/Distributed and Parallel Systems/Projects/DPS-Project/Code/src/controller"
+  OBJECT_DIR = CMakeFiles/Code.dir
+  OBJECT_FILE_DIR = CMakeFiles/Code.dir/src/component/truck
+
+build CMakeFiles/Code.dir/src/component/communication/communication.cpp.o: CXX_COMPILER__Code_unscanned_Debug /cygdrive/d/OneDrive/FH$ Dortmund/Sem1/Distributed$ and$ Parallel$ Systems/Projects/DPS-Project/Code/src/component/communication/communication.cpp || cmake_object_order_depends_target_Code
+  DEP_FILE = CMakeFiles/Code.dir/src/component/communication/communication.cpp.o.d
+  FLAGS = -g -std=gnu++14 -fdiagnostics-color=always
+  INCLUDES = -I"/cygdrive/d/OneDrive/FH Dortmund/Sem1/Distributed and Parallel Systems/Projects/DPS-Project/Code/." -I"/cygdrive/d/OneDrive/FH Dortmund/Sem1/Distributed and Parallel Systems/Projects/DPS-Project/Code/src" -I"/cygdrive/d/OneDrive/FH Dortmund/Sem1/Distributed and Parallel Systems/Projects/DPS-Project/Code/src/class" -I"/cygdrive/d/OneDrive/FH Dortmund/Sem1/Distributed and Parallel Systems/Projects/DPS-Project/Code/src/controller"
+  OBJECT_DIR = CMakeFiles/Code.dir
+  OBJECT_FILE_DIR = CMakeFiles/Code.dir/src/component/communication
+
 
 # =============================================================================
 # Link build statements for EXECUTABLE target Code
@@ -99,7 +113,7 @@ build CMakeFiles/Code.dir/src/main.c.o: C_COMPILER__Code_unscanned_Debug /cygdri
 #############################################
 # Link the executable Code.exe
 
-build Code.exe: CXX_EXECUTABLE_LINKER__Code_Debug CMakeFiles/Code.dir/src/component/subsystem/antiCollisionSystem.cpp.o CMakeFiles/Code.dir/src/component/subsystem/driverInterface.cpp.o CMakeFiles/Code.dir/src/lib/licensePlate.cpp.o CMakeFiles/Code.dir/src/class/trash/time.cpp.o CMakeFiles/Code.dir/src/component/controller/controller.cpp.o CMakeFiles/Code.dir/src/main.c.o
+build Code.exe: CXX_EXECUTABLE_LINKER__Code_Debug CMakeFiles/Code.dir/src/component/subsystem/antiCollisionSystem.cpp.o CMakeFiles/Code.dir/src/component/subsystem/driverInterface.cpp.o CMakeFiles/Code.dir/src/lib/licensePlate.cpp.o CMakeFiles/Code.dir/src/class/trash/time.cpp.o CMakeFiles/Code.dir/src/component/controller/controller.cpp.o CMakeFiles/Code.dir/src/main.c.o CMakeFiles/Code.dir/src/component/truck/truck.cpp.o CMakeFiles/Code.dir/src/component/communication/communication.cpp.o
   FLAGS = -g
   LINK_FLAGS = -Wl,--enable-auto-import
   OBJECT_DIR = CMakeFiles/Code.dir

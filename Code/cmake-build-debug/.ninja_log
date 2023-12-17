@@ -1,0 +1,12 @@
+# ninja log v5
+4	304	1702842606105209700	CMakeFiles/Code.dir/src/component/subsystem/antiCollisionSystem.cpp.o	57c59f86f411f7c
+160	453	1702842606269078800	CMakeFiles/Code.dir/src/main.c.o	7b7c4fe92daee416
+6	246	1702842618205673100	CMakeFiles/Code.dir/src/component/subsystem/driverInterface.cpp.o	353d1c6cd8c5d112
+87	309	1702842618262344400	CMakeFiles/Code.dir/src/component/truck/truck.cpp.o	5673ba8d745ec7e4
+117	322	1702842618286547800	CMakeFiles/Code.dir/src/component/communication/communication.cpp.o	80ff0fbae974b736
+7	1200	1702842761881138000	CMakeFiles/Code.dir/src/lib/licensePlate.cpp.o	913f2e58273f6e78
+20	437	1702842770748226700	CMakeFiles/Code.dir/src/class/trash/time.cpp.o	e8a46ac29a4b1df7
+18	1227	1702842809707500100	CMakeFiles/Code.dir/src/component/controller/controller.cpp.o	be6b08158fc4ba96
+26	6368	1702842878386815900	CMakeFiles/Code.dir/src/component/controller/controller.cpp.o	be6b08158fc4ba96
+20	226	1702842922322866000	CMakeFiles/Code.dir/src/main.c.o	7b7c4fe92daee416
+227	612	1702842922674297700	Code.exe	bfb9fbd8f3fec0d3

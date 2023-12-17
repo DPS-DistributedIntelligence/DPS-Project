@@ -8,34 +8,66 @@
 #ifndef CONTROLLER_H_
 #define CONTROLLER_H_
 
-#include "src/lib/commonLib.h"
+#include <cstdint>
+#include "lib/commonLib.h"
+#include "component/communication/communication.h"
 
 class controller {
 private:
 	currentGPS_st l_currentGPS_st;
-    uint32_t timespamp_u32 = 0;
+    uint32_t timestamp_u32 = 0;
     stateMachine_e currentState_enum;
     truckRole_e role;
-    int truck_id;
-    int leader_id;
-
-    // TODO: request this functionality from communication component and other component (refer diagram)
-    // required service or input
-    Truck* (*getNearbyTruck)();
-    Location* (*getSelfLocation)();
-
-    /*
-     * connect to a leader is finding a available channel in a channel list (provided by the simulation to te communication ) then try to access it(able to edit the array)
-     */
-    void  (*connectToLeader)(int leaderId);
-    void  (*openNewChannel)(int truck_id);
-
-    //
-    movement current_movement = {MOVE_STOP, 0};
+    int* truck_id;
+    int* leader_id;
+    Location* location;
+    communication* comComponent;
 
 public:
-    controller(int truck_id, currentGPS_st varGPS, uint32_t varTimestamp, Truck* (*getNearbyTruck)(), Location (*getSelfLocation)(), void  (*connectToLeader)(int leaderId), void  (*openNewChannel)(int truck_id));
+    //controller(int truck_id, currentGPS_st varGPS, uint32_t varTimestamp, Truck* (*getNearbyTruck)(), Location (*getSelfLocation)(), void  (*connectToLeader)(int leaderId), void  (*openNewChannel)(int truck_id));
 
+    movement current_movement = {MOVE_STOP, 0};
+
+    /*
+     *  constructor
+     *  (int* truck_id,int* leader_id, Location* location, communication* comComponent)
+     */
+    controller(int* truck_id,int* leader_id, Location* location, communication* comComponent, currentGPS_st varGPS, uint32_t varTimestamp);
+
+    /*
+	 * Description:
+	 * 	- Start communication with nearby trucks.
+	 * 	- Search for a Leader Truck.
+	 *		+ If no LEADER was found, set truck as leader.
+	 *		+ If LEADER was found, set truck as follower.
+	 *		+ Go to the corresponding function:
+	 *			-> truckRole_e sm_leader_state(void)
+	 *			-> truckRole_e sm_follower_state(void)
+	 * Parameters: -
+     * Return: next state
+	 */
+    stateMachine_e waiting_state();
+
+
+    /*
+     * Description:
+     * 	- If the role is LEADER, set the pace of the speed.
+     * 	- If the role is FOLLOWER, keep the speed & distance of the LEADER.
+     * Parameters: -
+     * Return: next state
+     */
+    stateMachine_e moving_state(movement* signal);
+
+    /*
+     * this function is used to find nearest truck, and its position to be considered to be a leader
+     * Return: true if a leader found
+     */
+    bool find_leader();
+
+    /*
+     * forward the received/created signal to the follower by sending the signal to truck channel
+     */
+    void forwardSignal(movement signal);
 
 	/*
 	 * Description:
@@ -60,20 +92,7 @@ public:
 	 */
 	stateMachine_e sm_init_state(void);
 
-	/*
-	 * Description:
-	 * 	- Start communication with nearby trucks.
-	 * 	- Search for a Leader Truck.
-	 *		+ If no LEADER was found, set truck as leader.
-	 *		+ If LEADER was found, set truck as follower.
-	 *		+ Go to the corresponding function:
-	 *			-> truckRole_e sm_leader_state(void)
-	 *			-> truckRole_e sm_follower_state(void)
-	 * Parameters:
-	 * 	[in] null
-	 * 	[out] null
-	 */
-    stateMachine_e waiting_state(void);
+
 	/*
 	 * Description:
 	 * 	- If no LEADER was found keep role as LEADER.
@@ -81,7 +100,7 @@ public:
 	 * 	[in] null
 	 * 	[out] null
 	 */
-	stateMachine_e sm_leader_state(void);
+	//stateMachine_e sm_leader_state(void);
 	/*
 	 * Description:
 	 * 	- If LEADER was found set role as FOLLOWER.
@@ -89,16 +108,8 @@ public:
 	 * 	[in] null
 	 * 	[out] null
 	 */
-	stateMachine_e sm_follower_state(void);
-	/*
-	 * Description:
-	 * 	- If the role is LEADER, set the pace of the speed.
-	 * 	- If the role is FOLLOWER, keep the speed & distance of the LEADER.
-	 * Parameters:
-	 * 	[in] truckRole_e varRole
-	 * 	[out] null
-	 */
-	stateMachine_e moving_state(movement* signal);
+	//stateMachine_e sm_follower_state(void);
+
 	/*
 	 * Description:
 	 * 	- Re-couple logic in case the leader was lost.
@@ -146,25 +157,14 @@ public:
 	 * 	[in] null
 	 * 	[out] l_currentGPS_st
 	 */
-	void setTimespamp_U32(uint32_t timespampU32);
+	void setTimestamp_U32(uint32_t timespampU32);
 	/*
 	 * Description:
 	 * Parameters:
-	 * 	[in] timespampU32
+	 * 	[in] timestampU32
 	 * 	[out] null
 	 */
-	uint32_t getTimespamp_U32();
-
-    /*
-     * this function is used to find nearest truck, and its position to be considered to be a leader
-     */
-    bool find_leader();
-
-
-    /*
-     * forward the received/created signal to the follower by sending the signal to truck channel
-     */
-    void forwardSignal(movement signal);
+	uint32_t getTimestamp_U32();
 };
 
 #endif /* CONTROLLER_H_ */

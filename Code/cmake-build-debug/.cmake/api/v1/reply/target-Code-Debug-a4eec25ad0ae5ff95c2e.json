@@ -100,7 +100,9 @@
 				3,
 				5,
 				7,
-				9
+				9,
+				14,
+				15
 			]
 		},
 		{
@@ -170,7 +172,9 @@
 				5,
 				7,
 				9,
-				11
+				11,
+				14,
+				15
 			]
 		},
 		{
@@ -182,7 +186,9 @@
 				4,
 				6,
 				8,
-				10
+				10,
+				12,
+				13
 			]
 		}
 	],
@@ -252,6 +258,28 @@
 			"backtrace" : 1,
 			"compileGroupIndex" : 1,
 			"path" : "src/main.c",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "src/component/communication/communication.h",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "src/component/truck/truck.h",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "src/component/truck/truck.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "src/component/communication/communication.cpp",
 			"sourceGroupIndex" : 0
 		}
 	],

@@ -9,6 +9,9 @@
 #define LICENSEPLATE_H_
 
 #include "src/lib/commonLib.h"
+#include <string>
+
+using namespace std;
 
 class licensePlate {
 private:

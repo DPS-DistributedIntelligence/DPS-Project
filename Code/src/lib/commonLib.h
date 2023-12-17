@@ -4,23 +4,13 @@
  *  Created on: 11 Dec 2023
  *      Author: Luis
  */
-
 #ifndef COMMONLIB_H_
 #define COMMONLIB_H_
 
-#include <iostream>
-#include <string>
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdint.h>
-
-using namespace std;
-
 typedef struct
 {
-    float latitudGPS_float;
-    float lontgitudGPS_float;
+    float latitudeGPS_float;
+    float longitudeGPS_float;
 }currentGPS_st;
 
 typedef enum
@@ -37,17 +27,15 @@ typedef enum
     sm_follower_state,      //9
 }stateMachine_e;
 
-
 typedef enum
 {
     LEADER,
     FOLLOWER
 }truckRole_e;
 
-
 typedef enum
 {
-    MOVE_FOWARD,
+    MOVE_FORWARD,
     MOVE_BACK,
     MOVE_LEFT,
     MOVE_RIGHT,
@@ -55,12 +43,19 @@ typedef enum
     MOVE_STOP,
 }movement_direction;
 
-
 struct movement{
     movement_direction direction;
     int speed;
 };
 
+struct Location{
+    int x;
+    int y;
+};
 
+struct nearbyTruck{
+    int truck_id;
+    Location location;
+};
 
 #endif /* COMMONLIB_H_ */
