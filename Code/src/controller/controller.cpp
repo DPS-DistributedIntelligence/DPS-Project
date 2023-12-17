@@ -32,6 +32,48 @@ stateMachine_e controller::sm_init_state()
 
 }
 
+stateMachine_e  controller::sm_leader_state()
+{
+    truckInfo_str leaderTruck_str;
+    if(messageToTransmit)
+    {
+        /* TODO: Function to transmit message */
+        /* TODO: Update values */
+        controller::setVehicleSpeed(leaderTruck_str.vehicleCurrentSpeed);
+        controller::setSteerAngle(leaderTruck_str.vehicleDirection);
+        TransmitMessage();
+    }
+    /*
+     * The leader can set the speed and steering angle for the entire group of trucks.
+     * Communicate this information to the followers to maintain a coordinated movement.
+     * Periodically broadcast its current speed, steering angle, and other relevant information to the followers.
+     * Determine the route and navigate through waypoints.
+     * Decide when and where the convoy should stop.
+     */
+
+
+}
+
+stateMachine_e controller::sm_follower_state()
+{
+    truckInfo_str followerTruck_str;
+    /* TODO: Function to receive message */
+    If(messageIsReceived)
+    {
+        /* TODO: Decode message */
+        followerTruck_str.vehicleCurrentSpeed = controller::getVehicleSpeed();
+        followerTruck_str.vehicleDirection = controller::getSteerAngle();
+    }
+    /*
+     * Continuously listen for commands from the leader regarding speed, steering angle, and other relevant instructions.
+     * Adjust the truck's speed and steering angle to match the leader's commands.
+     * Maintain a safe following distance.
+     *
+     */
+
+
+}
+
 stateMachine_e controller::sm_moving_state()
 {
     uint8_t driverInterfaceSpeed = 0;
@@ -88,12 +130,12 @@ uint8_t controller::getVehicleSpeed()
     return this->vehicleSpeed_u8;
 }
 
-void controller::setSteerAngle(uint8_t varSteerAngle)
+void controller::setSteerAngle(truckMovementDirection_e varSteerAngle)
 {
     this->steerAngle_u8 = varSteerAngle;
 }
 
-uint8_t controller::getSteerAngle()
+truckMovementDirection_e controller::getSteerAngle()
 {
     return this->steerAngle_u8;
 }

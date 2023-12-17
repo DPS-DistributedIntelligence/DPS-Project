@@ -21,18 +21,42 @@ typedef enum
 {
     sm_initState,          //0
     sm_waitingState,       //1
-    sm_movingState,        //2
-    sm_aligningState,      //3
-    sm_stopState,          //4
-    sm_emergencyStopState, //5
-    sm_errorHandlingState, //6
-    sm_systemStopState     //7
+    sm_leaderState,        //2
+    sm_followerState,      //3
+    sm_movingState,        //4
+    sm_aligningState,      //5
+    sm_stopState,          //6
+    sm_emergencyStopState, //7
+    sm_errorHandlingState, //8
+    sm_systemStopState     //9
 }stateMachine_e;
 typedef enum
 {
 	leader,
 	follower
 }truckRole_e;
+
+typedef enum
+{
+    forward,
+    back,
+    left,
+    right,
+    emergencyStop,
+    stop
+}truckMovementDirection_e;
+
+typedef struct
+{
+    truckRole_e vehicleRole;
+    uint8_t vehicleCurrentSpeed;
+    truckMovementDirection_e vehicleDirection;
+    bool vehicleTransceiverAlive;
+    bool vehicleReceiverAlive;
+    uint8_t* leaderBroadcastMessage;
+    uint8_t* leaderReceiveMessage;
+
+}truckInfo_str;
 
 class controller {
 private:
@@ -44,7 +68,7 @@ private:
     uint16_t leaderid_u16;
 
     uint8_t vehicleSpeed_u8;
-    uint8_t steerAngle_u8;
+    truckMovementDirection_e steerAngle_u8;
 
 public:
     controller(uint16_t varTruckId, currentGPS_st varGPS);
@@ -184,7 +208,7 @@ public:
      * 	[in] varSteerAngle
      * 	[out] null
      */
-    void setSteerAngle(uint8_t varSteerAngle);
+    void setSteerAngle(truckMovementDirection_e varSteerAngle);
     /*
      * Description:
      *  - Angle can only be from 0-180
@@ -195,7 +219,7 @@ public:
      * 	[in] null
      * 	[out] varSteerAngle
      */
-    uint8_t getSteerAngle();
+    truckMovementDirection_e getSteerAngle();
 
 };
 
