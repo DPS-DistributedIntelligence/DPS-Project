@@ -10,11 +10,23 @@
 
 #include "class/commonLib.h"
 
+typedef struct
+{
+    union
+    {
+        bool ingnitionKey;
+        bool communication;
+        bool rtc;
+        bool antiCollisionSystem;
+    };
+}initSystem_str;
+
 class controller {
 private:
     currentGPS_st l_currentGPS_st;
     uint64_t timespamp_u64 = 0;
     stateMachine_e currentState_enum;
+    initSystem_str initSystem_st;
     truckRole_e role;
     int truck_id;
     int leader_id;
@@ -147,6 +159,13 @@ public:
      * 	[out] null
      */
     uint64_t getTimespamp();
+    /*
+     * Description:
+     * Parameters:
+     * 	[in] null
+     * 	[out] null
+     */
+    bool getInitRTC();
 
     /*
      * this function is used to find nearest truck, and its position to be considered to be a leader

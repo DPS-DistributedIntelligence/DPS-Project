@@ -24,34 +24,16 @@ controller::controller(int truck_id, currentGPS_st varGPS, uint32_t varTimestamp
     this->openNewChannel = openNewChannel;
     truck_id = truck_id;
 
-    timespamp_u32 = varTimestamp;
+    this->timespamp_u64 = varTimestamp;
 }
 
-void controller::setGps_ST(currentGPS_st var)
+stateMachine_e controller::sm_init_state()
 {
-    l_currentGPS_st.latitudGPS_float = (var).latitudGPS_float;
-    l_currentGPS_st.lontgitudGPS_float = (var).lontgitudGPS_float;
+    initSystem_st.ingnitionKey = true;
+    initSystem_st.communication = getInitCommunicationSystem();
+    initSystem_st.antiCollisionSystem = getInitAntiCollision();
+    initSystem_st.rtc = getInitRTC();
 }
-
-currentGPS_st controller::getGPS_ST()
-{
-    return l_currentGPS_st;
-}
-
-uint64_t controller::getTimespamp() {
-    time_t localTime_unix;
-    /* Get local time un unix */
-    time(&localTime_unix);
-
-    /* Now convert to UTC */
-    struct tm* timezone = gmtime(&localTime_unix);
-
-    localTime_unix = mktime(timezone);
-    this->timespamp_u64 = (uint64_t)localTime_unix;
-
-    return this->timespamp_u64;
-}
-
 
 stateMachine_e controller::waiting_state() {
     // find leader
@@ -71,50 +53,22 @@ stateMachine_e controller::waiting_state() {
     if(role == FOLLOWER){
         this->connectToLeader;
         openNewChannel(truck_id); // for next follower
-        return sm_follower_state;
+        return sm_followerState;
     }else{
         // if follower open for connection
         openNewChannel(truck_id);
-        return sm_leader_state;
+        return sm_leaderState;
     }
 }
 
-bool controller::find_leader(){
-    bool found_leader = false;
-    time_t start = time(nullptr);
-    while(true){
-        // find leader
+stateMachine_e  controller::sm_leader_state()
+{
+    return sm_movingState;
+}
 
-        // get nearby truck list
-        Truck* nearbyTruck = this->getNearbyTruck();
-
-        // calculate relative position (can be done on gpu)
-        int self_x = getSelfLocation()[0];
-        int self_y = getSelfLocation()[1];
-        int nearest = MAX_LEADER_RANGE;
-
-        // set the leader if the truck is infront
-        for (int i = 0;*(Truck+i) != NULL;i++){
-            // decide base on x position
-            if (*(Truck+i).location[0]>self_x){
-                found_leader =  true;
-                // get the nearest truck
-                if (*(Truck+i).location[0]-self_x<nearest) {
-                    nearest = *(Truck + i).location[0] - self_x;
-                    leader_id = *(Truck + i).id;
-                }
-            }
-        }
-        if(found_leader){
-            break;
-        }
-
-        // break if time out
-        if (time(nullptr)-start> MAX_SEARCH_TIME){
-            break;
-        }
-    }
-    return found_leader;
+stateMachine_e controller::sm_follower_state()
+{
+    return sm_movingState;
 }
 
 stateMachine_e controller::moving_state(movement* signal){
@@ -171,3 +125,72 @@ void controller::forwardSignal(movement_direction signal){
 
 }
 
+bool controller::find_leader(){
+    bool found_leader = false;
+    time_t start = time(nullptr);
+    while(true){
+        // find leader
+
+        // get nearby truck list
+        Truck* nearbyTruck = this->getNearbyTruck();
+
+        // calculate relative position (can be done on gpu)
+        int self_x = getSelfLocation()[0];
+        int self_y = getSelfLocation()[1];
+        int nearest = MAX_LEADER_RANGE;
+
+        // set the leader if the truck is infront
+        for (int i = 0;*(Truck+i) != NULL;i++){
+            // decide base on x position
+            if (*(Truck+i).location[0]>self_x){
+                found_leader =  true;
+                // get the nearest truck
+                if (*(Truck+i).location[0]-self_x<nearest) {
+                    nearest = *(Truck + i).location[0] - self_x;
+                    leader_id = *(Truck + i).id;
+                }
+            }
+        }
+        if(found_leader){
+            break;
+        }
+
+        // break if time out
+        if (time(nullptr)-start> MAX_SEARCH_TIME){
+            break;
+        }
+    }
+    return found_leader;
+}
+
+void controller::setGps_ST(currentGPS_st var)
+{
+    l_currentGPS_st.latitudGPS_float = (var).latitudGPS_float;
+    l_currentGPS_st.lontgitudGPS_float = (var).lontgitudGPS_float;
+}
+
+currentGPS_st controller::getGPS_ST()
+{
+    return l_currentGPS_st;
+}
+
+uint64_t controller::getTimespamp() {
+    time_t localTime_unix;
+    /* Get local time un unix */
+    time(&localTime_unix);
+
+    /* Now convert to UTC */
+    struct tm* timezone = gmtime(&localTime_unix);
+
+    localTime_unix = mktime(timezone);
+    this->timespamp_u64 = (uint64_t)localTime_unix;
+
+    return this->timespamp_u64;
+}
+
+bool controller::getInitRTC()
+{
+    bool initRTC = false;
+    initRTC = controller::getTimespamp();
+    return initRTC;
+}

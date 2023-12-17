@@ -25,16 +25,16 @@ typedef struct
 
 typedef enum
 {
-    sm_init_state,          //0
-    sm_waiting_state,       //1
-    sm_moving_state,        //2
-    sm_aligning_state,      //3
-    sm_stop_state,          //4
-    sm_emergencyStop_state, //5
-    sm_errorHandling_state, //6
-    sm_systemStop_state,    //7
-    sm_leader_state,        //8
-    sm_follower_state,      //9
+    sm_initState,          //0
+    sm_waitingState,       //1
+    sm_movingState,        //2
+    sm_aligningState,      //3
+    sm_stopState,          //4
+    sm_emergencyStopState, //5
+    sm_errorHandlingState, //6
+    sm_systemStopState,    //7
+    sm_leaderState,        //8
+    sm_followerState,      //9
 }stateMachine_e;
 
 
