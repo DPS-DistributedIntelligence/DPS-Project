@@ -50,7 +50,10 @@ stateMachine_e  controller::sm_leader_state()
      * Determine the route and navigate through waypoints.
      * Decide when and where the convoy should stop.
      */
-
+    else
+    {
+        nextState = sm_movingState;
+    }
 
 }
 
@@ -63,6 +66,10 @@ stateMachine_e controller::sm_follower_state()
         /* TODO: Decode message */
         followerTruck_str.vehicleCurrentSpeed = controller::getVehicleSpeed();
         followerTruck_str.vehicleDirection = controller::getSteerAngle();
+    }
+    else
+    {
+        nextState = sm_movingState;
     }
     /*
      * Continuously listen for commands from the leader regarding speed, steering angle, and other relevant instructions.
