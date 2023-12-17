@@ -68,7 +68,29 @@ stateMachine_e  controller::sm_leader_state()
 
 stateMachine_e controller::sm_follower_state()
 {
-    return sm_movingState;
+    // find leader
+    bool leader = find_leader();
+
+    // set role
+    if (leader){
+        // set to leader
+        role = LEADER;
+
+    } else{
+        // set to follower
+        role = FOLLOWER;
+    }
+
+    // if follower connect to leader
+    if(role == FOLLOWER){
+        this->connectToLeader;
+        openNewChannel(truck_id); // for next follower
+        return sm_movingState;
+    }else{
+        // if follower open for connection
+        openNewChannel(truck_id);
+        return sm_leaderState;
+    }
 }
 
 stateMachine_e controller::moving_state(movement* signal){
