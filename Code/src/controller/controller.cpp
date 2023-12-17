@@ -5,113 +5,37 @@
  *      Author: Luis Fernando Rodriguez Gutierrez
  */
 
+
 #include "controller.h"
+#include "global_variable/global_variable.h"
+#include <ctime>
+#include <iostream>
 
+
+using namespace std;
 //TODO: set function/service provider
-controller::controller(uint16_t varTruckId_u16, currentGPS_st varGPS)
+controller::controller(int truck_id, currentGPS_st varGPS, uint32_t varTimestamp, Truck* (*getNearbyTruck)(), Location (*getSelfLocation)(), void  (*connectToLeader)(int leaderId), void  (*openNewChannel)(int truck_id))
 {
-    this->truckid_u16 = varTruckId_u16;
-    /* By default all trucks start as leader */
-    this->role = leader;
-    this->timeStpamp_u64 = controller::getTimespamp();
-    this->l_currentGPS_st = varGPS;
-}
+    l_currentGPS_st.latitudGPS_float = varGPS.latitudGPS_float;
+    l_currentGPS_st.lontgitudGPS_float = varGPS.lontgitudGPS_float;
+    this->getNearbyTruck = getNearbyTruck;
+    this->getSelfLocation = getSelfLocation;
+    this->connectToLeader = connectToLeader;
+    this->openNewChannel = openNewChannel;
+    truck_id = truck_id;
 
-stateMachine_e controller::sm_init_state()
-{
-    /* Start engine */
-    /* Set timestamps */
-    controller::getTimespamp();
-    /* Start gps */
-    controller::setGps_ST(this->l_currentGPS_st);
-    /* Start comms module */
-    /*
-     * TODO: Set function to start communication module
-     * - Constructor, funct etc...
-     */
-
-}
-
-stateMachine_e  controller::sm_leader_state()
-{
-    truckInfo_str leaderTruck_str;
-    if(messageToTransmit)
-    {
-        /* TODO: Function to transmit message */
-        /* TODO: Update values */
-        controller::setVehicleSpeed(leaderTruck_str.vehicleCurrentSpeed);
-        controller::setSteerAngle(leaderTruck_str.vehicleDirection);
-        TransmitMessage();
-    }
-    /*
-     * The leader can set the speed and steering angle for the entire group of trucks.
-     * Communicate this information to the followers to maintain a coordinated movement.
-     * Periodically broadcast its current speed, steering angle, and other relevant information to the followers.
-     * Determine the route and navigate through waypoints.
-     * Decide when and where the convoy should stop.
-     */
-    else
-    {
-        nextState = sm_movingState;
-    }
-
-}
-
-stateMachine_e controller::sm_follower_state()
-{
-    truckInfo_str followerTruck_str;
-    /* TODO: Function to receive message */
-    If(messageIsReceived)
-    {
-        /* TODO: Decode message */
-        followerTruck_str.vehicleCurrentSpeed = controller::getVehicleSpeed();
-        followerTruck_str.vehicleDirection = controller::getSteerAngle();
-    }
-    else
-    {
-        nextState = sm_movingState;
-    }
-    /*
-     * Continuously listen for commands from the leader regarding speed, steering angle, and other relevant instructions.
-     * Adjust the truck's speed and steering angle to match the leader's commands.
-     * Maintain a safe following distance.
-     *
-     */
-
-
-}
-
-stateMachine_e controller::sm_moving_state()
-{
-    uint8_t driverInterfaceSpeed = 0;
-    if(this->role == leader)
-    {
-        /* Set of code to allign */
-        /*
-         * 1. Communication is already working
-         * 2. Vehicles are alligned
-         */
-        /* Set vehicle to n speed */
-        controller::setVehicleSpeed(driverInterfaceSpeed);
-        /* Prepare message to be transmitted */
-
-        return sm_movingState;
-    }
-    else // follower
-    {
-
-    }
+    timespamp_u32 = varTimestamp;
 }
 
 void controller::setGps_ST(currentGPS_st var)
 {
-	l_currentGPS_st.latitudGPS_float = (var).latitudGPS_float;
-	l_currentGPS_st.lontgitudGPS_float = (var).lontgitudGPS_float;
+    l_currentGPS_st.latitudGPS_float = (var).latitudGPS_float;
+    l_currentGPS_st.lontgitudGPS_float = (var).lontgitudGPS_float;
 }
 
 currentGPS_st controller::getGPS_ST()
 {
-	return l_currentGPS_st;
+    return l_currentGPS_st;
 }
 
 uint64_t controller::getTimespamp() {
@@ -123,26 +47,127 @@ uint64_t controller::getTimespamp() {
     struct tm* timezone = gmtime(&localTime_unix);
 
     localTime_unix = mktime(timezone);
-    this->timeStpamp_u64 = (uint64_t)localTime_unix;
+    this->timespamp_u64 = (uint64_t)localTime_unix;
 
-    return this->timeStpamp_u64;
-}
-
-void controller::setVehicleSpeed(uint8_t varSpeed)
-{
-    this->vehicleSpeed_u8 = varSpeed;
-}
-uint8_t controller::getVehicleSpeed()
-{
-    return this->vehicleSpeed_u8;
+    return this->timespamp_u64;
 }
 
-void controller::setSteerAngle(truckMovementDirection_e varSteerAngle)
-{
-    this->steerAngle_u8 = varSteerAngle;
+
+stateMachine_e controller::waiting_state() {
+    // find leader
+    bool leader = find_leader();
+
+    // set role
+    if (leader){
+        // set to leader
+        role = LEADER;
+
+    } else{
+        // set to follower
+        role = FOLLOWER;
+    }
+
+    // if follower connect to leader
+    if(role == FOLLOWER){
+        this->connectToLeader;
+        openNewChannel(truck_id); // for next follower
+        return sm_follower_state;
+    }else{
+        // if follower open for connection
+        openNewChannel(truck_id);
+        return sm_leader_state;
+    }
 }
 
-truckMovementDirection_e controller::getSteerAngle()
-{
-    return this->steerAngle_u8;
+bool controller::find_leader(){
+    bool found_leader = false;
+    time_t start = time(nullptr);
+    while(true){
+        // find leader
+
+        // get nearby truck list
+        Truck* nearbyTruck = this->getNearbyTruck();
+
+        // calculate relative position (can be done on gpu)
+        int self_x = getSelfLocation()[0];
+        int self_y = getSelfLocation()[1];
+        int nearest = MAX_LEADER_RANGE;
+
+        // set the leader if the truck is infront
+        for (int i = 0;*(Truck+i) != NULL;i++){
+            // decide base on x position
+            if (*(Truck+i).location[0]>self_x){
+                found_leader =  true;
+                // get the nearest truck
+                if (*(Truck+i).location[0]-self_x<nearest) {
+                    nearest = *(Truck + i).location[0] - self_x;
+                    leader_id = *(Truck + i).id;
+                }
+            }
+        }
+        if(found_leader){
+            break;
+        }
+
+        // break if time out
+        if (time(nullptr)-start> MAX_SEARCH_TIME){
+            break;
+        }
+    }
+    return found_leader;
 }
+
+stateMachine_e controller::moving_state(movement* signal){
+
+    // set movement (direction and speed ) based on signal
+    if (role == FOLLOWER){
+        while(true){
+            // validity check (should stay in move state or exit): the current movement can be overwrite by other subsystem for safety (e.g. emergency stop)
+            if (signal->direction == MOVE_EMERGENCY_STOP){
+                return sm_emergencyStop_state;
+            }
+
+            // change the movement of the truck if the current movement is not equal to the received signal
+            if (signal->direction != current_movement.direction || signal->speed != current_movement.speed) {
+                current_movement.direction = signal->direction;
+                current_movement.speed = signal->speed;
+                // forward message
+                forwardSignal({signal->direction, signal->speed});
+            }
+        }
+
+    }else{
+        // as leader
+        while(true){
+            // validity check (should stay in move state or exit): the current movement can be overwrite by other subsystem for safety (e.g. emergency stop)
+            if (current_movement.direction==MOVE_EMERGENCY_STOP){
+                forwardSignal(current_movement);
+                return sm_emergencyStop_state;
+            }
+
+            // drive and produce signal
+            // TODO: make this fix variable dynamic base on the behaviour of the driver (driver can be human or machine)
+            // these variable are depending on the behaviour of the driver (driver can be human or machine)
+            movement_direction direction = MOVE_STOP;
+            int speed = 0;
+            current_movement={direction, speed};
+
+            // forward
+            forwardSignal(current_movement);
+        }
+
+
+    }
+
+
+
+}
+
+void controller::forwardSignal(movement_direction signal){
+    /*
+     * for the received/created signal to the follower by sending the signal to truck channel
+     */
+    //TODO: forward message to communication component
+
+}
+
