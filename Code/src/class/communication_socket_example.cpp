@@ -45,6 +45,7 @@ void* connection(void* threadid)
     if ((truck_socket = accept(communication_socket, NULL, NULL) < 0))
     {
         perror("accept");
+        WSACleanup();
         exit(EXIT_FAILURE);
     }
 
@@ -76,6 +77,7 @@ int main()
     if (setsockopt(communication_socket, SOL_SOCKET, SO_REUSEADDR, (char *) &opt, sizeof(opt)))
     {
         perror("setsockopt");
+        WSACleanup();
         exit(EXIT_FAILURE);
     }
 
@@ -92,6 +94,7 @@ int main()
     if (bind(communication_socket, (struct sockaddr*)&srv, sizeof(srv)) < 0)
     {
         perror("bind failed");
+        WSACleanup();
         exit(EXIT_FAILURE);
     }
 
@@ -100,6 +103,7 @@ int main()
     if (listen(communication_socket, NUM_CONNECTION) < 0)
     {
         perror("listen");
+        WSACleanup();
         exit(EXIT_FAILURE);
     }
 
