@@ -12,7 +12,7 @@ licensePlate::licensePlate(string varCityCode, string varPlateNumber) {
 	plateNumber_str = varPlateNumber;
 }
 
-string licensePlate::getLicensePlate_str()
+string licensePlate::get_LicensePlate()
 {
 	return cityCode_str + " " + plateNumber_str;
 }

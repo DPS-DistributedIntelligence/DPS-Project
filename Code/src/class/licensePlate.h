@@ -22,7 +22,7 @@ public:
      * 	[in]
      * 	[out]
      */
-	string getLicensePlate_str();
+	string get_LicensePlate();
 };
 
 #endif /* LICENSEPLATE_H_ */
