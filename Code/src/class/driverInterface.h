@@ -27,28 +27,28 @@ public:
 	 * 	[in]
 	 * 	[out]
 	 */
-	uint8_t getCommunicationStatus_U8();
+	uint8_t get_CommunicationStatus();
 	/*
 	 * Description:
 	 * Parameters:
 	 * 	[in]
 	 * 	[out]
 	 */
-	void setCommunicationStatus_U8(protocolResponse CommunicationStatusEnum);
+	void set_CommunicationStatus(protocolResponse CommunicationStatusEnum);
 	/*
 	 * Description:
 	 * Parameters:
 	 * 	[in]
 	 * 	[out]
 	 */
-	float getCurrentSpeed_Float();
+	float get_CurrentSpeed();
 	/*
 	 * Description:
 	 * Parameters:
 	 * 	[in]
 	 * 	[out]
 	 */
-	void setCurrentSpeed_Float(float currentSpeedFloat);
+	void set_CurrentSpeed(float currentSpeedFloat);
 };
 
 #endif /* DRIVERINTERFACE_H_ */

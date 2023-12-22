@@ -9,6 +9,7 @@
 #define CLASS_TRUCK_H_
 
 #import "commonLib.h"
+#import "driverInterface.h"
 
 typedef enum
 {
@@ -37,6 +38,7 @@ public:
 	uint8_t fuelTank_u8;
 	licensePlate licensePlate_class;
 	truckWheels_struct truckWheels_str;
+	driverInterface driverInterface_class;
 
 	truck(string varCityCode, string varPlateNumber, uint8_t varFuelTank);
 

@@ -3,24 +3,26 @@
 //
 
 #include "antiCollisionSystem.h"
-
+/*
+ * Comment here
+ */
 antiCollisionSystem::antiCollisionSystem(float varEmergencyStopDistance_float)
 {
     emergencyStopDistance_float = varEmergencyStopDistance_float;
 }
 
-float antiCollisionSystem::getEmergencyStopDistance_Float() {
+float antiCollisionSystem::get_EmergencyStopDistance() {
     return emergencyStopDistance_float;
 }
 
-void antiCollisionSystem::setEmergencyStopDistance_Float(float emergencyStopDistanceFloat) {
+void antiCollisionSystem::set_EmergencyStopDistance(float emergencyStopDistanceFloat) {
     emergencyStopDistance_float = emergencyStopDistanceFloat;
 }
 
-bool antiCollisionSystem::isEmergencyStop_B() {
+bool antiCollisionSystem::isEmergencyStop() {
     return emergencyStop_b;
 }
 
-void antiCollisionSystem::setEmergencyStop_B(bool emergencyStopB) {
+void antiCollisionSystem::set_EmergencyStop(bool emergencyStopB) {
     emergencyStop_b = emergencyStopB;
 }

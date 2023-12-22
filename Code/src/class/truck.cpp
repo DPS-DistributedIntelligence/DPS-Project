@@ -13,6 +13,13 @@ truck::truck(string varCityCode, string varPlateNumber, uint8_t varFuelTank)
 	this->fuelTank_u8 = varFuelTank;
 	this->truckWheels_str.frontAxisFaulty_b = false;
 	this->truckWheels_str.rearAxisFaulty_b = false;
+
+	/*
+	 * TODO: Add information from the driverInterface class for truck creation
+	 */
+	printf("Starting truck... \n"
+			"Communication Status... \n"
+			"Internal Status... \n");
 }
 
 void truck::set_faultyFrontAxis(bool varLeftOrRight)
@@ -80,3 +87,4 @@ string truck::get_truckLicensePlate()
 {
 	return this->get_truckLicensePlate();
 }
+

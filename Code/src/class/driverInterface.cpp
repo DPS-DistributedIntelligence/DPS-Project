@@ -12,18 +12,18 @@ driverInterface::driverInterface() {
 
 }
 
-uint8_t driverInterface::getCommunicationStatus_U8() {
+uint8_t driverInterface::get_CommunicationStatus() {
 	return communicationStatus_enum;
 }
 
-void driverInterface::setCommunicationStatus_U8(protocolResponse varCommunicationStatusEnum) {
+void driverInterface::set_CommunicationStatus(protocolResponse varCommunicationStatusEnum) {
 	communicationStatus_enum = varCommunicationStatusEnum;
 }
 
-float driverInterface::getCurrentSpeed_Float() {
+float driverInterface::get_CurrentSpeed() {
 	return currentSpeed_float;
 }
 
-void driverInterface::setCurrentSpeed_Float(float currentSpeedFloat = 0) {
+void driverInterface::set_CurrentSpeed(float currentSpeedFloat) {
 	currentSpeed_float = currentSpeedFloat;
 }

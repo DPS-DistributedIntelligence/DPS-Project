@@ -20,28 +20,28 @@ public:
      * 	[in]
      * 	[out]
      */
-    float getEmergencyStopDistance_Float();
+    float get_EmergencyStopDistance();
     /*
      * Description:
      * Parameters:
      * 	[in]
      * 	[out]
      */
-    void setEmergencyStopDistance_Float(float emergencyStopDistanceFloat);
+    void set_EmergencyStopDistance(float emergencyStopDistanceFloat);
     /*
      * Description:
      * Parameters:
      * 	[in]
      * 	[out]
      */
-    bool isEmergencyStop_B();
+    bool isEmergencyStop();
     /*
      * Description:
      * Parameters:
      * 	[in]
      * 	[out]
      */
-    void setEmergencyStop_B(bool emergencyStopB);
+    void set_EmergencyStop(bool emergencyStopB);
 };
 
 
