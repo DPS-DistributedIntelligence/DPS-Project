@@ -13,7 +13,7 @@ private:
     float emergencyStopDistance_float = 0;
 public:
     bool emergencyStop_b = false;
-    antiCollisionSystem(float varEmergencyStopDistance_float);
+    antiCollisionSystem();
     /*
      * Description:
      * Parameters:
@@ -28,6 +28,13 @@ public:
      * 	[out]
      */
     void set_EmergencyStopDistance(float emergencyStopDistanceFloat);
+    /*
+     * Description:
+     * Parameters:
+     * 	[in]
+     * 	[out]
+     */
+    void measureDistance(float varActualDistance);
     /*
      * Description:
      * Parameters:

@@ -34,13 +34,15 @@ typedef struct
 }truckWheels_struct;
 
 class truck {
+private:
+	uint8_t truckID;
 public:
 	uint8_t fuelTank_u8;
 	licensePlate licensePlate_class;
 	truckWheels_struct truckWheels_str;
 	driverInterface driverInterface_class;
 
-	truck(string varCityCode, string varPlateNumber, uint8_t varFuelTank);
+	truck(uint8_t varTruckSerialNumber, string varCityCode, string varPlateNumber, uint8_t varFuelTank);
 
     /*
      * Description:
@@ -103,6 +105,15 @@ public:
      * 	[out] null
      */
 	string get_truckLicensePlate();
+
+    /*
+     * Description:
+     * 	-
+     * Parameters:
+     * 	[in] null
+     * 	[out] null
+     */
+	uint8_t get_truckSerialNumber();
 };
 
 #endif /* CLASS_TRUCK_H_ */

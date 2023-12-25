@@ -7,8 +7,9 @@
 
 #include "truck.h"
 
-truck::truck(string varCityCode, string varPlateNumber, uint8_t varFuelTank)
+truck::truck(uint8_t varTruckSerialNumber, string varCityCode, string varPlateNumber, uint8_t varFuelTank)
 {
+	this->truckID = varTruckSerialNumber;
 	this->licensePlate_class = licensePlate(varCityCode, varPlateNumber);
 	this->fuelTank_u8 = varFuelTank;
 	this->truckWheels_str.frontAxisFaulty_b = false;
@@ -88,3 +89,7 @@ string truck::get_truckLicensePlate()
 	return this->get_truckLicensePlate();
 }
 
+uint8_t truck::get_truckSerialNumber()
+{
+	return this->truckID;
+}
