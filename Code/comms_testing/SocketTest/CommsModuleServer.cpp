@@ -58,45 +58,6 @@ namespace Modules {
         return 1;
     }
 
-    int CommsModuleServer::waitForConnections(u_int numConnections)
-    {
-        for(u_int i = 0; i < numConnections; i++)
-        {
-            SOCKET clientSocket = accept(serverSocket, NULL, NULL);
-            if (clientSocket == INVALID_SOCKET) {
-                closesocket(clientSocket);
-                return -1;
-            }
-
-            // Set the socket to non-blocking mode
-            u_long mode = 1;
-            if (ioctlsocket(clientSocket, FIONBIO, &mode) != 0) {
-                closesocket(clientSocket);
-                return -1;
-            }
-
-            clientSockets.push_back(clientSocket);
-        }
-
-        return 1;
-    }
-
-    int CommsModuleServer::waitForMessagesAndPrint()
-    {
-        // Relay messages between clients
-        char buffer[1024];
-        int bytesReceived;
-        do {
-            for(u_int i = 0; i < clientSockets.size(); i++) {
-                bytesReceived = recv(clientSockets.at(i), buffer, sizeof(buffer), 0);
-                if (bytesReceived > 0) {
-                    buffer[bytesReceived] = '\0';
-                    std::cout << "Client " << i << " says: " << buffer << "\n";
-                }
-            }
-        } while (bytesReceived > 0);
-        return 1;
-    }
 
     int CommsModuleServer::checkAndAcceptConnection()
     {
@@ -129,7 +90,7 @@ namespace Modules {
                     clientSockets.push_back(clientSocket);
                     return 1;
                 }
-                else
+                else //Close socket if something went wrong
                 {
                     closesocket(clientSocket);
                 }
@@ -138,6 +99,11 @@ namespace Modules {
 
         //Returning 0 if no new connection was accepted
         return 0;
+    }
+
+    int CommsModuleServer::checkAndReceiveMessages()
+    {
+        return 1;
     }
 
     int CommsModuleServer::relayMessages()
@@ -178,6 +144,31 @@ namespace Modules {
                 {
                     buff[bytesRead] = '\0';
                     std::cout << "Client " << curr_sock - clientSockets.begin() << " says: " << buff << "\n";
+
+                    if(clientSockets.size() >= 2)
+                    {
+                        string message(buff);
+
+                        //Getting the length in bytes
+                        int bytes_length = (int)strlen(message.c_str());
+
+                        SOCKET dest_sock;
+                        //Sending and comparing result (if result != bytes_length --> error)
+                        if(curr_sock != clientSockets.end())
+                        {
+                            dest_sock = *(curr_sock + 1);
+                        }
+                        else
+                        {
+                            dest_sock = clientSockets.front();
+                        }
+
+                        if(send(dest_sock, message.c_str(), bytes_length, 0) == bytes_length)
+                        {
+                            std::cout << "Successfully forwarded message \"" << message <<"\" from client " << curr_sock - clientSockets.begin() << "\n";
+                        }
+                    }
+
                 }
                 else if (bytesRead == 0)
                 {
@@ -203,6 +194,11 @@ namespace Modules {
             curr_sock++;
         }
         return 1;
+    }
+
+    int CommsModuleServer::getNumOfConnectedClients()
+    {
+        return (int)clientSockets.size();
     }
 
 } // Module

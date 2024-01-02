@@ -28,10 +28,10 @@ namespace Modules {
     public:
         CommsModuleServer(long timeout);
         int initialize(u_short port);
-        int waitForConnections(u_int numConnections);
-        int waitForMessagesAndPrint();
         int checkAndAcceptConnection();
+        int checkAndReceiveMessages();
         int relayMessages();
+        int getNumOfConnectedClients();
     };
 
 } // Module
