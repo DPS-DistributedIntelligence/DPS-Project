@@ -12,7 +12,6 @@ namespace Modules {
         timeout.tv_usec = timeout_us;
     }
 
-
     int CommsModuleServer::initialize(u_short port)
     {
         //Initializing the winsock.dll
@@ -80,19 +79,24 @@ namespace Modules {
             //Checking if there is an incoming connection
             if (FD_ISSET(serverSocket, &readSet))
             {
+                SocketClientID incomingClient{};
+
                 //Trying to accept the new incoming connection
-                SOCKET clientSocket = accept(serverSocket, nullptr, nullptr);
+                //SOCKET clientSocket = accept(serverSocket, nullptr, nullptr);
+                incomingClient.clientSocket = accept(serverSocket, nullptr, nullptr);
 
                 //If the new socket was successfully accepted, add it to the vector and returning 1
-                if (clientSocket != INVALID_SOCKET)
+                if (incomingClient.clientSocket != INVALID_SOCKET)
                 {
                     std::cout << "Connection accepted from client\n";
-                    clientSockets.push_back(clientSocket);
+                    //clientSockets.push_back(clientSocket);
+                    clientID_socket_map.push_back(incomingClient);
                     return 1;
                 }
                 else //Close socket if something went wrong
                 {
-                    closesocket(clientSocket);
+                    closesocket(incomingClient.clientSocket);
+                    return -1;
                 }
             }
         }
@@ -101,9 +105,67 @@ namespace Modules {
         return 0;
     }
 
-    int CommsModuleServer::checkAndReceiveMessages()
+    int CommsModuleServer::getMessageFromSocket(SOCKET& rxSocket, string& rx_message)
     {
-        return 1;
+        //Initializing for using the select statement
+        fd_set readSet;
+        FD_ZERO(&readSet);
+        FD_SET(rxSocket, &readSet);
+
+        //Executing the select statement and storing the result
+        int result = select(0, &readSet, nullptr, nullptr, &timeout);
+
+        //Processing the result
+        if(result == SOCKET_ERROR) //Socket error detected --> return -1
+        {
+            return -1;
+        }
+        else if (result > 0) //Data seems to be available
+        {
+            //Preparing a buffer
+            char buff[1024];
+            int bytesRead;
+
+            //Storing the data in the buffer
+            bytesRead = recv(rxSocket, buff, sizeof(buff), 0);
+
+            //Checking and processing the received data
+            if (bytesRead > 0) //Data is available
+            {
+                //Store the buffer in the string
+                rx_message.append(buff, bytesRead);
+                return 1;
+            }
+            else if (bytesRead == 0) //Client sent empty data, return 0;
+            {
+                return 0;
+            }
+            else //Something went wrong --> return -1
+            {
+                return -1;
+            }
+        }
+        else //No data received --> return 0
+        {
+            return 0;
+        }
+    }
+
+    void CommsModuleServer::getMessagesFromAllSockets()
+    {
+        //Initializing an iterator for iterating over the vector of sockets
+        //auto curr_sock = clientSockets.begin();
+        auto curr_client = clientID_socket_map.begin();
+        while(curr_client != clientID_socket_map.end())
+        {
+            string rx_message;
+            if(getMessageFromSocket((curr_client->clientSocket), rx_message) == 1)
+            {
+                cout << rx_message << "\n";
+            }
+
+            curr_client++;
+        }
     }
 
     int CommsModuleServer::relayMessages()
@@ -198,7 +260,7 @@ namespace Modules {
 
     int CommsModuleServer::getNumOfConnectedClients()
     {
-        return (int)clientSockets.size();
+        return (int)clientID_socket_map.size();
     }
 
 } // Module

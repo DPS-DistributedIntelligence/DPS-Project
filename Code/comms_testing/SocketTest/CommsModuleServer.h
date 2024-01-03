@@ -6,10 +6,11 @@
 #define SOCKETTEST_COMMSMODULESERVER_H
 
 #pragma once
-#include <winsock.h>
+#include <winsock2.h>
 #include <string>
 #include <vector>
 #include <iostream>
+#include "SocketClientIDStruct.h"
 
 //Linker should add "ws2_32.lib" to the list of libraries to be linked with the program
 #pragma comment(lib, "ws2_32.lib")
@@ -24,14 +25,19 @@ namespace Modules {
         SOCKET serverSocket{};
         vector<SOCKET> clientSockets;
         timeval timeout{};
+        vector<string> rxPackets;
+        vector<string> txPackets;
+        vector<SocketClientID> clientID_socket_map;
 
     public:
-        CommsModuleServer(long timeout);
+        CommsModuleServer(long timeout_us);
         int initialize(u_short port);
         int checkAndAcceptConnection();
         int checkAndReceiveMessages();
         int relayMessages();
         int getNumOfConnectedClients();
+        int getMessageFromSocket(SOCKET& rxSocket, string& rx_message);
+        void getMessagesFromAllSockets();
     };
 
 } // Module

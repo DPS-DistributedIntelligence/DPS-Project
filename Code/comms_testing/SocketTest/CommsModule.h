@@ -6,8 +6,9 @@
 #define SOCKETTEST_COMMSMODULE_H
 
 #pragma once
-#include <winsock.h>
+#include <winsock2.h>
 #include <string>
+#include <iostream>
 
 //Linker should add "ws2_32.lib" to the list of libraries to be linked with the program
 #pragma comment(lib, "ws2_32.lib")
@@ -20,11 +21,14 @@ namespace Modules {
     private:
         sockaddr_in serverAddr{};
         SOCKET clientSocket{};
+        timeval timeout{};
 
     public:
+        CommsModule(long timeout);
         int initialize(const string& ip_address, u_short port);
         int connect_to_Server();
         int send_message(const string& message);
+        int poll_message();
     };
 } // Modules
 

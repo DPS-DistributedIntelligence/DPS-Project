@@ -6,8 +6,9 @@
 
 using namespace Modules;
 
+CommsModule cm = CommsModule(1000);
+
 int main() {
-    CommsModule cm = CommsModule();
     if(cm.initialize("127.0.0.1", 8080) != 1)
     {
         std::cout << "Initialization failed\n";
@@ -39,6 +40,8 @@ int main() {
         {
             std::cout << "Sending successful\n";
         }
+
+        cm.poll_message();
 
         Sleep(1000);
     }
