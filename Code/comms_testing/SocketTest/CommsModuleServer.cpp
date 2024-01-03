@@ -71,7 +71,6 @@ namespace Modules {
         //Processing the result
         if (result == SOCKET_ERROR)
         {
-            std::cerr << "Socket error in select for accepting: " << WSAGetLastError() << "\n";
             return -1;
         }
         else if (result > 0)
@@ -88,8 +87,6 @@ namespace Modules {
                 //If the new socket was successfully accepted, add it to the vector and returning 1
                 if (incomingClient.clientSocket != INVALID_SOCKET)
                 {
-                    std::cout << "Connection accepted from client\n";
-                    //clientSockets.push_back(clientSocket);
                     clientID_socket_map.push_back(incomingClient);
                     return 1;
                 }
@@ -136,7 +133,7 @@ namespace Modules {
                 rx_message.append(buff, bytesRead);
                 return 1;
             }
-            else if (bytesRead == 0) //Client sent empty data, return 0;
+            else if (bytesRead == 0) //Client sent empty data --> return 0
             {
                 return 0;
             }
@@ -153,110 +150,41 @@ namespace Modules {
 
     void CommsModuleServer::getMessagesFromAllSockets()
     {
+        int result;
+
         //Initializing an iterator for iterating over the vector of sockets
-        //auto curr_sock = clientSockets.begin();
         auto curr_client = clientID_socket_map.begin();
         while(curr_client != clientID_socket_map.end())
         {
-            string rx_message;
-            if(getMessageFromSocket((curr_client->clientSocket), rx_message) == 1)
-            {
-                cout << rx_message << "\n";
-            }
+            while(true) {
+                string rx_message;
 
+                //Getting the message from the socket and storing the result
+                result = getMessageFromSocket((curr_client->clientSocket), rx_message);
+
+                //Break if no message with content was received (result 0 or -1)
+                if (result != 1) {
+                    break;
+                }
+
+                //If current client has no id (==0) and the packet starts with "signup-ID" (--> signup packet was detected)
+                if (curr_client->ID == 0 && rx_message.compare(0, 10, "signup-ID:") == 0) {
+                    //Extract the ID and store it in the current client
+                    string extracted_id = rx_message.substr(10);
+                    curr_client->ID = stoi(extracted_id);
+
+                    cout << "Signup detected with ID: " << curr_client->ID << "\n";
+                } else //Otherwise it is a normal packet
+                {
+                    cout << "[RX] from client " << curr_client->ID << ": \"" << rx_message << "\"\n";
+
+                    //TODO: Store it in the vector of RX packets
+                }
+            }
             curr_client++;
         }
     }
 
-    int CommsModuleServer::relayMessages()
-    {
-        //Initializing an iterator for iterating over the vector of sockets
-        auto curr_sock = clientSockets.begin();
-        while (curr_sock != clientSockets.end())
-        {
-            //Initializing for using the select statement
-            fd_set readSet;
-            FD_ZERO(&readSet);
-            FD_SET(*curr_sock, &readSet);
-
-            //Executing the select statement and storing the result
-            int result = select(0, &readSet, nullptr, nullptr, &timeout);
-
-            //Processing the result
-            if(result == SOCKET_ERROR) //Socket error detected.
-            {
-                std::cerr << "Socket error caused by client " << curr_sock - clientSockets.begin() << "\n";
-
-                //Closing and deleting socket, then continuing
-                closesocket(*curr_sock);
-                curr_sock = clientSockets.erase(curr_sock);
-                continue;
-            }
-            else if (result > 0) //Data seems to be available
-            {
-                //Preparing a buffer
-                char buff[1024];
-                int bytesRead;
-
-                //Storing the data in the buffer
-                bytesRead = recv(*curr_sock, buff, sizeof(buff), 0);
-
-                //Checking and processing the received data
-                if (bytesRead > 0) //Data is available
-                {
-                    buff[bytesRead] = '\0';
-                    std::cout << "Client " << curr_sock - clientSockets.begin() << " says: " << buff << "\n";
-
-                    if(clientSockets.size() >= 2)
-                    {
-                        string message(buff);
-
-                        //Getting the length in bytes
-                        int bytes_length = (int)strlen(message.c_str());
-
-                        SOCKET dest_sock;
-                        //Sending and comparing result (if result != bytes_length --> error)
-                        if(curr_sock != clientSockets.end())
-                        {
-                            dest_sock = *(curr_sock + 1);
-                        }
-                        else
-                        {
-                            dest_sock = clientSockets.front();
-                        }
-
-                        if(send(dest_sock, message.c_str(), bytes_length, 0) == bytes_length)
-                        {
-                            std::cout << "Successfully forwarded message \"" << message <<"\" from client " << curr_sock - clientSockets.begin() << "\n";
-                        }
-                    }
-
-                }
-                else if (bytesRead == 0)
-                {
-                    std::cerr << "Client " << curr_sock - clientSockets.begin() << " sent empty data\n";
-                    continue;
-                }
-                else
-                {
-                    int errorcode = WSAGetLastError();
-                    std::cerr << "Client " << curr_sock - clientSockets.begin() << " produced error " << errorcode << "!";
-
-                    if(errorcode == 10054)
-                    {
-                        std::cerr << " Socket gets closed down and removed!\n";
-                        closesocket(*curr_sock);
-                        curr_sock = clientSockets.erase(curr_sock);
-                        continue;
-                    }
-
-                    std::cerr << "\n";
-                }
-            }
-            curr_sock++;
-        }
-        return 1;
-    }
 
     int CommsModuleServer::getNumOfConnectedClients()
     {
