@@ -5,7 +5,7 @@
 #ifndef DPS_PLATOON_ANTICOLLISIONSYSTEM_H
 #define DPS_PLATOON_ANTICOLLISIONSYSTEM_H
 
-#include "commonLib.h"
+#include "class/commonLib.h"
 
 class antiCollisionSystem {
 
@@ -13,35 +13,42 @@ private:
     float emergencyStopDistance_float = 0;
 public:
     bool emergencyStop_b = false;
-    antiCollisionSystem(float varEmergencyStopDistance_float);
+    antiCollisionSystem();
     /*
      * Description:
      * Parameters:
      * 	[in]
      * 	[out]
      */
-    float getEmergencyStopDistance_Float();
+    float get_EmergencyStopDistance();
     /*
      * Description:
      * Parameters:
      * 	[in]
      * 	[out]
      */
-    void setEmergencyStopDistance_Float(float emergencyStopDistanceFloat);
+    void set_EmergencyStopDistance(float emergencyStopDistanceFloat);
     /*
      * Description:
      * Parameters:
      * 	[in]
      * 	[out]
      */
-    bool isEmergencyStop_B();
+    void measureDistance(float varActualDistance);
     /*
      * Description:
      * Parameters:
      * 	[in]
      * 	[out]
      */
-    void setEmergencyStop_B(bool emergencyStopB);
+    bool isEmergencyStop();
+    /*
+     * Description:
+     * Parameters:
+     * 	[in]
+     * 	[out]
+     */
+    void set_EmergencyStop(bool emergencyStopB);
 };
 
 

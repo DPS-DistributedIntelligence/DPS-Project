@@ -15,6 +15,8 @@
 #include <stdlib.h>
 #include <stdint.h>
 
+#include <vector>
+
 using namespace std;
 
 typedef struct
@@ -37,13 +39,11 @@ typedef enum
     sm_followerState,      //9
 }stateMachine_e;
 
-
 typedef enum
 {
     LEADER,
     FOLLOWER
 }truckRole_e;
-
 
 typedef enum
 {

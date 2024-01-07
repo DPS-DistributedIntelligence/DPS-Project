@@ -7,84 +7,120 @@
 
 
 #include "controller.h"
-#include "global_variable/global_variable.h"
-#include <ctime>
-#include <iostream>
 
 
 using namespace std;
 //TODO: set function/service provider
-controller::controller(int truck_id, currentGPS_st varGPS, uint32_t varTimestamp, Truck* (*getNearbyTruck)(), Location (*getSelfLocation)(), void  (*connectToLeader)(int leaderId), void  (*openNewChannel)(int truck_id))
-{
-    l_currentGPS_st.latitudGPS_float = varGPS.latitudGPS_float;
-    l_currentGPS_st.lontgitudGPS_float = varGPS.lontgitudGPS_float;
-    this->getNearbyTruck = getNearbyTruck;
-    this->getSelfLocation = getSelfLocation;
-    this->connectToLeader = connectToLeader;
-    this->openNewChannel = openNewChannel;
-    truck_id = truck_id;
 
-    this->timespamp_u64 = varTimestamp;
+controller::controller(uint8_t varControllerSerialNumber, bool varAnticollisionSystem, vector<controllerSystem_str> varControllerList)
+{
+    this->controllerSystem_st.controllerSerialNumber_u8 = varControllerSerialNumber;
+	/* Enable of disable the controller, for this truck to be able to join the platoon
+	 * the anti-collision system needs to be enable */
+	this->antiCollisionSystem_class.set_EmergencyStop(varAnticollisionSystem);
+	/* Set first state of the state machine to INIT */
+	this->currentState_enum = sm_initState;
+    /* Copy the list of all vehicles in the controller */
+    this->vehicleList_vector = varControllerList;
 }
 
 stateMachine_e controller::sm_init_state()
 {
-    initSystem_st.ingnitionKey = true;
-    initSystem_st.communication = getInitCommunicationSystem();
-    initSystem_st.antiCollisionSystem = getInitAntiCollision();
-    initSystem_st.rtc = getInitRTC();
+    controllerSystem_st.ingnitionKey_b = true;
+    /* Start the logical clock ticks */
+    logicalClock_class.logicalClockTick();
+    /* Store the logical clock ticks into the controller structure */
+    controllerSystem_st.logicalClock_u64 = logicalClock_class.get_logicalClock();
+    /* Logic to check if the logical clock was initialized though a flag */
+    if(controllerSystem_st.logicalClock_u64 != 0)
+    {
+    	controllerSystem_st.logicalClock_b = true;
+    }
+    else
+    {
+    	controllerSystem_st.logicalClock_b = false;
+    }
+    /*
+     * For the anti-collision system we always need to initialize it according to diagram.
+     * The distance will always be in mts.
+     */
+    if(controllerSystem_st.antiCollisionSystem_b == true)
+    {
+    	this->antiCollisionSystem_class.set_EmergencyStopDistance(10);
+    }
+    else
+    {
+    	/*
+    	 * Set truck out of the platoon
+    	 */
+    }
+
+    return sm_waitingState;
 }
 
+/*
+ * TODO: Obtain function to receive the vector of available vehicles
+ */
 stateMachine_e controller::waiting_state() {
     // find leader
     bool leader = find_leader();
 
+    /* Continue the logic for the logical clock ticks */
+    logicalClock_class.logicalClockTick();
+    /* Store the logical clock ticks into the controller structure */
+    controllerSystem_st.logicalClock_u64 = logicalClock_class.get_logicalClock();
+
     // set role
-    if (leader){
+    if (!leader){
         // set to leader
-        role = LEADER;
+        this->controllerSystem_st.role_e = LEADER;
 
     } else{
         // set to follower
-        role = FOLLOWER;
+    	this->controllerSystem_st.role_e = FOLLOWER;
     }
 
     // if follower connect to leader
-    if(role == FOLLOWER){
-        this->connectToLeader;
-        openNewChannel(truck_id); // for next follower
+    if(this->controllerSystem_st.role_e == FOLLOWER){
         return sm_followerState;
     }else{
-        // if follower open for connection
-        openNewChannel(truck_id);
         return sm_leaderState;
     }
 }
 
 stateMachine_e  controller::sm_leader_state()
 {
+    /*
+     * TODO: Logic to search for the truck that will be the leader
+     * Simple search of a truck, no fancy logic needed
+     * Logic will need Thread implementation to be fast
+     */
+    // set to leader
+    this->controllerSystem_st.role_e = LEADER;
+    /* Continue the logic for the logical clock ticks */
+    logicalClock_class.logicalClockTick();
+    /* Store the logical clock ticks into the controller structure */
+    controllerSystem_st.logicalClock_u64 = logicalClock_class.get_logicalClock();
     return sm_movingState;
 }
 
 stateMachine_e controller::sm_follower_state()
 {
-    // find leader
-    bool leader = find_leader();
-
-    // set role
-    if (leader){
-        // set to leader
-        role = LEADER;
-
-    } else{
-        // set to follower
-        role = FOLLOWER;
-    }
-
+    // set to follower
+    this->controllerSystem_st.role_e = FOLLOWER;
     // if follower connect to leader
-    if(role == FOLLOWER){
-        this->connectToLeader;
-        openNewChannel(truck_id); // for next follower
+    if(this->controllerSystem_st.role_e == FOLLOWER){
+        if(!find_leader())
+        {
+            openNewChannel(truck_id); // for next follower
+        }
+        else
+        {
+            /*
+             * Do Nothing
+             */
+        }
+
         return sm_movingState;
     }else{
         // if follower open for connection
@@ -93,32 +129,56 @@ stateMachine_e controller::sm_follower_state()
     }
 }
 
-stateMachine_e controller::moving_state(movement* signal){
+stateMachine_e controller::sm_moving_state(){
+
+    /* Continue the logic for the logical clock ticks */
+    logicalClock_class.logicalClockTick();
+    /* Store the logical clock ticks into the controller structure */
+    controllerSystem_st.logicalClock_u64 = logicalClock_class.get_logicalClock();
 
     // set movement (direction and speed ) based on signal
-    if (role == FOLLOWER){
+    /*
+     * TODO: Possible thread that will be implemented
+     */
+    if (this->controllerSystem_st.role_e == FOLLOWER){
         while(true){
             // validity check (should stay in move state or exit): the current movement can be overwrite by other subsystem for safety (e.g. emergency stop)
-            if (signal->direction == MOVE_EMERGENCY_STOP){
-                return sm_emergencyStop_state;
+            if (this->movement_st->direction == MOVE_EMERGENCY_STOP){
+                return sm_emergencyStopState;
             }
-
+            else
+            {
+                /*
+                 * Do Nothing
+                 */
+            }
             // change the movement of the truck if the current movement is not equal to the received signal
-            if (signal->direction != current_movement.direction || signal->speed != current_movement.speed) {
-                current_movement.direction = signal->direction;
-                current_movement.speed = signal->speed;
+            if ((this->movement_st->direction != this->currentMovement_st.direction) ||
+                    (this->movement_st->speed != this->currentMovement_st.speed))
+            {
+                this->currentMovement_st.direction = this->movement_st->direction;
+                this->currentMovement_st.speed = this->movement_st->speed;
                 // forward message
-                forwardSignal({signal->direction, signal->speed});
+                forwardSignal(this->currentMovement_st);
+            }
+            else
+            {
+                /*
+                 * Do Nothing
+                 */
             }
         }
 
     }else{
+        /*
+         * TODO: Possible thread that will be implemented
+         */
         // as leader
         while(true){
             // validity check (should stay in move state or exit): the current movement can be overwrite by other subsystem for safety (e.g. emergency stop)
-            if (current_movement.direction==MOVE_EMERGENCY_STOP){
-                forwardSignal(current_movement);
-                return sm_emergencyStop_state;
+            if (this->currentMovement_st.direction==MOVE_EMERGENCY_STOP){
+                forwardSignal(this->currentMovement_st);
+                return sm_emergencyStopState;
             }
 
             // drive and produce signal
@@ -126,93 +186,54 @@ stateMachine_e controller::moving_state(movement* signal){
             // these variable are depending on the behaviour of the driver (driver can be human or machine)
             movement_direction direction = MOVE_STOP;
             int speed = 0;
-            current_movement={direction, speed};
+            this->currentMovement_st = {direction, speed};
 
             // forward
-            forwardSignal(current_movement);
+            forwardSignal(this->currentMovement_st);
         }
-
-
     }
 
 
 
 }
 
-void controller::forwardSignal(movement_direction signal){
+void controller::forwardSignal(movement_str signal){
     /*
      * for the received/created signal to the follower by sending the signal to truck channel
      */
     //TODO: forward message to communication component
+    /*
+     * We can send all the messages in this state or in prev, it depends on where to put logical clock
+     */
 
 }
-
-bool controller::find_leader(){
+/*
+ * TODO: Move to communications
+ */
+bool controller::find_leader(vector<controllerSystem_str> varControllerList)
+{
     bool found_leader = false;
-    time_t start = time(nullptr);
-    while(true){
-        // find leader
-
-        // get nearby truck list
-        Truck* nearbyTruck = this->getNearbyTruck();
-
-        // calculate relative position (can be done on gpu)
-        int self_x = getSelfLocation()[0];
-        int self_y = getSelfLocation()[1];
-        int nearest = MAX_LEADER_RANGE;
-
-        // set the leader if the truck is infront
-        for (int i = 0;*(Truck+i) != NULL;i++){
-            // decide base on x position
-            if (*(Truck+i).location[0]>self_x){
-                found_leader =  true;
-                // get the nearest truck
-                if (*(Truck+i).location[0]-self_x<nearest) {
-                    nearest = *(Truck + i).location[0] - self_x;
-                    leader_id = *(Truck + i).id;
-                }
-            }
-        }
-        if(found_leader){
-            break;
-        }
-
-        // break if time out
-        if (time(nullptr)-start> MAX_SEARCH_TIME){
+    for(auto varControllerListTemp: varControllerList)
+    {
+        if(varControllerListTemp.role_e == LEADER)
+        {
+            found_leader = true;
             break;
         }
     }
     return found_leader;
 }
 
-void controller::setGps_ST(currentGPS_st var)
+uint8_t controller::get_leader(vector<controllerSystem_str> varControllerList)
 {
-    l_currentGPS_st.latitudGPS_float = (var).latitudGPS_float;
-    l_currentGPS_st.lontgitudGPS_float = (var).lontgitudGPS_float;
-}
-
-currentGPS_st controller::getGPS_ST()
-{
-    return l_currentGPS_st;
-}
-
-uint64_t controller::getTimespamp() {
-    time_t localTime_unix;
-    /* Get local time un unix */
-    time(&localTime_unix);
-
-    /* Now convert to UTC */
-    struct tm* timezone = gmtime(&localTime_unix);
-
-    localTime_unix = mktime(timezone);
-    this->timespamp_u64 = (uint64_t)localTime_unix;
-
-    return this->timespamp_u64;
-}
-
-bool controller::getInitRTC()
-{
-    bool initRTC = false;
-    initRTC = controller::getTimespamp();
-    return initRTC;
+    uint8_t leader_id = 0;
+    for(auto varControllerListTemp: varControllerList)
+    {
+        if(varControllerListTemp.role_e == LEADER)
+        {
+            leader_id = varControllerListTemp.controllerSerialNumber_u8;
+            break;
+        }
+    }
+    return leader_id;
 }

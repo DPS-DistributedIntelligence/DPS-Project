@@ -9,45 +9,48 @@
 #define CONTROLLER_H_
 
 #include "class/commonLib.h"
+#include "truck/truck.h"
+#include "subsystem/antiCollisionSystem.h"
+#include "subsystem/logicalClock.h"
 
 typedef struct
 {
     union
     {
-        bool ingnitionKey;
-        bool communication;
-        bool rtc;
-        bool antiCollisionSystem;
+        bool ingnitionKey_b;
+        bool communication_b;
+        bool logicalClock_b;
+        bool antiCollisionSystem_b;
     };
-}initSystem_str;
+    uint8_t controllerSerialNumber_u8;
+    truckRole_e role_e;
+    uint64_t logicalClock_u64;
+}controllerSystem_str;
+
+typedef struct
+{
+    movement_direction direction;
+    int speed;
+}movemend_str;
 
 class controller {
 private:
-    currentGPS_st l_currentGPS_st;
-    uint64_t timespamp_u64 = 0;
+    logicalClock logicalClock_class;
+	controllerSystem_str controllerSystem_st;
+	antiCollisionSystem antiCollisionSystem_class;
+    /* Expected movement to follow */
+    movement_str *movement_st;
     stateMachine_e currentState_enum;
-    initSystem_str initSystem_st;
-    truckRole_e role;
-    int truck_id;
-    int leader_id;
 
-    // TODO: request this functionality from communication component and other component (refer diagram)
-    // required service or input
-    Truck* (*getNearbyTruck)();
-    Location* (*getSelfLocation)();
-
-    /*
-     * connect to a leader is finding a available channel in a channel list (provided by the simulation to te communication ) then try to access it(able to edit the array)
-     */
-    void  (*connectToLeader)(int leaderId);
-    void  (*openNewChannel)(int truck_id);
-
-    //
-    movement current_movement = {MOVE_STOP, 0};
+    vector<controllerSystem_str> vehicleList_vector;
 
 public:
-    controller(int truck_id, currentGPS_st varGPS, uint32_t varTimestamp, Truck* (*getNearbyTruck)(), Location (*getSelfLocation)(), void  (*connectToLeader)(int leaderId), void  (*openNewChannel)(int truck_id));
-
+    /* Actual movement of vehicle */
+    movement_str currentMovement_st;
+    /*
+     * Constructor
+     */
+    controller(uint8_t varControllerSerialNumber, bool varAnticollisionSystem, vector<controllerSystem_str> varControllerList);
 
     /*
      * Description:
@@ -110,7 +113,7 @@ public:
      * 	[in] truckRole_e varRole
      * 	[out] null
      */
-    stateMachine_e moving_state(movement* signal);
+    stateMachine_e sm_moving_state();
     /*
      * Description:
      * 	- Re-couple logic in case the leader was lost.
@@ -137,46 +140,37 @@ public:
     stateMachine_e sm_systemStop_state(void);
 
 
+    /*
+     * Description: this function is used to find nearest truck, and its position to be considered to be a leader
+     * Parameters:
+     * 	[in] null
+     * 	[out] bool - found_leader
+     */
+    bool find_leader(vector<controllerSystem_str> varControllerList);
 
     /*
-     * Description:
+     * Description: This function will inform the leader ID, this will be equivalent to array position
      * Parameters:
-     * 	[in] var
-     * 	[out] null
+     * 	[in] null
+     * 	[out] uint8_t - leader_id
      */
-    void setGps_ST(currentGPS_st var);
+    uint8_t get_leader(vector<controllerSystem_str> varControllerList);
+
     /*
-     * Description:
+     * Description: forward the received/created signal to the follower by sending the signal to truck channel
      * Parameters:
-     * 	[in] var
+     * 	[in] null
      * 	[out] null
      */
-    currentGPS_st getGPS_ST();
-    /*
-     * Description:
-     * Parameters:
-     * 	[in] timespampU32
-     * 	[out] null
-     */
-    uint64_t getTimespamp();
+    void forwardSignal(movement_str signal);
+
     /*
      * Description:
      * Parameters:
      * 	[in] null
      * 	[out] null
      */
-    bool getInitRTC();
-
-    /*
-     * this function is used to find nearest truck, and its position to be considered to be a leader
-     */
-    bool find_leader();
-
-
-    /*
-     * forward the received/created signal to the follower by sending the signal to truck channel
-     */
-    void forwardSignal(movement_direction signal);
+    void set_logicalClock(void);
 };
 
 #endif /* CONTROLLER_H_ */
