@@ -3,10 +3,6 @@
 //
 
 #include "antiCollisionSystem.h"
-/*
- * Comment here
- */
-antiCollisionSystem::antiCollisionSystem();
 
 float antiCollisionSystem::get_EmergencyStopDistance() {
     return emergencyStopDistance_float;
