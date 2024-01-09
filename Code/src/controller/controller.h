@@ -9,7 +9,6 @@
 #define CONTROLLER_H_
 
 #include "class/commonLib.h"
-#include "truck/truck.h"
 #include "subsystem/antiCollisionSystem.h"
 #include "subsystem/logicalClock.h"
 
@@ -33,7 +32,7 @@ typedef struct
     int speed;
 }movemend_str;
 
-class controller {
+class controller{
 private:
     logicalClock logicalClock_class;
 	controllerSystem_str controllerSystem_st;
@@ -139,6 +138,13 @@ public:
      */
     stateMachine_e sm_systemStop_state(void);
 
+    /*
+     * Description:
+     * Parameters:
+     * 	[in] null
+     * 	[out] truckRole_e
+     */
+    truckRole_e get_controllerRole();
 
     /*
      * Description: this function is used to find nearest truck, and its position to be considered to be a leader
@@ -152,7 +158,7 @@ public:
      * Description: This function will inform the leader ID, this will be equivalent to array position
      * Parameters:
      * 	[in] null
-     * 	[out] uint8_t - leader_id
+     * 	[out] truckRole_e - truck role
      */
     uint8_t get_leader(vector<controllerSystem_str> varControllerList);
 

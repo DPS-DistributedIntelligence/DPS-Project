@@ -12,8 +12,7 @@
 using namespace std;
 //TODO: set function/service provider
 
-controller::controller(uint8_t varControllerSerialNumber, bool varAnticollisionSystem, vector<controllerSystem_str> varControllerList)
-{
+controller::controller(uint8_t varControllerSerialNumber, bool varAnticollisionSystem, vector<controllerSystem_str> varControllerList){
     this->controllerSystem_st.controllerSerialNumber_u8 = varControllerSerialNumber;
 	/* Enable of disable the controller, for this truck to be able to join the platoon
 	 * the anti-collision system needs to be enable */
@@ -21,6 +20,7 @@ controller::controller(uint8_t varControllerSerialNumber, bool varAnticollisionS
 	/* Set first state of the state machine to INIT */
 	this->currentState_enum = sm_initState;
     /* Copy the list of all vehicles in the controller */
+    this->vehicleList_vector = varControllerList;
     this->vehicleList_vector = varControllerList;
 }
 
@@ -195,6 +195,11 @@ stateMachine_e controller::sm_moving_state(){
 
 
 
+}
+
+truckRole_e controller::get_controllerRole(void)
+{
+    return this->controllerSystem_st.role_e;
 }
 
 void controller::forwardSignal(movement_str signal){

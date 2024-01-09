@@ -8,112 +8,43 @@
 #ifndef CLASS_TRUCK_H_
 #define CLASS_TRUCK_H_
 
-#import "../class/commonLib.h"
-#import "subsystem/driverInterface.h"
+#import "class/commonLib.h"
+#include "subsystem/licensePlate.h"
+#include "controller/controller.h"
 
-typedef enum
-{
-	ok,
-	front_axis,
-	rear_axis
-}truckAxis_enum;
-
-typedef enum
-{
-	ok,
-	frontLeft_wheelHazard,
-	frontRight_wheelHazard,
-	reartLeft_wheelHazard,
-	rearRight_wheelHazard
-}truckWheelHazard_enum;
-
-typedef struct
-{
-	bool frontAxisFaulty_b, rearAxisFaulty_b;
-	truckWheelHazard_enum wheelsStatus_u8;
-}truckWheels_struct;
+#include <pthread.h>
+#include <unistd.h>
+#include <conio.h>
 
 class truck {
 private:
-	uint8_t truckID;
+    controller controller_class;
 public:
-	uint8_t fuelTank_u8;
-	licensePlate licensePlate_class;
-	truckWheels_struct truckWheels_str;
-	driverInterface driverInterface_class;
-
-	truck(uint8_t varTruckSerialNumber, string varCityCode, string varPlateNumber, uint8_t varFuelTank);
+    licensePlate licensePlate_class;
+    movement_direction currentDirection_enum = MOVE_STOP;
+	truck(licensePlate licensePlate_class, controller controllerClass);
 
     /*
      * Description:
-     * 	-
      * Parameters:
      * 	[in] null
      * 	[out] null
      */
-	void set_faultyFrontAxis(bool varLeftOrRight);
+    void* driverInterface(void*);
     /*
      * Description:
-     * 	-
      * Parameters:
      * 	[in] null
      * 	[out] null
      */
-	void set_faultyRearAxis(bool varLeftOrRight);
-
+    void* controller(void*);
     /*
      * Description:
-     * 	-
      * Parameters:
      * 	[in] null
      * 	[out] null
      */
-	truckAxis_enum get_faultyAxis();
-
-    /*
-     * Description:
-     * 	-
-     * Parameters:
-     * 	[in] null
-     * 	[out] null
-     */
-	truckWheelHazard_enum get_faultyWheel();
-
-    /*
-     * Description:
-     * 	-
-     * Parameters:
-     * 	[in] null
-     * 	[out] null
-     */
-	void set_currentFuelAmount(uint8_t varFuelAmount);
-
-    /*
-     * Description:
-     * 	-
-     * Parameters:
-     * 	[in] null
-     * 	[out] null
-     */
-	uint8_t get_currentFuelAmount();
-
-    /*
-     * Description:
-     * 	-
-     * Parameters:
-     * 	[in] null
-     * 	[out] null
-     */
-	string get_truckLicensePlate();
-
-    /*
-     * Description:
-     * 	-
-     * Parameters:
-     * 	[in] null
-     * 	[out] null
-     */
-	uint8_t get_truckSerialNumber();
+    void* communications(void*);
 };
 
 #endif /* CLASS_TRUCK_H_ */

@@ -16,6 +16,9 @@ private:
 	string plateNumber_str;
 public:
 	licensePlate(string varCityCode, string varPlateNumber);
+
+    licensePlate();
+
     /*
      * Description:
      * Parameters:
