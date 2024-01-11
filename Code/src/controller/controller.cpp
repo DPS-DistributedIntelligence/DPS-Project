@@ -197,6 +197,21 @@ stateMachine_e controller::sm_moving_state(){
 
 }
 
+movement_str controller::get_currentMovement(void)
+{
+    return this->currentMovement_st;
+}
+
+void controller::set_currentMovement(movement_direction varCurrentMovement)
+{
+    this->currentMovement_st.direction = varCurrentMovement;
+}
+
+void controller::set_currentSpeed(uint8_t varCurrentSpeed)
+{
+    this->currentMovement_st.speed = varCurrentSpeed;
+}
+
 truckRole_e controller::get_controllerRole(void)
 {
     return this->controllerSystem_st.role_e;

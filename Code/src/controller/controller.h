@@ -39,7 +39,6 @@ private:
 	antiCollisionSystem antiCollisionSystem_class;
     /* Expected movement to follow */
     movement_str *movement_st;
-    stateMachine_e currentState_enum;
 
     vector<controllerSystem_str> vehicleList_vector;
 
@@ -137,6 +136,29 @@ public:
      * 	[out] null
      */
     stateMachine_e sm_systemStop_state(void);
+
+    /*
+     * Description:
+     * Parameters:
+     * 	[in] null
+     * 	[out] null
+     */
+    movement_str get_currentMovement(void);
+
+    /*
+     * Description:
+     * Parameters:
+     * 	[in] movement_str
+     * 	[out] null
+     */
+    void set_currentMovement(movement_direction varCurrentMovement);
+    /*
+     * Description:
+     * Parameters:
+     * 	[in] movement_str
+     * 	[out] null
+     */
+    void set_currentSpeed(uint8_t varCurrentSpeed);
 
     /*
      * Description:
