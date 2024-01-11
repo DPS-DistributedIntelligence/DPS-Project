@@ -130,17 +130,27 @@ stateMachine_e controller::sm_follower_state()
 
 stateMachine_e controller::sm_moving_state(){
 
-    /* Continue the logic for the logical clock ticks */
-    logicalClock_class.logicalClockTick();
-    /* Store the logical clock ticks into the controller structure */
-    controllerSystem_st.logicalClock_u64 = logicalClock_class.get_logicalClock();
-
     /*
      * TODO: set movement (direction and speed ) based on signal
      */
     if (this->controllerSystem_st.role_e == FOLLOWER){
         /* TODO: Check if this is updated to check if node is alive */
         while(true){
+
+            if(logicalClock_class.logicalClockTickCompare(controllerSystem_st.logicalClock_u64))
+            {
+                /* Continue the logic for the logical clock ticks */
+                logicalClock_class.logicalClockTick();
+            }
+            else
+            {
+                /* Update the logical clock of the follower */
+                /*
+                 * TODO: Package received from comms
+                 */
+                logicalClock_class.logicalClockUpdate(leaderLogicalClock);
+            }
+
             // validity check (should stay in move state or exit): the current movement can be overwrite by other subsystem for safety (e.g. emergency stop)
             if (this->movement_st->direction == MOVE_EMERGENCY_STOP){
                 return sm_emergencyStopState;
