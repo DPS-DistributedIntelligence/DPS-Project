@@ -19,6 +19,11 @@
 
 using namespace std;
 
+// ANSI escape codes for text colors
+#define RED_TEXT "\033[1;31m"
+#define GREEN_TEXT "\033[1;32m"
+#define RESET_COLOR "\033[0m"
+
 typedef struct
 {
     float latitudGPS_float;

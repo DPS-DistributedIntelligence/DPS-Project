@@ -17,6 +17,7 @@ bool logicalClock::logicalClockTickCompare(uint64_t varGlobalLogicalClock)
 void logicalClock::logicalClockUpdate(uint64_t varGlobalLogicalClock)
 {
     this->logicalClock_u64 = (this->logicalClock_u64 > varGlobalLogicalClock) ? (this->logicalClock_u64) : (varGlobalLogicalClock);
+    printf(RED_TEXT "Event: Logical clock differs from Leader! \n" RESET_COLOR);
 }
 
 uint64_t logicalClock::get_logicalClock()
