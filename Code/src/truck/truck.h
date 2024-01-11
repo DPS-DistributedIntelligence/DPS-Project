@@ -19,9 +19,9 @@
 class truck {
 private:
     controller controller_class;
+    const uint8_t cruiseDriverStep_u8 = 8;
 public:
     licensePlate licensePlate_class;
-    movement_direction currentDirection_enum = MOVE_STOP;
 	truck(licensePlate licensePlate_class, controller controllerClass);
 
     /*

@@ -10,8 +10,8 @@
 char inputChar = '\0';
 pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 
-truck::truck(licensePlate licensePlate_class, controller controllerClass)
-        : licensePlate_class(licensePlate_class), controller_class(controllerClass)
+truck::truck(class licensePlate licensePlate_class, class controller controller_class)
+        : licensePlate_class(licensePlate_class), controller_class(controller_class)
 {
 	/*
 	 * TODO: Add information from the driverInterface class for truck creation
@@ -36,18 +36,43 @@ void* truck::driverInterface(void*) {
                     case 'W':
                     case 'w':
                         cout << "Forward" << endl;
+                        this->controller_class.currentMovement_st.direction = MOVE_FOWARD;
+                        this->controller_class.currentMovement_st.speed += this->cruiseDriverStep_u8;
                         break;
                     case 'S':
                     case 's':
                         cout << "Stop" << endl;
+                        this->controller_class.currentMovement_st.speed = ((this->controller_class.currentMovement_st.speed < 10) | (this->controller_class.currentMovement_st.speed <= 0)) ? (this->controller_class.currentMovement_st.speed = 0) : (this->controller_class.currentMovement_st.speed - 10);
+                        if(this->controller_class.currentMovement_st.speed == 0)
+                        {
+                            this->controller_class.currentMovement_st.direction = MOVE_STOP;
+                        }
+                        else
+                        {
+                            this->controller_class.currentMovement_st.direction = MOVE_FOWARD;
+                        }
                         break;
                     case 'A':
                     case 'a':
                         cout << "Left" << endl;
+                        this->controller_class.currentMovement_st.direction = MOVE_LEFT;
                         break;
                     case 'D':
                     case 'd':
                         cout << "Right" << endl;
+                        this->controller_class.currentMovement_st.direction = MOVE_RIGHT;
+                        break;
+                    case 'H':
+                    case 'h':
+                        cout << "HandBrake" << endl;
+                        this->controller_class.currentMovement_st.direction = MOVE_EMERGENCY_STOP;
+                        this->controller_class.currentMovement_st.speed = 0;
+                        break;
+                    case 'B':
+                    case 'b':
+                        cout << "Brake" << endl;
+                        this->controller_class.currentMovement_st.direction = MOVE_STOP;
+                        this->controller_class.currentMovement_st.speed = ((this->controller_class.currentMovement_st.speed < 10) | (this->controller_class.currentMovement_st.speed <= 0)) ? (this->controller_class.currentMovement_st.speed = 0) : (this->controller_class.currentMovement_st.speed - 10);
                         break;
                     default:
                         cout << "IDLE" << endl;
