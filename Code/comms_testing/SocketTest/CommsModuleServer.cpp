@@ -150,20 +150,34 @@ namespace Modules {
 
     void CommsModuleServer::getMessagesFromAllSockets()
     {
-        int result;
-
         //Initializing an iterator for iterating over the vector of sockets
         auto curr_client = clientID_socket_map.begin();
         while(curr_client != clientID_socket_map.end())
         {
-            while(true) {
+            int result;
+
+            while(true)
+            {
                 string rx_message;
 
                 //Getting the message from the socket and storing the result
                 result = getMessageFromSocket((curr_client->clientSocket), rx_message);
 
-                //Break if no message with content was received (result 0 or -1)
-                if (result != 1) {
+                //Checking result
+                if (result == -1) //Socket error occcured
+                {
+                    //Close socket
+                    closesocket(curr_client->clientSocket);
+
+                    //Remove client from list
+                    curr_client = clientID_socket_map.erase(curr_client);
+
+                    cout << "Result -1 occured with client id " << curr_client->ID << "\n";
+                    break;
+                }
+                else if(result == 0) //Empty message
+                {
+                    cout << "Result 0 occured with client id " << curr_client->ID << "\n";
                     break;
                 }
 
@@ -174,17 +188,52 @@ namespace Modules {
                     curr_client->ID = stoi(extracted_id);
 
                     cout << "Signup detected with ID: " << curr_client->ID << "\n";
-                } else //Otherwise it is a normal packet
+                }
+                else //Otherwise it is a normal packet
                 {
-                    cout << "[RX] from client " << curr_client->ID << ": \"" << rx_message << "\"\n";
+                    //Creating empty struct and assigning source id and message string
+                    Message receivedMessage;
+                    receivedMessage.sourceID = curr_client->ID;
+                    receivedMessage.messagestr = rx_message;
 
-                    //TODO: Store it in the vector of RX packets
+                    //Pushing received message into the vector
+                    messageBuffer.push_back(receivedMessage);
+
+                    cout << "[RX] from client " << curr_client->ID << ": \"" << rx_message << "\"\n";
                 }
             }
-            curr_client++;
+
+            //Getting the next client
+            if(curr_client != clientID_socket_map.end())
+            {
+                curr_client++;
+            }
         }
     }
 
+    void CommsModuleServer::processPackets()
+    {
+        //Setting up an iterator and iterating over the messages
+        auto curr_message = messageBuffer.begin();
+        while(curr_message != messageBuffer.end())
+        {
+            //Check if message contains destination ID, otherwise discard
+            if(curr_message->messagestr.compare(0, 8, "dest-ID:") != 0)
+            {
+                curr_message = messageBuffer.erase(curr_message);
+            }
+
+            //Extracting the destination ID and writing it to the message
+            string extracted_dest_id = curr_message->messagestr.substr(8, 3);
+            curr_message->destID = stoi(extracted_dest_id);
+
+            //Get the next message
+            if(curr_message != messageBuffer.end())
+            {
+                curr_message++;
+            }
+        }
+    }
 
     int CommsModuleServer::getNumOfConnectedClients()
     {

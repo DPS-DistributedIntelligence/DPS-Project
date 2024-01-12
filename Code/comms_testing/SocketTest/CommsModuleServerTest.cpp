@@ -32,8 +32,9 @@ int main()
         }
         while(result == 1 || server.getNumOfConnectedClients() == 0);
 
-        //server.relayMessages();
         server.getMessagesFromAllSockets();
+
+        server.processPackets();
     }
 
     system("pause");
