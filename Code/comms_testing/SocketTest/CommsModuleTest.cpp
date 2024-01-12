@@ -4,6 +4,7 @@
 #include "CommsModule.h"
 #include <iostream>
 #include <random>
+#include <vector>
 
 using namespace Modules;
 
@@ -15,9 +16,13 @@ int main() {
     std::mt19937 generator(rd());
     std::uniform_int_distribution<int> distribution(0, 999);
 
-    int ID = distribution(generator);
+    int ID = 0;
 
-    std::cout << "Generated random ID: " << ID << "\n";
+    std::cout << "Enter ID: ";
+    std::cin >> ID;
+    std::cout << "Input ID: " << ID << "\n";
+
+    //std::cout << "Generated random ID: " << ID << "\n";
     std::cout << "Proceeding with setting up socket and connecting to server...\n";
 
     if(cm.initialize("127.0.0.1", 8080) != 1)
@@ -47,18 +52,31 @@ int main() {
     }
     std::cout << "Signup packet was sent successfully\n";
 
+    vector<int> destIDs {100, 200, 300};
 
     while(true)
     {
-        string message = "Message with random int: " + std::to_string(distribution(generator));
-        if(cm.send_message(message) != 1)
+        auto dest_it = destIDs.begin();
+        while(dest_it != destIDs.end())
         {
-            std::cout << "Sending failed\n";
-            return -1;
-        }
-        else
-        {
-            std::cout << "Sending successful\n";
+            if(*dest_it != ID)
+            {
+                string message;
+                message += "dest-ID:" + std::to_string(*dest_it);
+                message += " ";
+                message += "Message with random int: " + std::to_string(distribution(generator)) + "\n";
+
+                if(cm.send_message(message) != 1)
+                {
+                    std::cout << "Sending failed\n";
+                    return -1;
+                }
+                else {
+                    std::cout << "Sending successful\n";
+                }
+            }
+
+            dest_it++;
         }
 
         cm.poll_message();

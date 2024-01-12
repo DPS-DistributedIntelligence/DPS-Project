@@ -148,6 +148,19 @@ namespace Modules {
         }
     }
 
+    int CommsModuleServer::sendMessage(SOCKET &txSocket, std::string& tx_message)
+    {
+        //Getting the length in bytes
+        int bytes_length = (int)strlen(tx_message.c_str());
+
+        //Sending and comparing result (if result != bytes_length --> error)
+        if(send(txSocket, tx_message.c_str(), bytes_length, 0) == bytes_length)
+        {
+            return 1;
+        }
+        return -1;
+    }
+
     void CommsModuleServer::getMessagesFromAllSockets()
     {
         //Initializing an iterator for iterating over the vector of sockets
@@ -172,12 +185,12 @@ namespace Modules {
                     //Remove client from list
                     curr_client = clientID_socket_map.erase(curr_client);
 
-                    cout << "Result -1 occured with client id " << curr_client->ID << "\n";
+                    //cout << "Result -1 occured with client id " << curr_client->ID << "\n";
                     break;
                 }
                 else if(result == 0) //Empty message
                 {
-                    cout << "Result 0 occured with client id " << curr_client->ID << "\n";
+                    //cout << "Result 0 occured with client id " << curr_client->ID << "\n";
                     break;
                 }
 
@@ -191,15 +204,22 @@ namespace Modules {
                 }
                 else //Otherwise it is a normal packet
                 {
-                    //Creating empty struct and assigning source id and message string
-                    Message receivedMessage;
-                    receivedMessage.sourceID = curr_client->ID;
-                    receivedMessage.messagestr = rx_message;
+                    istringstream rx_messageStream(rx_message);
 
-                    //Pushing received message into the vector
-                    messageBuffer.push_back(receivedMessage);
+                    string rx_submessage;
+                    while(getline(rx_messageStream, rx_submessage, '\n'))
+                    {
+                        //Creating empty struct and assigning source id and message string
+                        Message receivedSubMessage;
+                        receivedSubMessage.sourceID = curr_client->ID;
+                        receivedSubMessage.messagestr = rx_submessage;
 
-                    cout << "[RX] from client " << curr_client->ID << ": \"" << rx_message << "\"\n";
+
+                        //Pushing received message into the vector
+                        messageBuffer.push_back(receivedSubMessage);
+
+                        cout << "[RX] from client " << curr_client->ID << ": \"" << rx_submessage << "\"\n";
+                    }
                 }
             }
 
@@ -232,6 +252,46 @@ namespace Modules {
             {
                 curr_message++;
             }
+        }
+    }
+
+    void CommsModuleServer::forwardPackets()
+    {
+        auto curr_message = messageBuffer.begin();
+        while(curr_message != messageBuffer.end())
+        {
+            //Getting the destination socket
+            SOCKET *destSocket = nullptr;
+
+            auto client = clientID_socket_map.begin();
+            while(client != clientID_socket_map.end())
+            {
+                if(client->ID == curr_message->destID)
+                {
+                    destSocket = &client->clientSocket;
+                    break;
+                }
+
+                client++;
+            }
+
+            //If destination socket was not found, erase packet
+            if(destSocket == nullptr)
+            {
+                curr_message = messageBuffer.erase(curr_message);
+                continue;
+            }
+
+            string message_to_tx = curr_message->messagestr;
+            message_to_tx += "\n";
+
+            if(sendMessage(*destSocket, message_to_tx) == 1)
+            {
+                curr_message = messageBuffer.erase(curr_message);
+                continue;
+            }
+
+            curr_message++;
         }
     }
 

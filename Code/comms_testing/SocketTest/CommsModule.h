@@ -9,6 +9,7 @@
 #include <winsock2.h>
 #include <string>
 #include <iostream>
+#include <sstream>
 
 //Linker should add "ws2_32.lib" to the list of libraries to be linked with the program
 #pragma comment(lib, "ws2_32.lib")

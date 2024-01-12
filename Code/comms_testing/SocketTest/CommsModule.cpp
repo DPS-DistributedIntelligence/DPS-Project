@@ -126,7 +126,19 @@ namespace Modules {
             if (bytesRead > 0) //Data is available
             {
                 buff[bytesRead] = '\0';
-                std::cout << "Received: " << buff << "\n";
+
+                //Converting into real string
+                string rx_message;
+                rx_message.append(buff, bytesRead);
+
+                //Creating a string stream
+                istringstream rx_messageStream(rx_message);
+
+                string rx_submessage;
+                while(getline(rx_messageStream, rx_submessage, '\n'))
+                {
+                    std::cout << "Received: " << rx_submessage << "\n";
+                }
             }
             else if (bytesRead == 0)
             {
