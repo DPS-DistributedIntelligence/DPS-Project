@@ -19,6 +19,7 @@ typedef struct truck_metadata
     bool have_communication = false;
     bool have_logical_clock = false;
     bool have_anti_collision_system = false;
+    // message
 
 
     int truck_id = -1;

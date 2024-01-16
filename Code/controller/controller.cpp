@@ -4,7 +4,9 @@
 
 
 //constructor
-controller::controller(int controller_id, bool anti_collision_enable){
+controller::controller(int new_controller_id, bool anti_collision_enable, truck_metadata *new_own_truck_metadata){
+    id = new_controller_id;
+    own_truck_metadata = new_own_truck_metadata;
 
 }
 
@@ -102,15 +104,14 @@ event controller::state_moving(){
 }
 
 event controller::state_align(){
-    current_state = align;
     return event_handler; // no change
 }
 event controller::state_stop(){
-    current_state = stop;
     return ev_stop;
 }
 event controller::state_system_stop(){
     current_state = system_stop;
+
     return event_handler; // no change
 }
 
@@ -159,30 +160,57 @@ void controller::set_logical_clock(){
 }
 
 event controller::move_leader(){
-    // consider only one iteration ( event will be check at every iteration by caller)
-    //TODO:
+    // consider only one iteration ( event will be checked at every iteration by caller)
+
+    movementDirection new_direction= forward;
+    int speed = 0 ;
+    //TODO: get direction and speed (input from console)
+
+    movement new_movement = {new_direction, speed};
+
+    //TODO: send message
     return event_handler;
 }
 event controller::move_follower(){
-    // consider only one iteration ( event will be check at every iteration by caller)
-    //TODO:
+    // consider only one iteration ( event will be checked at every iteration by caller)
+    movement new_movement;
+    //TODO: receive message, encrypt message
+
+    if(true){  // new message
+        if(true){ // normal movement
+            move(new_movement);
+        }else if(true){ // stop message
+            move_stop();
+        }else if(true){ // emergency stop message
+            move_emergency_stop();
+        }
+    }
     return event_handler;
 }
+
+
+
 event controller::move_stop(){
     // consider only one iteration ( event will be check at every iteration by caller)
-    //TODO:
+    //TODO: print indicator
+    set_current_movement(forward);
+    set_current_speed(0);
     return event_handler;
 }
 event controller::move_emergency_stop(){
     // consider only one iteration ( event will be check at every iteration by caller)
-    //TODO:
+    //TODO: print indicator
+    set_current_movement(forward);
+    set_current_speed(0);
     return event_handler;
 }
-event controller::move_system_stop(){
-    // consider only one iteration ( event will be check at every iteration by caller)
-    //TODO:
+
+event controller::move(movement new_movement){
+    set_current_movement(new_movement.direction);
+    set_current_speed(new_movement.speed);
     return event_handler;
 }
+
 
 void controller::run(){
 
@@ -217,6 +245,7 @@ void controller::next_state_computer(event event_received){
                 next_state = current_state;
             }
             break;
+
         case waiting:
             if (event_received == ev_be_leader) {
                 next_state = leader;
@@ -226,41 +255,32 @@ void controller::next_state_computer(event event_received){
                 next_state = current_state;
             }
             break;
+
         case leader:
-            if (event_received == ev_ready){
+            if (event_received == ev_stop){
+                next_state = system_stop;
+            }else if (event_received == ev_leader_found) {
+                next_state = follower;
+            }else if (event_received == ev_reset) {
                 next_state = waiting;
             }else{
                 next_state = current_state;
             }
             break;
+
         case follower:
-            if (event_received == ev_ready){
+            if (event_received == ev_stop){
+                next_state = system_stop;
+            }else if (event_received == ev_no_leader_found) {
+                next_state = leader;
+            }else if (event_received == ev_reset) {
                 next_state = waiting;
             }else{
                 next_state = current_state;
             }
             break;
-        case moving:
-            if (event_received == ev_ready){
-                next_state = waiting;
-            }else{
-                next_state = current_state;
-            }
-            break;
-        case align:
-            if (event_received == ev_ready){
-                next_state = waiting;
-            }else{
-                next_state = current_state;
-            }
-            break;
-        case stop:
-            if (event_received == ev_ready){
-                next_state = waiting;
-            }else{
-                next_state = current_state;
-            }
-            break;
+
+
         case system_stop:
             if (event_received == ev_ready){
                 next_state = waiting;
@@ -270,9 +290,3 @@ void controller::next_state_computer(event event_received){
             break;
     }
 }
-
-
-
-/*
- *
- */

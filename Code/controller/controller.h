@@ -7,7 +7,7 @@
 class controller{
 public:
     // constructors
-    controller(int controller_id, bool anti_collision_enable);
+    controller(int controller_id, bool anti_collision_enable, truck_metadata *new_own_truck_metadata);
 
     // attribute
     int id = -1;
@@ -54,7 +54,7 @@ public:
     event move_follower();
     event move_stop();
     event move_emergency_stop();
-    event move_system_stop();
+    event move(movement new_movement);
 
     void next_state_computer(event handler);
 };
