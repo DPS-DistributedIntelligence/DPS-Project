@@ -17,8 +17,6 @@ controller::controller(uint8_t varControllerSerialNumber, bool varAnticollisionS
 	/* Enable of disable the controller, for this truck to be able to join the platoon
 	 * the anti-collision system needs to be enable */
 	this->antiCollisionSystem_class.set_EmergencyStop(varAnticollisionSystem);
-	/* Set first state of the state machine to INIT */
-	this->currentState_enum = sm_initState;
     /* Copy the list of all vehicles in the controller */
     this->vehicleList_vector = varControllerList;
     this->vehicleList_vector = varControllerList;
@@ -51,7 +49,7 @@ stateMachine_e controller::sm_init_state()
     else
     {
     	/*
-    	 * Set truck out of the platoon
+    	 * TODO: Do Not connect truck with platoon
     	 */
     }
 
@@ -63,6 +61,7 @@ stateMachine_e controller::sm_init_state()
  */
 stateMachine_e controller::waiting_state() {
     // find leader
+    /* TODO: Add vector to get the leader ID */
     bool leader = find_leader();
 
     /* Continue the logic for the logical clock ticks */
@@ -131,17 +130,27 @@ stateMachine_e controller::sm_follower_state()
 
 stateMachine_e controller::sm_moving_state(){
 
-    /* Continue the logic for the logical clock ticks */
-    logicalClock_class.logicalClockTick();
-    /* Store the logical clock ticks into the controller structure */
-    controllerSystem_st.logicalClock_u64 = logicalClock_class.get_logicalClock();
-
-    // set movement (direction and speed ) based on signal
     /*
-     * TODO: Possible thread that will be implemented
+     * TODO: set movement (direction and speed ) based on signal
      */
     if (this->controllerSystem_st.role_e == FOLLOWER){
+        /* TODO: Check if this is updated to check if node is alive */
         while(true){
+
+            if(logicalClock_class.logicalClockTickCompare(controllerSystem_st.logicalClock_u64))
+            {
+                /* Continue the logic for the logical clock ticks */
+                logicalClock_class.logicalClockTick();
+            }
+            else
+            {
+                /* Update the logical clock of the follower */
+                /*
+                 * TODO: Package received from comms
+                 */
+                logicalClock_class.logicalClockUpdate(leaderLogicalClock);
+            }
+
             // validity check (should stay in move state or exit): the current movement can be overwrite by other subsystem for safety (e.g. emergency stop)
             if (this->movement_st->direction == MOVE_EMERGENCY_STOP){
                 return sm_emergencyStopState;
@@ -170,11 +179,9 @@ stateMachine_e controller::sm_moving_state(){
         }
 
     }else{
-        /*
-         * TODO: Possible thread that will be implemented
-         */
         // as leader
         while(true){
+            /* TODO: Check if this is updated to check if node is alive */
             // validity check (should stay in move state or exit): the current movement can be overwrite by other subsystem for safety (e.g. emergency stop)
             if (this->currentMovement_st.direction==MOVE_EMERGENCY_STOP){
                 forwardSignal(this->currentMovement_st);
@@ -195,6 +202,21 @@ stateMachine_e controller::sm_moving_state(){
 
 
 
+}
+
+movement_str controller::get_currentMovement(void)
+{
+    return this->currentMovement_st;
+}
+
+void controller::set_currentMovement(movement_direction varCurrentMovement)
+{
+    this->currentMovement_st.direction = varCurrentMovement;
+}
+
+void controller::set_currentSpeed(uint8_t varCurrentSpeed)
+{
+    this->currentMovement_st.speed = varCurrentSpeed;
 }
 
 truckRole_e controller::get_controllerRole(void)

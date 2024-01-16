@@ -35,42 +35,52 @@ void* truck::driverInterface(void*) {
                 switch (inputChar) {
                     case 'W':
                     case 'w':
-                        cout << "Forward" << endl;
-                        this->controller_class.currentMovement_st.direction = MOVE_FOWARD;
-                        this->controller_class.currentMovement_st.speed += this->cruiseDriverStep_u8;
+                        cout << "Vehicle Direction: Forward" << endl;
+                        this->controller_class.set_currentSpeed(this->controller_class.get_currentMovement().speed + this->cruiseDriverStep_u8);
+                        this->controller_class.set_currentMovement(MOVE_FOWARD);
+                        cout << "Vehicle Speed: " << this->controller_class.get_currentMovement().speed << endl;
                         break;
                     case 'S':
                     case 's':
-                        cout << "Stop" << endl;
-                        this->controller_class.currentMovement_st.speed = ((this->controller_class.currentMovement_st.speed < 10) | (this->controller_class.currentMovement_st.speed <= 0)) ? (this->controller_class.currentMovement_st.speed = 0) : (this->controller_class.currentMovement_st.speed - 10);
-                        if(this->controller_class.currentMovement_st.speed == 0)
+                        cout << "Vehicle Direction: Stop" << endl;
+                        if(this->controller_class.get_currentMovement().speed == 0)
                         {
-                            this->controller_class.currentMovement_st.direction = MOVE_STOP;
+                            this->controller_class.set_currentMovement(MOVE_STOP);
                         }
                         else
                         {
-                            this->controller_class.currentMovement_st.direction = MOVE_FOWARD;
+                            if(this->controller_class.get_currentMovement().speed < 10)
+                            {
+                                this->controller_class.set_currentSpeed(0);
+                                this->controller_class.set_currentMovement(MOVE_STOP);
+                            }
+                            else
+                            {
+                                this->controller_class.set_currentSpeed(this->controller_class.get_currentMovement().speed - this->cruiseDriverStep_u8);
+                                this->controller_class.set_currentMovement(MOVE_FOWARD);
+                            }
                         }
+                        cout << "Vehicle Speed: " << this->controller_class.get_currentMovement().speed << endl;
                         break;
                     case 'A':
                     case 'a':
-                        cout << "Left" << endl;
+                        cout << "Vehicle Direction: Left" << endl;
                         this->controller_class.currentMovement_st.direction = MOVE_LEFT;
                         break;
                     case 'D':
                     case 'd':
-                        cout << "Right" << endl;
+                        cout << "Vehicle Direction: Right" << endl;
                         this->controller_class.currentMovement_st.direction = MOVE_RIGHT;
                         break;
                     case 'H':
                     case 'h':
-                        cout << "HandBrake" << endl;
+                        cout << "Vehicle Direction: HandBrake" << endl;
                         this->controller_class.currentMovement_st.direction = MOVE_EMERGENCY_STOP;
                         this->controller_class.currentMovement_st.speed = 0;
                         break;
                     case 'B':
                     case 'b':
-                        cout << "Brake" << endl;
+                        cout << "Vehicle Direction: Brake" << endl;
                         this->controller_class.currentMovement_st.direction = MOVE_STOP;
                         this->controller_class.currentMovement_st.speed = ((this->controller_class.currentMovement_st.speed < 10) | (this->controller_class.currentMovement_st.speed <= 0)) ? (this->controller_class.currentMovement_st.speed = 0) : (this->controller_class.currentMovement_st.speed - 10);
                         break;
