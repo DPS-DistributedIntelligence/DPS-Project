@@ -51,6 +51,10 @@ Group project.
 >
 > Matriculation Number: 7219011
 
+> Name: Aditya Kumar
+>
+> Matriculation Number: 7219675
+
 ## Leander
 
 > [!Note]
@@ -76,22 +80,32 @@ Group project.
 ## Sheikh
 
 > [!Note]
-> Moving state will be in pseudo code as in the current state we dont know what we will need
+> blah labh
+> blah
 
 > Workload:
-> - [ ] Controller
-> > - [ ] Waiting state in controller.h
-> > - [ ] Waiting state in controller.cpp
-> > - [ ] Moving state
+> - [ ] Task 1
+> > - [x] Task 1.1
+> > - [ ] Task 1.2
 
 ## Luis
 
 > [!Note]
-> Leader and Follower state will be in pseudo code as in the current state we dont know what we will need.
+> blah labh
+> blah
 
 > Workload:
-> - [ ] Controller
-> > - [ ] Init state in controller.h
-> > - [ ] Init state in controller.cpp
-> > - [ ] Follower state
-> > - [ ] Leader state
+> - [ ] Task 1
+> > - [x] Task 1.1
+> > - [ ] Task 1.2
+
+## Aditya
+
+> [!Note]
+> blah labh
+> blah
+
+> Workload:
+> - [ ] Task 1
+> > - [x] Task 1.1
+> > - [ ] Task 1.2 
