@@ -1,0 +1,5 @@
+# ninja log v5
+1	477	7271360587774840	CMakeFiles/Code.dir/main.cpp.obj	e860f4ccb19acab3
+480	641	7271360589313531	Code.exe	be6ada9d595817aa
+5	77	7271361784396849	CMakeFiles/Code.dir/controller/controller.cpp.obj	3341d2c19b9ef554
+79	208	7271361785637232	Code.exe	a14025df7e0f209d
