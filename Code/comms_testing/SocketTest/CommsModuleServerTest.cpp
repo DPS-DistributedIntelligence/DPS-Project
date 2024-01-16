@@ -34,9 +34,9 @@ int main()
 
         server.getMessagesFromAllSockets();
 
-        server.processPackets();
+        //server.processPackets();
 
-        server.forwardPackets();
+        //server.forwardPackets();
     }
 
     system("pause");

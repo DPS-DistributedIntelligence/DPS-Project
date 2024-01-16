@@ -194,6 +194,8 @@ namespace Modules {
                     break;
                 }
 
+                cout << "Received: " << rx_message << endl;
+
                 //If current client has no id (==0) and the packet starts with "signup-ID" (--> signup packet was detected)
                 if (curr_client->ID == 0 && rx_message.compare(0, 10, "signup-ID:") == 0) {
                     //Extract the ID and store it in the current client

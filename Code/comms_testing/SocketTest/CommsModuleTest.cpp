@@ -2,27 +2,29 @@
 // Created by leand on 25.12.2023.
 //
 #include "CommsModule.h"
+#include "Message.h"
+
 #include <iostream>
 #include <random>
 #include <vector>
 
 using namespace Modules;
 
-CommsModule cm = CommsModule(1000);
-
 int main() {
-    //Generate random ID between 0 and 999
+    //Setting up random generator
     std::random_device rd;
     std::mt19937 generator(rd());
     std::uniform_int_distribution<int> distribution(0, 999);
 
+    //Asking for an ID
     int ID = 0;
-
+    std::cout << "Enter an ID! Should be 100, 200 or 300 for now" << endl;
     std::cout << "Enter ID: ";
     std::cin >> ID;
     std::cout << "Input ID: " << ID << "\n";
 
-    //std::cout << "Generated random ID: " << ID << "\n";
+    CommsModule cm = CommsModule(ID, 1000);
+
     std::cout << "Proceeding with setting up socket and connecting to server...\n";
 
     if(cm.initialize("127.0.0.1", 8080) != 1)
@@ -45,46 +47,44 @@ int main() {
         std::cout << "Connecting successful\n";
     }
 
-    std::cout << "Sending signup packet with ID: " << ID << "\n";
-    while (cm.send_message("signup-ID:" + std::to_string(ID)) != 1)
-    {
-        std::cerr << "Sending signup packet failed!\n";
-    }
-    std::cout << "Signup packet was sent successfully\n";
-
     vector<int> destIDs {100, 200, 300};
 
     while(true)
     {
+        //Iterating over the destination IDs
         auto dest_it = destIDs.begin();
         while(dest_it != destIDs.end())
         {
+            //Only queue a packet if it is not my own ID
             if(*dest_it != ID)
             {
-                string message;
-                message += "dest-ID:" + std::to_string(*dest_it);
-                message += " ";
-                message += "Message with random int: " + std::to_string(distribution(generator)) + "\n";
+                //Making a example message with random logical clock content
+                Message msg;
+                msg.setReceiverId(*dest_it);
+                msg.setSenderId(ID);
+                msg.setLogicalClock(distribution(generator));
+                msg.setControllerSerialNumber(255);
+                msg.setRole(truckRole_e::LEADER);
+                msg.setSpeed(75);
+                msg.setDirection(MovementDirection::MOVE_FORWARD);
 
-                if(cm.send_message(message) != 1)
-                {
-                    std::cout << "Sending failed\n";
-                    return -1;
-                }
-                else {
-                    std::cout << "Sending successful\n";
-                }
+                //Adding it to the tx_buffer
+                cm.add_tx_message_to_buffer(msg);
             }
 
             dest_it++;
         }
 
-        cm.poll_message();
+        //Sending the tx buffer
+        cm.send_txBuffer();
 
+        //Receiving the rx buffer and printing all the messages
+        cm.receive_rxBuffer();
+        cm.print_rx_messages_from_buffer();
+
+        //Sleeping for 1s
         Sleep(1000);
     }
 
-
-    system("pause");
     return 0;
 }

@@ -4,7 +4,7 @@ set(CMAKE_CXX_STANDARD 17)
 project(SocketTest)
 
 
-add_executable(CommsModuleTest CommsModuleTest.cpp CommsModule.cpp)
+add_executable(CommsModuleTest CommsModuleTest.cpp CommsModule.cpp MessageParser.cpp Message.cpp)
 add_executable(CommsModuleServerTest CommsModuleServerTest.cpp CommsModuleServer.cpp)
 
 

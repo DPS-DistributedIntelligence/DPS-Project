@@ -17,6 +17,7 @@
 using namespace std;
 
 class MessageParser {
+public:
     // Convert a truckRole_e enum value to a string representation
     static string truckRoleToString(truckRole_e role);
 
