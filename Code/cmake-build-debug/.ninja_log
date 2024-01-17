@@ -1,4 +1,16 @@
 # ninja log v5
-1	477	7271360587774840	CMakeFiles/Code.dir/main.cpp.obj	e860f4ccb19acab3
-260	594	7271463090672249	Code.exe	a14025df7e0f209d
-4	256	7271463087400467	CMakeFiles/Code.dir/controller/controller.cpp.obj	3341d2c19b9ef554
+3	1287	7272056379263846	Code.exe	3b85e4b4db4e055b
+24	1454	7272045446374648	CMakeFiles/Code.dir/decryptor/decryptor.cpp.obj	55f7189d46e8ee9
+1	51	0	clean	f1c0810b4f0350db
+3	995	7272047725222564	CMakeFiles/Code.dir/controller/controller.cpp.obj	3c7de477521c29d7
+4	751	7272056707840234	build.ninja	7bf2175e629dfb41
+63	1225	7272045444171773	CMakeFiles/Code.dir/lib/Message.cpp.obj	25bf42ac9430cb29
+3	1840	7272045450332889	CMakeFiles/Code.dir/main.cpp.obj	8c2494087401b8f9
+17	2174	7272047736921321	CMakeFiles/Code.dir/communication/CommsModule.cpp.obj	b94c7b3fc896c88e
+4	464	7272056707840234	build.ninja	7bf2175e629dfb41
+3	563	7272056903020174	CMakeFiles/Code.dir/truck/Truck.cpp.obj	baa57118f6de5607
+565	1097	7272056906880442	Code.exe	edcbbb2c05185a46
+3	971	7272057809313232	CMakeFiles/Code.dir/main.cpp.obj	8c2494087401b8f9
+972	1333	7272057811935941	Code.exe	edcbbb2c05185a46
+3	1432	7272061221212091	CMakeFiles/Code.dir/main.cpp.obj	8c2494087401b8f9
+1433	1916	7272061224407816	Code.exe	edcbbb2c05185a46

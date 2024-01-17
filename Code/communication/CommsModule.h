@@ -23,7 +23,7 @@ using namespace std;
         int ID;
         sockaddr_in serverAddr{};
         SOCKET clientSocket{};
-        timeval timeout{};
+        TIMEVAL timeout{};
         vector<Message> tx_messages;
         vector<Message> rx_messages;
         int send_string(const string& message_str);
@@ -42,4 +42,4 @@ using namespace std;
     };
 //} // Modules
 
-#endif 
+#endif

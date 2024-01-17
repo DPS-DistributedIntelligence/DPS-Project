@@ -10,7 +10,6 @@ class Decryptor{
 public:
     Decryptor(TruckMetadata*);
     void run();
-
 };
 
 #endif

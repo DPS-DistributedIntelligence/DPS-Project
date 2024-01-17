@@ -5,8 +5,9 @@
 #pragma once
 #include "../Lib/lib.h"
 #include "../lib/TruckMetadata.h"
+#include <ctime>
 
-enum controllerState {initial, waiting, leader, follower, moving, align, stop, system_stop};
+enum controllerState {initial, waiting, leader, follower, moving, aligning, stop, system_stop};
 
 class controller{
 public:
@@ -44,8 +45,6 @@ public:
     // setters and getters
     movement get_current_movement();
     controllerState get_current_state();
-    truckRole get_truck_role();
-    int get_leader_id();
 
     void set_current_movement(movementDirection new_movement_direction);
     void set_current_speed(int new_movement_speed);

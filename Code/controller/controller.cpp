@@ -5,6 +5,7 @@
 controller::controller(int new_controller_id, TruckMetadata *new_own_truck_metadata){
     id = new_controller_id;
     self_truck = new_own_truck_metadata;
+    self_truck->watchdog = time(nullptr);
     //TODO: controller initialization
 
 }
@@ -30,6 +31,7 @@ event controller::state_waiting(){
             return ev_be_follower;
         }
     }
+    return ev_any;
 }
 
 // leader state have internal state
@@ -49,7 +51,7 @@ event controller::state_leader(){
             case moving:
                 self_truck->event_handler = state_moving();
                 break;
-            case align:
+            case aligning:
                 self_truck->event_handler = state_align();
                 break;
             case stop:
@@ -78,7 +80,7 @@ event controller::state_follower(){
             case moving:
                 self_truck->event_handler = state_moving();
                 break;
-            case align:
+            case aligning:
                 self_truck->event_handler = state_align();
                 break;
             case stop:
@@ -121,18 +123,12 @@ movement controller::get_current_movement(){
 controllerState controller::get_current_state(){
     return current_state;
 }
-truckRole controller::get_truck_role(){
-    return self_truck->role;
-}
 
 void controller::set_current_movement(movementDirection new_movement_direction){
     current_movement.direction = new_movement_direction;
 }
 void controller::set_current_speed(int new_movement_speed){
     current_movement.speed = new_movement_speed;
-}
-int controller::get_leader_id(){
-    return self_truck->truck_leader_id;
 }
 
 // methods
@@ -202,6 +198,7 @@ event controller::move_follower(){
         new_movement = *i;
         set_current_movement(new_movement.direction);
         set_current_speed(new_movement.speed);
+        self_truck->watchdog = time(nullptr); // reset watchdog
         break; // only read the latest one
     }
     //TODO: print movement
@@ -209,8 +206,7 @@ event controller::move_follower(){
 
 
     //TODO: watchdog: check for timeout (no new message received); if true: be leader (use counter)
-    self_truck->watchdog++;
-    if(self_truck->watchdog > 999999999){
+    if((time(nullptr) - self_truck->watchdog) > 60){  //no new message within 1 minute
         self_truck->role = LEADER;
         return ev_be_leader;
     }

@@ -8,6 +8,7 @@
 #include "Message.h"
 #include "SurroundingTruck.h"
 #include "location.h"
+#include <ctime>
 
 using namespace std;
 typedef struct TruckMetadata
@@ -27,8 +28,6 @@ typedef struct TruckMetadata
     Location truck_location = {0,0};
 
 
-
-
     // Message need to be sent
     vector<Message> pending_send_message;
 
@@ -37,7 +36,7 @@ typedef struct TruckMetadata
 
     // for movement (follower)
     vector<movement> movement_leader;
-    int long watchdog = 0;
+    time_t watchdog;
 
     // only when the role is not set this vector is used
     vector<SurroundingTruck> surrounding_truck;
