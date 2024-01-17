@@ -10,7 +10,34 @@ controller::controller(int new_controller_id, TruckMetadata *new_own_truck_metad
 
 }
 
-// states
+// run the high level state
+void controller::run(){
+
+    while(true){
+        next_state_computer(self_truck->event_handler); //set next state
+        switch(next_state){
+            case initial:
+                self_truck->event_handler = state_initial();
+                break;
+            case waiting:
+                self_truck->event_handler = state_waiting();
+                break;
+            case leader:
+                self_truck->event_handler = state_leader();
+                break;
+            case follower:
+                self_truck->event_handler = state_follower();
+                break;
+            case system_stop:
+                self_truck->event_handler = state_system_stop();
+                break;
+        }
+    }
+}
+
+
+// states -> high level states
+
 event controller::state_initial(){
     current_state = initial;
     if(!initialized){
@@ -34,8 +61,8 @@ event controller::state_waiting(){
     return ev_any;
 }
 
-// leader state have internal state
 event controller::state_leader(){
+    // run leader internal state
     current_state = leader;
     while(true){
         if (self_truck->event_handler == ev_stop){
@@ -63,9 +90,10 @@ event controller::state_leader(){
 }
 
 
-// follower state have internal state
+
 event controller::state_follower(){
     current_state = follower;
+    // run follower internal state
     while(true){
         if (self_truck->event_handler == ev_stop){
             return ev_stop;
@@ -91,6 +119,7 @@ event controller::state_follower(){
     return ev_any;
 }
 
+// states -> low level states / internal states
 event controller::state_moving(){
     current_state = moving;
     if(self_truck->event_handler != ev_stop || self_truck->event_handler != ev_reset || self_truck->event_handler != ev_leader_found || self_truck->event_handler != ev_no_leader_found){
@@ -102,6 +131,51 @@ event controller::state_moving(){
     }else{
         return self_truck->event_handler;
     }
+}
+
+
+event controller::move_leader(){
+    // consider only one iteration ( event will be checked at every iteration by caller)
+
+    movementDirection new_direction= MOVE_FORWARD;
+    int speed = 0 ;
+
+    //TODO: always check for new leader.done
+    bool leader_found = find_leader();
+    if (leader_found){
+        self_truck->role = FOLLOWER;
+        return ev_be_follower;
+    }
+
+    //TODO: get direction and speed (input from console)
+
+    movement new_movement = {new_direction, speed};
+
+    //TODO: send message
+    return self_truck->event_handler;
+}
+event controller::move_follower(){
+    // consider only one iteration ( event will be checked at every iteration by caller)
+    movement new_movement;
+    //TODO: receive message, encrypt message, move, print movement. done
+    for(auto i = self_truck->movement_leader.begin(); i != self_truck->movement_leader.end(); i++){
+        new_movement = *i;
+        set_current_movement(new_movement.direction);
+        set_current_speed(new_movement.speed);
+        self_truck->watchdog = time(nullptr); // reset watchdog
+        break; // only read the latest one
+    }
+    //TODO: print movement
+
+
+
+    //TODO: watchdog: check for timeout (no new message received); if true: be leader (use counter)
+    if((time(nullptr) - self_truck->watchdog) > 60){  //no new message within 1 minute
+        self_truck->role = LEADER;
+        return ev_be_leader;
+    }
+
+    return self_truck->event_handler;
 }
 
 event controller::state_align(){
@@ -170,52 +244,6 @@ void controller::set_logical_clock(){
     //TODO:
 }
 
-event controller::move_leader(){
-    // consider only one iteration ( event will be checked at every iteration by caller)
-
-    movementDirection new_direction= MOVE_FORWARD;
-    int speed = 0 ;
-
-    //TODO: always check for new leader.done
-    bool leader_found = find_leader();
-    if (leader_found){
-        self_truck->role = FOLLOWER;
-        return ev_be_follower;
-    }
-
-    //TODO: get direction and speed (input from console)
-
-    movement new_movement = {new_direction, speed};
-
-    //TODO: send message
-    return self_truck->event_handler;
-}
-event controller::move_follower(){
-    // consider only one iteration ( event will be checked at every iteration by caller)
-    movement new_movement;
-    //TODO: receive message, encrypt message, move, print movement. done
-    for(auto i = self_truck->movement_leader.begin(); i != self_truck->movement_leader.end(); i++){
-        new_movement = *i;
-        set_current_movement(new_movement.direction);
-        set_current_speed(new_movement.speed);
-        self_truck->watchdog = time(nullptr); // reset watchdog
-        break; // only read the latest one
-    }
-    //TODO: print movement
-
-
-
-    //TODO: watchdog: check for timeout (no new message received); if true: be leader (use counter)
-    if((time(nullptr) - self_truck->watchdog) > 60){  //no new message within 1 minute
-        self_truck->role = LEADER;
-        return ev_be_leader;
-    }
-
-    return self_truck->event_handler;
-}
-
-
-
 event controller::move_stop(){
     // consider only one iteration ( event will be check at every iteration by caller)
     //TODO: print indicator
@@ -238,30 +266,10 @@ event controller::move(movement new_movement){
 }
 
 
-void controller::run(){
 
-    while(true){
-        next_state_computer(self_truck->event_handler);
-        switch(next_state){
-            case initial:
-                self_truck->event_handler = state_initial();
-                break;
-            case waiting:
-                self_truck->event_handler = state_waiting();
-                break;
-            case leader:
-                self_truck->event_handler = state_leader();
-                break;
-            case follower:
-                self_truck->event_handler = state_follower();
-                break;
-            case system_stop:
-                self_truck->event_handler = state_system_stop();
-                break;
-        }
-    }
-}
 
+
+// check for next state based on current state and event
 void controller::next_state_computer(event event_received){
     self_truck->event_handler = ev_any;
     switch(current_state){
