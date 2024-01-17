@@ -28,6 +28,7 @@ typedef struct TruckMetadata
 
 
 
+
     // Message need to be sent
     vector<Message> pending_send_message;
 
@@ -36,6 +37,7 @@ typedef struct TruckMetadata
 
     // for movement (follower)
     vector<movement> movement_leader;
+    int long watchdog = 0;
 
     // only when the role is not set this vector is used
     vector<SurroundingTruck> surrounding_truck;

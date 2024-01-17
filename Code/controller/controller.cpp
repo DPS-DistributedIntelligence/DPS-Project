@@ -139,14 +139,30 @@ int controller::get_leader_id(){
 bool controller::find_leader() {
     bool leader_found = false;
     int leader_id = -1;
-    //TODO: get location of each truck -> find front vehicle
+    int front_truck_location = 100000;
+    //TODO: get location of each truck -> find front vehicle. done
     //~read all message, every message contain location of truck and truck id
     //~if front truck exist, set leader_found = true (try to find the most front truck)
     //~get the leader id from the truck message
+    for(auto i = self_truck->surrounding_truck.begin(); i != self_truck->surrounding_truck.end(); i++){
+        //TODO: calculate distance. done
+        if(i->x_location > self_truck->truck_location.x){ // find front truck
+            front_truck_location = min(front_truck_location, i->x_location);// get the closest truck
+            leader_found = true;
+        }else{ // consider as follower
+
+        }
+    }
 
     if(leader_found){
-        // TODO: get leader id;
+        // TODO: get leader id; done
+        for(auto i = self_truck->surrounding_truck.begin(); i != self_truck->surrounding_truck.end(); i++){
+            if(i->x_location == front_truck_location) {
+                leader_id = i->id;
+            }
+        }
         self_truck->truck_leader_id = leader_id;
+        return !(front_truck_location == 100000 && leader_found); // return false if something went wrong
         return true;
     }else{
         return false;
@@ -163,6 +179,14 @@ event controller::move_leader(){
 
     movementDirection new_direction= MOVE_FORWARD;
     int speed = 0 ;
+
+    //TODO: always check for new leader.done
+    bool leader_found = find_leader();
+    if (leader_found){
+        self_truck->role = FOLLOWER;
+        return ev_be_follower;
+    }
+
     //TODO: get direction and speed (input from console)
 
     movement new_movement = {new_direction, speed};
@@ -173,18 +197,24 @@ event controller::move_leader(){
 event controller::move_follower(){
     // consider only one iteration ( event will be checked at every iteration by caller)
     movement new_movement;
-    //TODO: receive message, encrypt message, move, print movement
-
-    if(true){  // new message
-        if(true){ // normal movement
-            move(new_movement);
-        }else if(true){ // stop message
-            move_stop();
-        }else if(true){ // emergency stop message
-            move_emergency_stop();
-        }
-
+    //TODO: receive message, encrypt message, move, print movement. done
+    for(auto i = self_truck->movement_leader.begin(); i != self_truck->movement_leader.end(); i++){
+        new_movement = *i;
+        set_current_movement(new_movement.direction);
+        set_current_speed(new_movement.speed);
+        break; // only read the latest one
     }
+    //TODO: print movement
+
+
+
+    //TODO: watchdog: check for timeout (no new message received); if true: be leader (use counter)
+    self_truck->watchdog++;
+    if(self_truck->watchdog > 999999999){
+        self_truck->role = LEADER;
+        return ev_be_leader;
+    }
+
     return self_truck->event_handler;
 }
 
@@ -237,6 +267,7 @@ void controller::run(){
 }
 
 void controller::next_state_computer(event event_received){
+    self_truck->event_handler = ev_any;
     switch(current_state){
         case initial:
             if (event_received == ev_ready){
