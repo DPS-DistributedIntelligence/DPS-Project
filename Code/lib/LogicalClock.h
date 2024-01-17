@@ -5,7 +5,7 @@
 #include <iostream>
 class logicalClock {
 private:
-    uint64_t logicalClock_u64;
+    int logicalClock_u64;
 public:
     //constructor
     logicalClock();
@@ -20,10 +20,10 @@ public:
     /*
      * Description: Compare 2 logical clocks, the local and a received one, if they are different, return false.
      * Parameters:
-     * 	[in] uint64_t logicalClock
+     * 	[in] int logicalClock
      * 	[out] bool
      */
-    bool logicalClockTickCompare(uint64_t varGlobalLogicalClock);
+    bool logicalClockTickCompare(int varGlobalLogicalClock);
 
     /*
      * Description: Compares to values for the logical clock, current and received one, it updates the current if the
@@ -32,7 +32,7 @@ public:
      * 	[in] null
      * 	[out] null
      */
-    void logicalClockUpdate(uint64_t varGlobalLogicalClock);
+    void logicalClockUpdate(int varGlobalLogicalClock);
 
     /*
      * Description: Return the value of the current clock
@@ -40,7 +40,7 @@ public:
      * 	[in] null
      * 	[out] null
      */
-    uint64_t get_logicalClock();
+    int get_logicalClock();
 };
 
 
