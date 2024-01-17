@@ -1,12 +1,11 @@
 
 #include "controller.h"
-//#include "../Lib/lib.h"
-
 
 //constructor
-controller::controller(int new_controller_id, bool anti_collision_enable, truck_metadata *new_own_truck_metadata){
+controller::controller(int new_controller_id, TruckMetadata *new_own_truck_metadata){
     id = new_controller_id;
-    own_truck_metadata = new_own_truck_metadata;
+    self_truck = new_own_truck_metadata;
+    //TODO: controller initialization
 
 }
 
@@ -20,14 +19,14 @@ event controller::state_initial(){
 }
 event controller::state_waiting(){
     current_state = waiting;
-    if(own_truck_metadata->role == NOT_SET){
+    if(self_truck->role == NOT_SET){
         bool leader_exist = find_leader();
         // set role
         if (!leader_exist){
-            own_truck_metadata->role = LEADER;
+            self_truck->role = LEADER;
             return ev_be_leader;
         } else {
-            own_truck_metadata->role = FOLLOWER;
+            self_truck->role = FOLLOWER;
             return ev_be_follower;
         }
     }
@@ -37,24 +36,24 @@ event controller::state_waiting(){
 event controller::state_leader(){
     current_state = leader;
     while(true){
-        if (event_handler == ev_stop){
+        if (self_truck->event_handler == ev_stop){
             return ev_stop;
         }
-        else if(event_handler == ev_reset){
+        else if(self_truck->event_handler == ev_reset){
             return ev_reset;
         }
-        else if(event_handler == ev_leader_found){
+        else if(self_truck->event_handler == ev_leader_found){
             return ev_leader_found;
         }
         switch(next_state_in_leader_state){
             case moving:
-                event_handler = state_moving();
+                self_truck->event_handler = state_moving();
                 break;
             case align:
-                event_handler = state_align();
+                self_truck->event_handler = state_align();
                 break;
             case stop:
-                event_handler = state_stop();
+                self_truck->event_handler = state_stop();
                 break;
         }
     }
@@ -66,24 +65,24 @@ event controller::state_leader(){
 event controller::state_follower(){
     current_state = follower;
     while(true){
-        if (event_handler == ev_stop){
+        if (self_truck->event_handler == ev_stop){
             return ev_stop;
         }
-        else if(event_handler == ev_reset){
+        else if(self_truck->event_handler == ev_reset){
             return ev_reset;
         }
-        else if(event_handler == ev_no_leader_found){
+        else if(self_truck->event_handler == ev_no_leader_found){
             return ev_no_leader_found;
         }
         switch(next_state_in_follower_state){
             case moving:
-                event_handler = state_moving();
+                self_truck->event_handler = state_moving();
                 break;
             case align:
-                event_handler = state_align();
+                self_truck->event_handler = state_align();
                 break;
             case stop:
-                event_handler = state_stop();
+                self_truck->event_handler = state_stop();
                 break;
         }
     }
@@ -92,19 +91,19 @@ event controller::state_follower(){
 
 event controller::state_moving(){
     current_state = moving;
-    if(event_handler !=  ev_stop || event_handler !=  ev_reset || event_handler !=  ev_leader_found || event_handler !=  ev_no_leader_found){
-        if(own_truck_metadata->role == LEADER){
+    if(self_truck->event_handler != ev_stop || self_truck->event_handler != ev_reset || self_truck->event_handler != ev_leader_found || self_truck->event_handler != ev_no_leader_found){
+        if(self_truck->role == LEADER){
             return move_leader();
         }else{
             return move_follower();
         }
     }else{
-        return event_handler;
+        return self_truck->event_handler;
     }
 }
 
 event controller::state_align(){
-    return event_handler; // no change
+    return self_truck->event_handler; // no change
 }
 event controller::state_stop(){
     return ev_stop;
@@ -112,18 +111,18 @@ event controller::state_stop(){
 event controller::state_system_stop(){
     current_state = system_stop;
 
-    return event_handler; // no change
+    return self_truck->event_handler; // no change
 }
 
 // setters and getters
-movement controller::get_current_movement() const{
+movement controller::get_current_movement(){
     return current_movement;
 }
-controllerState controller::get_current_state() const{
+controllerState controller::get_current_state(){
     return current_state;
 }
-truckRole controller::get_truck_role() const{
-    return own_truck_metadata->role;
+truckRole controller::get_truck_role(){
+    return self_truck->role;
 }
 
 void controller::set_current_movement(movementDirection new_movement_direction){
@@ -132,8 +131,8 @@ void controller::set_current_movement(movementDirection new_movement_direction){
 void controller::set_current_speed(int new_movement_speed){
     current_movement.speed = new_movement_speed;
 }
-int controller::get_leader_id() const{
-    return own_truck_metadata->truck_leader_id;
+int controller::get_leader_id(){
+    return self_truck->truck_leader_id;
 }
 
 // methods
@@ -147,7 +146,7 @@ bool controller::find_leader() {
 
     if(leader_found){
         // TODO: get leader id;
-        own_truck_metadata->truck_leader_id = leader_id;
+        self_truck->truck_leader_id = leader_id;
         return true;
     }else{
         return false;
@@ -162,19 +161,19 @@ void controller::set_logical_clock(){
 event controller::move_leader(){
     // consider only one iteration ( event will be checked at every iteration by caller)
 
-    movementDirection new_direction= forward;
+    movementDirection new_direction= MOVE_FORWARD;
     int speed = 0 ;
     //TODO: get direction and speed (input from console)
 
     movement new_movement = {new_direction, speed};
 
     //TODO: send message
-    return event_handler;
+    return self_truck->event_handler;
 }
 event controller::move_follower(){
     // consider only one iteration ( event will be checked at every iteration by caller)
     movement new_movement;
-    //TODO: receive message, encrypt message
+    //TODO: receive message, encrypt message, move, print movement
 
     if(true){  // new message
         if(true){ // normal movement
@@ -184,8 +183,9 @@ event controller::move_follower(){
         }else if(true){ // emergency stop message
             move_emergency_stop();
         }
+
     }
-    return event_handler;
+    return self_truck->event_handler;
 }
 
 
@@ -193,44 +193,44 @@ event controller::move_follower(){
 event controller::move_stop(){
     // consider only one iteration ( event will be check at every iteration by caller)
     //TODO: print indicator
-    set_current_movement(forward);
+    set_current_movement(MOVE_FORWARD);
     set_current_speed(0);
-    return event_handler;
+    return self_truck->event_handler;
 }
 event controller::move_emergency_stop(){
     // consider only one iteration ( event will be check at every iteration by caller)
     //TODO: print indicator
-    set_current_movement(forward);
+    set_current_movement(MOVE_FORWARD);
     set_current_speed(0);
-    return event_handler;
+    return self_truck->event_handler;
 }
 
 event controller::move(movement new_movement){
     set_current_movement(new_movement.direction);
     set_current_speed(new_movement.speed);
-    return event_handler;
+    return self_truck->event_handler;
 }
 
 
 void controller::run(){
 
     while(true){
-        next_state_computer(event_handler);
+        next_state_computer(self_truck->event_handler);
         switch(next_state){
             case initial:
-                event_handler = state_initial();
+                self_truck->event_handler = state_initial();
                 break;
             case waiting:
-                event_handler = state_waiting();
+                self_truck->event_handler = state_waiting();
                 break;
             case leader:
-                event_handler = state_leader();
+                self_truck->event_handler = state_leader();
                 break;
             case follower:
-                event_handler = state_follower();
+                self_truck->event_handler = state_follower();
                 break;
             case system_stop:
-                event_handler = state_system_stop();
+                self_truck->event_handler = state_system_stop();
                 break;
         }
     }

@@ -61,6 +61,36 @@ build CMakeFiles/Code.dir/controller/controller.cpp.obj: CXX_COMPILER__Code_unsc
   OBJECT_DIR = CMakeFiles\Code.dir
   OBJECT_FILE_DIR = CMakeFiles\Code.dir\controller
 
+build CMakeFiles/Code.dir/lib/Message.cpp.obj: CXX_COMPILER__Code_unscanned_Debug D$:/OneDrive/FH$ Dortmund/Sem1/Distributed$ and$ Parallel$ Systems/Projects/DPS-Project/Code/lib/Message.cpp || cmake_object_order_depends_target_Code
+  DEP_FILE = CMakeFiles\Code.dir\lib\Message.cpp.obj.d
+  FLAGS = -g -fdiagnostics-color=always
+  OBJECT_DIR = CMakeFiles\Code.dir
+  OBJECT_FILE_DIR = CMakeFiles\Code.dir\lib
+
+build CMakeFiles/Code.dir/server/CommsModuleServer.cpp.obj: CXX_COMPILER__Code_unscanned_Debug D$:/OneDrive/FH$ Dortmund/Sem1/Distributed$ and$ Parallel$ Systems/Projects/DPS-Project/Code/server/CommsModuleServer.cpp || cmake_object_order_depends_target_Code
+  DEP_FILE = CMakeFiles\Code.dir\server\CommsModuleServer.cpp.obj.d
+  FLAGS = -g -fdiagnostics-color=always
+  OBJECT_DIR = CMakeFiles\Code.dir
+  OBJECT_FILE_DIR = CMakeFiles\Code.dir\server
+
+build CMakeFiles/Code.dir/communication/CommsModule.cpp.obj: CXX_COMPILER__Code_unscanned_Debug D$:/OneDrive/FH$ Dortmund/Sem1/Distributed$ and$ Parallel$ Systems/Projects/DPS-Project/Code/communication/CommsModule.cpp || cmake_object_order_depends_target_Code
+  DEP_FILE = CMakeFiles\Code.dir\communication\CommsModule.cpp.obj.d
+  FLAGS = -g -fdiagnostics-color=always
+  OBJECT_DIR = CMakeFiles\Code.dir
+  OBJECT_FILE_DIR = CMakeFiles\Code.dir\communication
+
+build CMakeFiles/Code.dir/truck/Truck.cpp.obj: CXX_COMPILER__Code_unscanned_Debug D$:/OneDrive/FH$ Dortmund/Sem1/Distributed$ and$ Parallel$ Systems/Projects/DPS-Project/Code/truck/Truck.cpp || cmake_object_order_depends_target_Code
+  DEP_FILE = CMakeFiles\Code.dir\truck\Truck.cpp.obj.d
+  FLAGS = -g -fdiagnostics-color=always
+  OBJECT_DIR = CMakeFiles\Code.dir
+  OBJECT_FILE_DIR = CMakeFiles\Code.dir\truck
+
+build CMakeFiles/Code.dir/decryptor/decryptor.cpp.obj: CXX_COMPILER__Code_unscanned_Debug D$:/OneDrive/FH$ Dortmund/Sem1/Distributed$ and$ Parallel$ Systems/Projects/DPS-Project/Code/decryptor/decryptor.cpp || cmake_object_order_depends_target_Code
+  DEP_FILE = CMakeFiles\Code.dir\decryptor\decryptor.cpp.obj.d
+  FLAGS = -g -fdiagnostics-color=always
+  OBJECT_DIR = CMakeFiles\Code.dir
+  OBJECT_FILE_DIR = CMakeFiles\Code.dir\decryptor
+
 
 # =============================================================================
 # Link build statements for EXECUTABLE target Code
@@ -69,7 +99,7 @@ build CMakeFiles/Code.dir/controller/controller.cpp.obj: CXX_COMPILER__Code_unsc
 #############################################
 # Link the executable Code.exe
 
-build Code.exe: CXX_EXECUTABLE_LINKER__Code_Debug CMakeFiles/Code.dir/main.cpp.obj CMakeFiles/Code.dir/controller/controller.cpp.obj
+build Code.exe: CXX_EXECUTABLE_LINKER__Code_Debug CMakeFiles/Code.dir/main.cpp.obj CMakeFiles/Code.dir/controller/controller.cpp.obj CMakeFiles/Code.dir/lib/Message.cpp.obj CMakeFiles/Code.dir/server/CommsModuleServer.cpp.obj CMakeFiles/Code.dir/communication/CommsModule.cpp.obj CMakeFiles/Code.dir/truck/Truck.cpp.obj CMakeFiles/Code.dir/decryptor/decryptor.cpp.obj
   FLAGS = -g
   LINK_LIBRARIES = -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   OBJECT_DIR = CMakeFiles\Code.dir

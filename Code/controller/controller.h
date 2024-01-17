@@ -2,30 +2,34 @@
 #ifndef CONTROLLER_H
 #define CONTROLLER_H
 
+#pragma once
 #include "../Lib/lib.h"
+#include "../lib/TruckMetadata.h"
+
+enum controllerState {initial, waiting, leader, follower, moving, align, stop, system_stop};
 
 class controller{
 public:
     // constructors
-    controller(int controller_id, bool anti_collision_enable, truck_metadata *new_own_truck_metadata);
+    controller(int controller_id, TruckMetadata *new_own_truck_metadata);
 
     // attribute
     int id = -1;
-    movement *leader_movement;
-    movement current_movement;
+    movement *leader_movement{};
+    movement current_movement{};
     controllerState current_state = initial;
     controllerState next_state = initial;
     controllerState next_state_in_leader_state = moving;
     controllerState current_state_in_leader_state = moving;
     controllerState next_state_in_follower_state = moving;
     controllerState current_state_in_follower_state = moving;
-    event event_handler = ev_any;
+    //event event_handler = ev_any; hold by truck
     bool initialized = false;
     //vector<controllerSystem> vehicle_list_vector;
 
     // parts
     //logicalClock logicalClock_class;
-    truck_metadata *own_truck_metadata{};
+    TruckMetadata *self_truck{};
 
     // states
     event state_initial();
@@ -38,10 +42,10 @@ public:
     event state_system_stop();
 
     // setters and getters
-    [[nodiscard]] movement get_current_movement() const;
-    [[nodiscard]] controllerState get_current_state() const;
-    [[nodiscard]] truckRole get_truck_role() const;
-    [[nodiscard]] int get_leader_id() const;
+    movement get_current_movement();
+    controllerState get_current_state();
+    truckRole get_truck_role();
+    int get_leader_id();
 
     void set_current_movement(movementDirection new_movement_direction);
     void set_current_speed(int new_movement_speed);
