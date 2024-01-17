@@ -7,41 +7,33 @@
 #include "TruckRole.h"
 #include "Message.h"
 #include "SurroundingTruck.h"
-#include "location.h"
+#include "LogicalClock.h"
 #include <ctime>
 
 using namespace std;
 typedef struct TruckMetadata
 {
-    bool have_ignition_key = false;
-    bool have_communication = false;
-    bool have_logical_clock = false;
-    bool have_anti_collision_system = false;
-    // message
-
 
     int truck_id = -1;
     truckRole role = NOT_SET;
-    int logical_clock = -1;
+    logicalClock truck_logical_clock;
     int truck_leader_id = -1;
     event event_handler = ev_any;
-    Location truck_location = {0,0};
 
-
-    // Message need to be sent
+    // Message need to be sent (update by controller, used by communication)
     vector<Message> pending_send_message;
 
-    // Message received
+    // Message received (update by communication, used by controller)
     vector<Message> received_message;
 
-    // for movement (follower)
+    // this movement used if the truck is a follower. this movement is updated by decryptor from the received message
     vector<movement> movement_leader;
     time_t watchdog;
 
-    // only when the role is not set this vector is used
-    vector<SurroundingTruck> surrounding_truck;
+    // list of truck -> used to find leader
+    vector<SurroundingTruck> surrounding_truck; //initially -> vector<controllerSystem> vehicle_list_vector;
 
-
+    // address to any other subsystems
 
 }TruckMetadata;
 

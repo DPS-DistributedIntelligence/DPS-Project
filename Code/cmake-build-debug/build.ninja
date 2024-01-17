@@ -84,6 +84,13 @@ build CMakeFiles\Code.dir\truck\Truck.cpp.obj: CXX_COMPILER__Code_unscanned_Debu
   TARGET_COMPILE_PDB = CMakeFiles\Code.dir\
   TARGET_PDB = Code.pdb
 
+build CMakeFiles\Code.dir\lib\LogicalClock.cpp.obj: CXX_COMPILER__Code_unscanned_Debug D$:\OneDrive\FH$ Dortmund\Sem1\Distributed$ and$ Parallel$ Systems\Projects\DPS-Project\Code\lib\LogicalClock.cpp || cmake_object_order_depends_target_Code
+  FLAGS = /DWIN32 /D_WINDOWS /EHsc /Ob0 /Od /RTC1 -std:c++17 -MDd -Zi
+  OBJECT_DIR = CMakeFiles\Code.dir
+  OBJECT_FILE_DIR = CMakeFiles\Code.dir\lib
+  TARGET_COMPILE_PDB = CMakeFiles\Code.dir\
+  TARGET_PDB = Code.pdb
+
 
 # =============================================================================
 # Link build statements for EXECUTABLE target Code
@@ -92,7 +99,7 @@ build CMakeFiles\Code.dir\truck\Truck.cpp.obj: CXX_COMPILER__Code_unscanned_Debu
 #############################################
 # Link the executable Code.exe
 
-build Code.exe: CXX_EXECUTABLE_LINKER__Code_Debug CMakeFiles\Code.dir\main.cpp.obj CMakeFiles\Code.dir\controller\controller.cpp.obj CMakeFiles\Code.dir\lib\Message.cpp.obj CMakeFiles\Code.dir\decryptor\decryptor.cpp.obj CMakeFiles\Code.dir\truck\Truck.cpp.obj
+build Code.exe: CXX_EXECUTABLE_LINKER__Code_Debug CMakeFiles\Code.dir\main.cpp.obj CMakeFiles\Code.dir\controller\controller.cpp.obj CMakeFiles\Code.dir\lib\Message.cpp.obj CMakeFiles\Code.dir\decryptor\decryptor.cpp.obj CMakeFiles\Code.dir\truck\Truck.cpp.obj CMakeFiles\Code.dir\lib\LogicalClock.cpp.obj
   FLAGS = /DWIN32 /D_WINDOWS /EHsc /Ob0 /Od /RTC1 -MDd -Zi
   LINK_FLAGS = /machine:x64 /debug /INCREMENTAL /subsystem:console
   LINK_LIBRARIES = kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib

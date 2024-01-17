@@ -16,7 +16,6 @@ public:
 
     // attribute
     int id = -1;
-    movement *leader_movement{};
     movement current_movement{};
     controllerState current_state = initial;
     controllerState next_state = initial;
@@ -24,12 +23,10 @@ public:
     controllerState current_state_in_leader_state = moving;
     controllerState next_state_in_follower_state = moving;
     controllerState current_state_in_follower_state = moving;
-    //event event_handler = ev_any; hold by truck
     bool initialized = false;
-    //vector<controllerSystem> vehicle_list_vector;
+
 
     // parts
-    //logicalClock logicalClock_class;
     TruckMetadata *self_truck{};
 
     // states
@@ -38,6 +35,7 @@ public:
     event state_leader();
     event state_follower();
     event state_moving();
+
     event state_align();
     event state_stop();
     event state_system_stop();
@@ -52,7 +50,6 @@ public:
     // methods
     void run();
     bool find_leader();
-    void set_logical_clock();
     event move_leader();
     event move_follower();
     event move_stop();
@@ -60,6 +57,10 @@ public:
     event move(movement new_movement);
 
     void next_state_computer(event handler);
+
+    // variable that already moved to the truck
+    //movement_str *movement_st; // expected next movement
+    //vector<controllerSystem_str> vehicleList_vector;
 };
 
 #endif

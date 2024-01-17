@@ -9,6 +9,7 @@ void Decryptor::run() {
 
     while(true){
         for(auto i = self_truck->received_message.begin(); i != self_truck->received_message.end(); ++i){
+            // follower only interest in new event and new movement from leader
             if(self_truck->role == FOLLOWER){
                 if(i->getSenderId() == self_truck->truck_leader_id){
                     event event_received = i->getEvent();
@@ -25,7 +26,8 @@ void Decryptor::run() {
                 }
 
             }
-            else if(self_truck->role = NOT_SET){ // gather surrounding truck information
+            else if(self_truck->role = NOT_SET){ // gather surrounding truck information -> get the truc list from communication
+                //TODO: get list of surrounding truck
                 int new_truck_id = i->getSenderId();
                 int new_truck_x = i->getLocation().x;
                 bool exist = false;

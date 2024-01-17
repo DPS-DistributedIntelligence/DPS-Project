@@ -9,4 +9,5 @@ add_executable(
         lib/Message.cpp
         decryptor/decryptor.cpp
         Truck/Truck.cpp
+        lib/LogicalClock.cpp
 )
