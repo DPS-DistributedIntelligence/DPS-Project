@@ -1,2 +1,5 @@
 *.idea
 *.log
+Code/*
+!Code/src/*
+!Code/CMakeLists
