@@ -13,7 +13,7 @@ enum controllerState {initial, waiting, leader, follower, moving, aligning, stop
 class controller{
 public:
     // constructors
-    controller(int controller_id, TruckMetadata *new_own_truck_metadata);
+    controller(int controller_id, TruckMetadata *new_own_truck_metadata, CommsModule *new_self_comms);
 
     // attribute
     int id = -1;
@@ -29,6 +29,7 @@ public:
 
     // parts
     TruckMetadata *self_truck{};
+    CommsModule *self_communications;
 
     // states
     event state_initial();

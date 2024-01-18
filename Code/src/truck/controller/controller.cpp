@@ -1,14 +1,16 @@
 #include <iostream>
 #include <conio.h>
+#include <winsock2.h>
 #include <windows.h>
 #include "controller.h"
 #define WATCHDOG_TIMEOUT_SECONDS 60
 using namespace std;
 
 //constructor
-controller::controller(int new_controller_id, TruckMetadata *new_self_truck){
+controller::controller(int new_controller_id, TruckMetadata *new_self_truck, CommsModule *new_self_comms){
     id = new_controller_id;
     self_truck = new_self_truck;
+    self_communications = new_self_comms;
     self_truck->watchdog = time(nullptr);
     //TODO: controller initialization
 
@@ -527,8 +529,7 @@ void* controller::controller_run_thread()
 }
 void* controller::communications_run_thread()
 {
-    CommsModule local_communications = CommsModule(self_truck->truck_id, 1000);
-    if(local_communications.initialize("127.0.0.1", 8080))
+    if(self_communications->initialize("127.0.0.1", 8080))
     {
         cout << "Communications... Initialization failed" << endl;
     }
@@ -536,7 +537,7 @@ void* controller::communications_run_thread()
     {
         cout << "Communications... Initialization successful" << endl;
     }
-    if(local_communications.connect_to_Server() != 1)
+    if(self_communications->connect_to_Server() != 1)
     {
         cout << "Communications... Connecting failed" << endl;
     }
@@ -548,7 +549,7 @@ void* controller::communications_run_thread()
     {
         //pthread_mutex_lock(&mutex);
         //Adding it to the tx_buffer
-        local_communications.add_tx_message_to_buffer(self_truck->pending_send_message.front());
+        self_communications->add_tx_message_to_buffer(self_truck->pending_send_message.front());
         // Remove the first element from the vector
         self_truck->pending_send_message.erase(self_truck->pending_send_message.begin());
         //pthread_mutex_unlock(&mutex);
@@ -562,6 +563,6 @@ void* controller::controller_run(void* context) {
 }
 void* controller::communications_run(void* context)
 {
-    return ((controller *)context)->controller_run_thread();
+    return ((controller *)context)->communications_run_thread();
 }
 

@@ -18,8 +18,9 @@ public:
     pthread_t t_communication;
 
     TruckMetadata self;
-    controller truck_controller = controller(0, &self);
     CommsModule truck_communications = CommsModule(0, 1000);
+    controller truck_controller = controller(0, &self, &truck_communications);
+
 
 
     // any other sub systems
