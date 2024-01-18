@@ -12,8 +12,11 @@ class Truck{
 public:
     pthread_t t_controller;
     pthread_t t_interface;
+    pthread_t t_decryptor;
+    pthread_t t_communication;
+
     TruckMetadata self;
-    //Decryptor truck_decryptor = Decryptor(&self);
+    Decryptor truck_decryptor = Decryptor(&self);
     controller truck_controller = controller(0, &self);
 
 

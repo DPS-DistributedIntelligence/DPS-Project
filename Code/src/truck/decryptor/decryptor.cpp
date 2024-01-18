@@ -4,7 +4,7 @@ Decryptor::Decryptor(TruckMetadata* self_new_truck) {
     self_truck = self_new_truck;
 }
 
-void Decryptor::run() {
+void *Decryptor::run_thread() {
     vector<int> surroundingTruckId;
 
     while(true){
@@ -41,3 +41,10 @@ void Decryptor::run() {
         }
     }
 }
+
+void *Decryptor::run(void *context) {
+    return ((Decryptor *)context)->run_thread();
+}
+
+
+
