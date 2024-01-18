@@ -19,6 +19,7 @@ public:
 
     TruckMetadata self;
     controller truck_controller = controller(0, &self);
+    Decryptor truck_decryptor = Decryptor(&self);
     CommsModule truck_communication = CommsModule(0,100,&self);
 
 
