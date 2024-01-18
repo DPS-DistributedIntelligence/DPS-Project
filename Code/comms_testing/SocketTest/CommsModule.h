@@ -11,6 +11,7 @@
 #include <vector>
 #include <iostream>
 #include <sstream>
+#include <mutex>
 
 #include "Message.h"
 #include "MessageParser.h"
@@ -30,10 +31,11 @@ namespace Modules {
         timeval timeout{};
         vector<Message> tx_messages;
         vector<Message> rx_messages;
+        mutex tx_vec_mutex;
+        mutex rx_vec_mutex;
         int send_string(const string& message_str);
         int receive_string(string& rx_message);
         int send_message(Message message);
-        int send_signup_packet();
 
     public:
         CommsModule(int id, long timeout);

@@ -80,14 +80,6 @@ namespace Modules {
             }
         }
 
-        /*
-        //Sending signup packet
-        if(send_signup_packet() != 1)
-        {
-            return -1;
-        }
-        */
-
         return 1;
     }
 
@@ -153,13 +145,6 @@ namespace Modules {
 
         return 0;
     }
-
-    int CommsModule::send_signup_packet()
-    {
-        string packet_content = "signup-ID:" + std::to_string(ID) + "\n";
-        return send_string(packet_content);
-    }
-
 
     //Internal function used to send a message
     int CommsModule::send_message(Message message)
