@@ -27,6 +27,8 @@ namespace Modules {
     class CommsModule {
     private:
         int ID;
+        vector<int> client_IDs;
+        mutex client_IDs_vec_mutex;
         sockaddr_in serverAddr{};
         SOCKET clientSocket{};
         timeval timeout{};
@@ -48,6 +50,7 @@ namespace Modules {
         optional<Message> get_last_rx_message_from_buffer(bool del);
         optional<Message> get_rx_message_by_index_from_buffer(int index, bool del);
         int get_length_of_rx_buffer();
+        vector<int> get_connected_client_IDs();
         int print_rx_messages_from_buffer();
     };
 } // Modules

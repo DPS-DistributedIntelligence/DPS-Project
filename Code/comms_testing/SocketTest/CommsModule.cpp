@@ -336,6 +336,20 @@ namespace Modules {
         return length;
     }
 
+    //Function to get a vector of all connected IDs
+    vector<int> CommsModule::get_connected_client_IDs()
+    {
+        //Locking the mutex
+        client_IDs_vec_mutex.lock();
+
+        //Doing a deep copy
+        vector<int> ret_client_IDs(client_IDs);
+
+        //Unlocking the mutex
+        client_IDs_vec_mutex.unlock();
+
+        return ret_client_IDs;
+    }
 
     //Function to print all messages from the rx buffer
     int CommsModule::print_rx_messages_from_buffer()
