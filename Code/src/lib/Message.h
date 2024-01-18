@@ -12,6 +12,7 @@
 
 #include "TruckRole.h"
 #include "Movement.h"
+#include "Event.h"
 
 class Message {
     private:
@@ -21,8 +22,14 @@ class Message {
         uint8_t controllerSerialNumber_u8;
         truckRole role_e;
         int speed;
-        MovementDirection direction;
-    public:
+        movementDirection direction;
+        event event_;
+public:
+    event getEvent() const;
+
+    void setEvent(event event);
+
+public:
         Message();
 
         // Getters and setters for each attribute
@@ -44,8 +51,8 @@ class Message {
         int getSpeed() const;
         void setSpeed(int speed);
 
-        MovementDirection getDirection() const;
-        void setDirection(MovementDirection direction);
+        movementDirection getDirection() const;
+        void setDirection(movementDirection direction);
 };
 
 

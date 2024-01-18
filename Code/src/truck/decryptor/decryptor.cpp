@@ -28,19 +28,6 @@ void Decryptor::run() {
             }
             else if(self_truck->role = NOT_SET){ // gather surrounding truck information -> get the truc list from communication
                 //TODO: get list of surrounding truck
-                int new_truck_id = i->getSenderId();
-                int new_truck_x = i->getLocation().x;
-                bool exist = false;
-
-                for(auto i = surroundingTruckId.begin(); i != surroundingTruckId.end(); i++){
-                    if (new_truck_id == *i){
-                        exist = true;
-                    }
-                }
-                if(!exist){
-                    surroundingTruckId.push_back(new_truck_id);
-                    self_truck->surrounding_truck.push_back({new_truck_x,new_truck_id});
-                }
 
             }
             else if(self_truck->role == LEADER){

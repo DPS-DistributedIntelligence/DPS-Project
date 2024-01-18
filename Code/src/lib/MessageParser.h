@@ -27,9 +27,9 @@ public:
     // Serialize a Message object to a JSON string
     static string toJSON(const Message& msg);
 
-    static string directionToString(MovementDirection direction);
+    static string directionToString(movementDirection direction);
 
-    static MovementDirection stringToDirection(const std::string& directionStr);
+    static movementDirection stringToDirection(const std::string& directionStr);
 
     // Deserialize a JSON string to a Message object
     static Message fromJSON(const std::string& jsonString);

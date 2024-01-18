@@ -13,7 +13,7 @@ public:
     pthread_t t_controller;
     pthread_t t_interface;
     TruckMetadata self;
-    Decryptor truck_decryptor = Decryptor(&self);
+    //Decryptor truck_decryptor = Decryptor(&self);
     controller truck_controller = controller(0, &self);
 
 

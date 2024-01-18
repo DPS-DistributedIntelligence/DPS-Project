@@ -6,7 +6,7 @@
 
 // Constructor
 Message::Message()
-        : receiver_id(0), sender_id(0), logicalClock_u64(0), controllerSerialNumber_u8(0), role_e(truckRole::UNKNOWN) {
+        : receiver_id(0), sender_id(0), logicalClock_u64(0), controllerSerialNumber_u8(0), role_e(truckRole::NOT_SET) {
     // Initialize default values for the message attributes
 }
 
@@ -68,10 +68,18 @@ void Message::setSpeed(int speed) {
     speed = speed;
 }
 
-MovementDirection Message::getDirection() const {
+movementDirection Message::getDirection() const {
     return direction;
 }
 
-void Message::setDirection(MovementDirection direction) {
+void Message::setDirection(movementDirection direction) {
     direction = direction;
+}
+
+event Message::getEvent() const {
+    return event_;
+}
+
+void Message::setEvent(event event) {
+    event_ = event;
 }

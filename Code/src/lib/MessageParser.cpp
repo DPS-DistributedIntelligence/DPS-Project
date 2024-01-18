@@ -17,29 +17,29 @@ string MessageParser::truckRoleToString(truckRole role) {
 truckRole MessageParser::stringToTruckRole(const string& roleStr) {
     if (roleStr == "LEADER") return truckRole::LEADER;
     if (roleStr == "FOLLOWER") return truckRole::FOLLOWER;
-    return truckRole::UNKNOWN;
+    return truckRole::NOT_SET;
 }
 
-string MessageParser::directionToString(MovementDirection direction) {
+string MessageParser::directionToString(movementDirection direction) {
     switch (direction) {
-        case MovementDirection::MOVE_FORWARD: return "MOVE_FORWARD";
-        case MovementDirection::MOVE_BACK: return "MOVE_BACK";
-        case MovementDirection::MOVE_LEFT: return "MOVE_LEFT";
-        case MovementDirection::MOVE_RIGHT: return "MOVE_RIGHT";
-        case MovementDirection::MOVE_EMERGENCY_STOP: return "MOVE_EMERGENCY_STOP";
-        case MovementDirection::MOVE_STOP: return "MOVE_STOP";
+        case movementDirection::MOVE_FORWARD: return "MOVE_FORWARD";
+        case movementDirection::MOVE_BACK: return "MOVE_BACK";
+        case movementDirection::MOVE_LEFT: return "MOVE_LEFT";
+        case movementDirection::MOVE_RIGHT: return "MOVE_RIGHT";
+        case movementDirection::MOVE_EMERGENCY_STOP: return "MOVE_EMERGENCY_STOP";
+        case movementDirection::MOVE_STOP: return "MOVE_STOP";
         default: return "UNKNOWN_DIRECTION";
     }
 }
 
-MovementDirection MessageParser::stringToDirection(const std::string& directionStr) {
-    if (directionStr == "MOVE_FORWARD") return MovementDirection::MOVE_FORWARD;
-    if (directionStr == "MOVE_BACK") return MovementDirection::MOVE_BACK;
-    if (directionStr == "MOVE_LEFT") return MovementDirection::MOVE_LEFT;
-    if (directionStr == "MOVE_RIGHT") return MovementDirection::MOVE_RIGHT;
-    if (directionStr == "MOVE_EMERGENCY_STOP") return MovementDirection::MOVE_EMERGENCY_STOP;
-    if (directionStr == "MOVE_STOP") return MovementDirection::MOVE_STOP;
-    return MovementDirection::MOVE_STOP; // Assuming MOVE_STOP is your default case
+movementDirection MessageParser::stringToDirection(const std::string& directionStr) {
+    if (directionStr == "MOVE_FORWARD") return movementDirection::MOVE_FORWARD;
+    if (directionStr == "MOVE_BACK") return movementDirection::MOVE_BACK;
+    if (directionStr == "MOVE_LEFT") return movementDirection::MOVE_LEFT;
+    if (directionStr == "MOVE_RIGHT") return movementDirection::MOVE_RIGHT;
+    if (directionStr == "MOVE_EMERGENCY_STOP") return movementDirection::MOVE_EMERGENCY_STOP;
+    if (directionStr == "MOVE_STOP") return movementDirection::MOVE_STOP;
+    return movementDirection::MOVE_STOP; // Assuming MOVE_STOP is your default case
 }
 
 // Serialize Message object to JSON string
