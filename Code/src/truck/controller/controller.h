@@ -25,6 +25,8 @@ public:
     controllerState next_state_in_follower_state = moving;
     controllerState current_state_in_follower_state = moving;
     bool initialized = false;
+    bool new_command = false;
+    pthread_mutex_t mutex;
 
 
     // parts

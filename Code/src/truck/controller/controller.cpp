@@ -26,6 +26,23 @@ event controller::state_initial(){
         //TODO: initialization
         /* Start the logical clock ticks */
         self_truck->truck_logical_clock.logicalClockTick(); // initialized by the truck not controller.
+
+        if(self_communications->initialize("127.0.0.1", 8080) != 1)
+        {
+            cout << "Communications... Initialization failed" << endl;
+        }
+        else
+        {
+            cout << "Communications... Initialization successful" << endl;
+        }
+        if(self_communications->connect_to_Server() != 1)
+        {
+            cout << "Communications... Connecting failed" << endl;
+        }
+        else
+        {
+            cout << "Communications... Connecting successful" << endl;
+        }
     }
     return ev_ready;
 }
@@ -151,8 +168,6 @@ event controller::move_leader(){
         prev_direction = this->get_current_direction();
         prev_speed = this->get_current_speed();
 
-
-
         if(this->get_current_direction() == MOVE_EMERGENCY_STOP)
         {
             cout << "Emergency Stop. exiting from leader state" << endl;
@@ -162,6 +177,7 @@ event controller::move_leader(){
         {
             cout << "New Direction: " << get_movement_direction_string(this->get_current_direction()) << endl;
             cout << "New Speed: " << this->get_current_speed() << endl;
+
             return self_truck->event_handler;
         }
     }
@@ -416,6 +432,7 @@ void* controller::key_board_run_thread(){
                (inputChar == 'E') | (inputChar == 'e') |
                (inputChar == 'B') | (inputChar == 'b'))
             {
+                new_command = true;
                 //pthread_mutex_lock(&mutex);
                 switch (inputChar) {
                     case 'W':
@@ -529,29 +546,37 @@ void* controller::controller_run_thread()
 }
 void* controller::communications_run_thread()
 {
-    if(self_communications->initialize("127.0.0.1", 8080))
-    {
-        cout << "Communications... Initialization failed" << endl;
-    }
-    else
-    {
-        cout << "Communications... Initialization successful" << endl;
-    }
-    if(self_communications->connect_to_Server() != 1)
-    {
-        cout << "Communications... Connecting failed" << endl;
-    }
-    else
-    {
-        cout << "Communications... Connecting successful" << endl;
-    }
     while(true)
     {
+        Message msg;
+        msg.setReceiverId(0);
+        msg.setSenderId(0);
+        msg.setLogicalClock(self_truck->truck_logical_clock.get_logicalClock());
+        msg.setControllerSerialNumber(255);
+        msg.setRole(self_truck->role);
+        msg.setSpeed(controller::get_current_speed());
+        msg.setDirection(controller::get_current_direction());
+        self_communications->add_tx_message_to_buffer(msg);
+
+        //Sending the tx buffer
+        if(self_communications->send_txBuffer() != 1)
+        {
+            cout << "tx error" << endl;
+        }
+
+        //Receiving the rx buffer
+        if(self_communications->receive_rxBuffer() == -1)
+        {
+            cout << "rx error" << endl;
+        }
+
+        //Printing all the messages
+        self_communications->print_rx_messages_from_buffer();
         //pthread_mutex_lock(&mutex);
         //Adding it to the tx_buffer
-        self_communications->add_tx_message_to_buffer(self_truck->pending_send_message.front());
+        //self_communications->add_tx_message_to_buffer(self_truck->pending_send_message.front());
         // Remove the first element from the vector
-        self_truck->pending_send_message.erase(self_truck->pending_send_message.begin());
+        //self_truck->pending_send_message.erase(self_truck->pending_send_message.begin());
         //pthread_mutex_unlock(&mutex);
     }
 }
