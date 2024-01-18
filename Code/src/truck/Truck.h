@@ -18,7 +18,6 @@ public:
     pthread_t t_communication;
 
     TruckMetadata self;
-    Decryptor truck_decryptor = Decryptor(&self);
     controller truck_controller = controller(0, &self);
     CommsModule truck_communication = CommsModule(0,100,&self);
 
