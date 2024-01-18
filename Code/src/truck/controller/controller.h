@@ -5,6 +5,7 @@
 #pragma once
 #include "../../lib/lib.h"
 #include "../../lib/TruckMetadata.h"
+#include "../../client/CommsModule.h"
 #include <ctime>
 
 enum controllerState {initial, waiting, leader, follower, moving, aligning, stop, system_stop};
@@ -14,6 +15,8 @@ public:
     // constructors
     controller(int controller_id, TruckMetadata *new_own_truck_metadata);
 
+    const char* ip_address = "127.0.0.1";
+    const int port = 8080;
     // attribute
     int id = -1;
     movement current_movement{};
@@ -47,21 +50,29 @@ public:
     int get_current_speed();
     movementDirection get_current_direction();
     controllerState get_current_state();
+    int get_truck_ID(void);
+    int get_truck_Leader_ID(void);
+
 
     void set_current_direction(movementDirection new_movement_direction);
     void set_current_role(truckRole varTruckRole);
     void set_current_movement(movementDirection new_movement_direction);
     void set_current_speed(int new_movement_speed);
+    void set_truck_ID(int varTruckID);
+    void set_truck_Leader_ID(int varTruckID);
 
     // methods
-    static void *run(void *context);
-    void *run_thread();
+    static void *controller_run(void *context);
+    void *controller_run_thread();
+    static void *communications_run(void *context);
+    void *communications_run_thread();
     bool find_leader();
     event move_leader();
     event move_follower();
     event move_stop();
     event move_emergency_stop();
     event move(movement new_movement);
+
 
     void next_state_computer(event handler);
 
