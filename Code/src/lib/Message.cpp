@@ -1,8 +1,12 @@
+//
+// Created by leand on 16.01.2024.
+//
+
 #include "Message.h"
 
 // Constructor
 Message::Message()
-        : receiver_id(0), sender_id(0), logicalClock_u64(0), controllerSerialNumber_u8(0), role_e(truckRole::NOT_SET) , event_(ev_any){
+        : receiver_id(0), sender_id(0), logicalClock_u64(0), controllerSerialNumber_u8(0), role_e(truckRole::UNKNOWN) {
     // Initialize default values for the message attributes
 }
 
@@ -64,25 +68,10 @@ void Message::setSpeed(int speed) {
     speed = speed;
 }
 
-movementDirection Message::getDirection() const {
+MovementDirection Message::getDirection() const {
     return direction;
 }
 
-void Message::setDirection(movementDirection direction) {
+void Message::setDirection(MovementDirection direction) {
     direction = direction;
-}
-
-event Message::getEvent() const{
-    return event_;
-}
-void Message::setEvent(event new_event){
-    event_ = new_event;
-}
-
-Location Message::getLocation() const{
-    return location_;
-}
-
-void Message::setLocation(Location new_location) {
-    location_ = new_location;
 }

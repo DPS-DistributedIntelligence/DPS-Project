@@ -1,6 +1,9 @@
+//
+// Created by leand on 16.01.2024.
+//
 
-#ifndef MESSAGE_H
-#define MESSAGE_H
+#ifndef SOCKETTEST_MESSAGE_H
+#define SOCKETTEST_MESSAGE_H
 
 #pragma once
 
@@ -9,52 +12,41 @@
 
 #include "TruckRole.h"
 #include "Movement.h"
-#include "Event.h"
-#include "Location.h"
 
 class Message {
-private:
-    int receiver_id;
-    int sender_id;
-    uint64_t logicalClock_u64;
-    uint8_t controllerSerialNumber_u8;
-    truckRole role_e;
-    int speed;
-    movementDirection direction;
-    event event_;
-    Location location_;
+    private:
+        int receiver_id;
+        int sender_id;
+        uint64_t logicalClock_u64;
+        uint8_t controllerSerialNumber_u8;
+        truckRole role_e;
+        int speed;
+        MovementDirection direction;
+    public:
+        Message();
 
+        // Getters and setters for each attribute
+        int getReceiverId() const;
+        void setReceiverId(int id);
 
-public:
-    Message();
+        int getSenderId() const;
+        void setSenderId(int id);
 
-    // Getters and setters for each attribute
-    int getReceiverId() const;
-    void setReceiverId(int id);
+        uint64_t getLogicalClock() const;
+        void setLogicalClock(uint64_t clock);
 
-    int getSenderId() const;
-    void setSenderId(int id);
+        uint8_t getControllerSerialNumber() const;
+        void setControllerSerialNumber(uint8_t serialNumber);
 
-    uint64_t getLogicalClock() const;
-    void setLogicalClock(uint64_t clock);
+        truckRole getRole() const;
+        void setRole(truckRole role);
 
-    uint8_t getControllerSerialNumber() const;
-    void setControllerSerialNumber(uint8_t serialNumber);
+        int getSpeed() const;
+        void setSpeed(int speed);
 
-    truckRole getRole() const;
-    void setRole(truckRole role);
-
-    int getSpeed() const;
-    void setSpeed(int speed);
-
-    event getEvent() const;
-    void setEvent(event);
-
-    movementDirection getDirection() const;
-    void setDirection(movementDirection direction);
-
-    Location getLocation() const;
-    void setLocation(Location);
+        MovementDirection getDirection() const;
+        void setDirection(MovementDirection direction);
 };
 
-#endif
+
+#endif //SOCKETTEST_MESSAGE_H
