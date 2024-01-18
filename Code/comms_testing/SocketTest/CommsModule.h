@@ -12,6 +12,7 @@
 #include <iostream>
 #include <sstream>
 #include <mutex>
+#include <optional>
 
 #include "Message.h"
 #include "MessageParser.h"
@@ -41,10 +42,13 @@ namespace Modules {
         CommsModule(int id, long timeout);
         int initialize(const string& ip_address, u_short port);
         int connect_to_Server();
-        int add_tx_message_to_buffer(Message tx_message);
-        int print_rx_messages_from_buffer();
         int send_txBuffer();
         int receive_rxBuffer();
+        int add_tx_message_to_buffer(Message tx_message);
+        optional<Message> get_last_rx_message_from_buffer(bool del);
+        optional<Message> get_rx_message_by_index_from_buffer(int index, bool del);
+        int get_length_of_rx_buffer();
+        int print_rx_messages_from_buffer();
     };
 } // Modules
 

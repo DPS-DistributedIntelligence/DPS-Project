@@ -264,6 +264,79 @@ namespace Modules {
         return 1;
     }
 
+    //Function for getting the last message of the vector
+    //Argument: bool if element should be deleted afterward
+    optional<Message> CommsModule::get_last_rx_message_from_buffer(bool del)
+    {
+        //Locking mutex
+        rx_vec_mutex.lock();
+
+        //If vector is empty, unlock mutex and return empty
+        if(rx_messages.empty())
+        {
+            rx_vec_mutex.unlock();
+            return{};
+        }
+
+        //Getting the last message of the buffer
+        Message msg = rx_messages.back();
+
+        //Removing the last element if wanted
+        if(del)
+        {
+            rx_messages.pop_back();
+        }
+
+        //Unlocking the mutex
+        rx_vec_mutex.unlock();
+
+        return msg;
+    }
+
+    //Function for getting the message of a certain position from the vector
+    //Argument: bool if element should be deleted afterwards
+    optional<Message> CommsModule::get_rx_message_by_index_from_buffer(int index, bool del)
+    {
+        //Locking mutex
+        rx_vec_mutex.lock();
+
+        //Unlocking and returning empty if out of bounds
+        if(index < 0 || index > (rx_messages.size() - 1))
+        {
+            rx_vec_mutex.unlock();
+            return{};
+        }
+
+        //Getting the message at the supplied pos
+        Message msg = rx_messages[index];
+
+        //Removing the element if wanted
+        if(del)
+        {
+            rx_messages.erase(rx_messages.begin() + index);
+        }
+
+        //Unlocking the mutex
+        rx_vec_mutex.unlock();
+
+        return msg;
+    }
+
+    int CommsModule::get_length_of_rx_buffer()
+    {
+        //Locking mutex
+        rx_vec_mutex.lock();
+
+        //Getting the length
+        int length = (int)rx_messages.size();
+
+        //Unlocking the mutex
+        rx_vec_mutex.unlock();
+
+        return length;
+    }
+
+
     //Function to print all messages from the rx buffer
     int CommsModule::print_rx_messages_from_buffer()
     {
