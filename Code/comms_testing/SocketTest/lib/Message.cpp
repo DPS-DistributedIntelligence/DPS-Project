@@ -6,7 +6,7 @@
 
 // Constructor
 Message::Message()
-        : receiver_id(0), sender_id(0), logicalClock_u64(0), controllerSerialNumber_u8(0), role_e(truckRole_e::UNKNOWN) {
+        : receiver_id(0), sender_id(0), logicalClock_u64(0), controllerSerialNumber_u8(0), role_e(truckRole::UNKNOWN) {
     // Initialize default values for the message attributes
 }
 
@@ -51,12 +51,12 @@ void Message::setControllerSerialNumber(uint8_t serialNumber) {
 }
 
 // Getter for role_e
-truckRole_e Message::getRole() const {
+truckRole Message::getRole() const {
     return role_e;
 }
 
 // Setter for role_e
-void Message::setRole(truckRole_e role) {
+void Message::setRole(truckRole role) {
     role_e = role;
 }
 

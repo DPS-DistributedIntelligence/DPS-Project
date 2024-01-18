@@ -10,8 +10,8 @@
 #include <string>
 #include <cstdint>
 
-#include "truckRole_e.h"
-#include "MovementDirection.h"
+#include "TruckRole.h"
+#include "Movement.h"
 
 class Message {
     private:
@@ -19,7 +19,7 @@ class Message {
         int sender_id;
         uint64_t logicalClock_u64;
         uint8_t controllerSerialNumber_u8;
-        truckRole_e role_e;
+        truckRole role_e;
         int speed;
         MovementDirection direction;
     public:
@@ -38,8 +38,8 @@ class Message {
         uint8_t getControllerSerialNumber() const;
         void setControllerSerialNumber(uint8_t serialNumber);
 
-        truckRole_e getRole() const;
-        void setRole(truckRole_e role);
+        truckRole getRole() const;
+        void setRole(truckRole role);
 
         int getSpeed() const;
         void setSpeed(int speed);

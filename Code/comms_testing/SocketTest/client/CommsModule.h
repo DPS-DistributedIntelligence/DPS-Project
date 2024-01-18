@@ -14,8 +14,8 @@
 #include <mutex>
 #include <optional>
 
-#include "Message.h"
-#include "MessageParser.h"
+#include "../lib/Message.h"
+#include "../lib/MessageParser.h"
 
 //Linker should add "ws2_32.lib" to the list of libraries to be linked with the program
 #pragma comment(lib, "ws2_32.lib")

@@ -18,11 +18,11 @@ using namespace std;
 
 class MessageParser {
 public:
-    // Convert a truckRole_e enum value to a string representation
-    static string truckRoleToString(truckRole_e role);
+    // Convert a truckRole enum value to a string representation
+    static string truckRoleToString(truckRole role);
 
-    // Convert a string to a truckRole_e enum value
-    static truckRole_e stringToTruckRole(const std::string& roleStr);
+    // Convert a string to a truckRole enum value
+    static truckRole stringToTruckRole(const std::string& roleStr);
 
     // Serialize a Message object to a JSON string
     static string toJSON(const Message& msg);

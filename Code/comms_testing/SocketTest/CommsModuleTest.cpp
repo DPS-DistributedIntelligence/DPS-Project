@@ -1,8 +1,8 @@
 //
 // Created by leand on 25.12.2023.
 //
-#include "CommsModule.h"
-#include "Message.h"
+#include "client/CommsModule.h"
+#include "lib/Message.h"
 
 #include <iostream>
 #include <random>
@@ -64,7 +64,7 @@ int main() {
                 msg.setSenderId(ID);
                 msg.setLogicalClock(distribution(generator));
                 msg.setControllerSerialNumber(255);
-                msg.setRole(truckRole_e::LEADER);
+                msg.setRole(truckRole::LEADER);
                 msg.setSpeed(75);
                 msg.setDirection(MovementDirection::MOVE_FORWARD);
 

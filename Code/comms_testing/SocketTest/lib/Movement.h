@@ -2,8 +2,8 @@
 // Created by leand on 16.01.2024.
 //
 
-#ifndef SOCKETTEST_MOVEMENTDIRECTION_H
-#define SOCKETTEST_MOVEMENTDIRECTION_H
+#ifndef SOCKETTEST_MOVEMENT_H
+#define SOCKETTEST_MOVEMENT_H
 
 enum class MovementDirection
 {
@@ -15,4 +15,4 @@ enum class MovementDirection
     MOVE_STOP,
 };
 
-#endif //SOCKETTEST_MOVEMENTDIRECTION_H
+#endif //SOCKETTEST_MOVEMENT_H

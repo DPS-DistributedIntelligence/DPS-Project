@@ -4,20 +4,20 @@
 
 #include "MessageParser.h"
 
-// Convert truckRole_e enum to string representation
-string MessageParser::truckRoleToString(truckRole_e role) {
+// Convert truckRole enum to string representation
+string MessageParser::truckRoleToString(truckRole role) {
     switch (role) {
-        case truckRole_e::LEADER: return "LEADER";
-        case truckRole_e::FOLLOWER: return "FOLLOWER";
+        case truckRole::LEADER: return "LEADER";
+        case truckRole::FOLLOWER: return "FOLLOWER";
         default: return "UNKNOWN";
     }
 }
 
-// Convert string to truckRole_e enum
-truckRole_e MessageParser::stringToTruckRole(const string& roleStr) {
-    if (roleStr == "LEADER") return truckRole_e::LEADER;
-    if (roleStr == "FOLLOWER") return truckRole_e::FOLLOWER;
-    return truckRole_e::UNKNOWN;
+// Convert string to truckRole enum
+truckRole MessageParser::stringToTruckRole(const string& roleStr) {
+    if (roleStr == "LEADER") return truckRole::LEADER;
+    if (roleStr == "FOLLOWER") return truckRole::FOLLOWER;
+    return truckRole::UNKNOWN;
 }
 
 string MessageParser::directionToString(MovementDirection direction) {
