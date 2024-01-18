@@ -65,8 +65,13 @@ public:
 
     void next_state_computer(event handler);
 
-    void* key_board_run();
-    static void* key_board_run_thread();
+
+
+    const int cruiseDriverStep = 10;
+    const int cruiseDriverLimit = 210;
+
+    static void* key_board_run(void* context);
+    void* key_board_run_thread();
 
     // variable that already moved to the truck
     //movement_str *movement_st; // expected next movement

@@ -13,4 +13,5 @@ add_executable( Code
         src/interface/interface.cpp
         src/interface/interface.h
         src/lib/MessageParse.cpp
+        src/lib/Movement.cpp
 )

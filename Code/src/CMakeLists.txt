@@ -9,6 +9,7 @@ add_executable(
         controller/controller.h
         lib/Message.cpp
         decryptor/decryptor.cpp
+
         Truck/Truck.cpp
         lib/LogicalClock.cpp
         interface/interface.h

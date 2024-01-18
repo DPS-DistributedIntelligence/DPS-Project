@@ -49,6 +49,7 @@ void* controller::run_thread()
                 self_truck->event_handler = state_system_stop();
                 break;
             default:
+                cout << "Default" << endl;
                 break;
         }
     }
@@ -445,7 +446,7 @@ void* controller::key_board_run_thread(){
     {
         if (_kbhit())
         {
-            inputChar = _getch();
+            char inputChar = _getch();
             if((inputChar == 'W') | (inputChar == 'w') |
                (inputChar == 'S') | (inputChar == 's') |
                (inputChar == 'A') | (inputChar == 'a') |
@@ -527,5 +528,4 @@ void* controller::key_board_run_thread(){
 
 void *controller::key_board_run(void* context) {
     return ((controller *)context)->key_board_run_thread();
-    return nullptr;
 }

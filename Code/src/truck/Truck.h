@@ -17,7 +17,6 @@ public:
     //CommsModule truck_comms = CommsModule(0,100);
     Decryptor truck_decryptor = Decryptor(&self);
     controller truck_controller = controller(0, &self);
-    interface truck_interface = interface(&truck_controller);
 
 
     // any other sub systems
