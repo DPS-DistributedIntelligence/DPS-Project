@@ -3,7 +3,7 @@
 #define CONTROLLER_H
 
 #pragma once
-#include "../Lib/lib.h"
+#include "../lib/lib.h"
 #include "../lib/TruckMetadata.h"
 #include <ctime>
 
@@ -41,11 +41,19 @@ public:
     event state_system_stop();
 
     // setters and getters
-    movement get_current_movement();
-    controllerState get_current_state();
+    void set_current_role(truckRole varTruckRole);
+    truckRole get_current_role();
 
+    // setters and getters
     void set_current_movement(movementDirection new_movement_direction);
+    movement get_current_movement();
+    // getter
+    controllerState get_current_state();
+    // setters and getters
+    void set_current_direction(movementDirection new_movement_direction);
+    movementDirection get_current_direction(void);
     void set_current_speed(int new_movement_speed);
+    int get_current_speed(void);
 
     // methods
     void run();

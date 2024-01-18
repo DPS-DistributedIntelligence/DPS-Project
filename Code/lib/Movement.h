@@ -17,6 +17,7 @@ typedef struct Movement{
     int speed;
 }movement;
 
+char* get_movement_direction_string(movementDirection varCurrentDirection);
 
 
 

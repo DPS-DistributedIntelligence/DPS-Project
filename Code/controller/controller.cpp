@@ -61,7 +61,7 @@ event controller::state_initial(){
     if(!initialized){
         cout << "initializing truck controller" << endl;
         //TODO: initialization
-
+        /* Start the logical clock ticks */
         self_truck->truck_logical_clock.logicalClockTick(); // initialized by the truck not controller.
     }
     return ev_ready;
@@ -167,8 +167,8 @@ event controller::state_moving(){
 event controller::move_leader(){
     // consider only one iteration ( event will be checked at every iteration by caller)
 
-    movementDirection new_direction= MOVE_FORWARD;
-    int speed = 0 ;
+    static movementDirection prev_direction = MOVE_FORWARD;
+    static int prev_speed = 0;
 
     //TODO: always check for new leader.done
     bool leader_found = find_leader();
@@ -179,41 +179,35 @@ event controller::move_leader(){
     }
 
     //TODO: get direction and speed (input from console).done
-    string new_dir;
-    string new_spd;
-    cout << "Direction: " << endl;
-    cin >> new_dir; cout << " " << endl;
+    if((prev_direction != this->get_current_direction()) || (prev_speed != this->get_current_speed()))
+    {
+        prev_direction = this->get_current_direction();
+        prev_speed = this->get_current_speed();
 
-    if (new_dir == "W"){
-        new_direction = MOVE_FORWARD;
-    }else if (new_dir == "S"){
-        new_direction = MOVE_BACK;
-    }else if (new_dir == "A"){
-        new_direction = MOVE_LEFT;
-    }else if (new_dir == "D"){
-        new_direction = MOVE_RIGHT;
-    }else if (new_dir == "E"){
-        cout << "Emergency Stop. exiting from leader state" << endl;
-        return ev_stop; // emergency stop -> will exit leader state back to stop
-    }else{
-        cout << "input invalid" << endl;
+        if(this->get_current_direction() == MOVE_EMERGENCY_STOP)
+        {
+            cout << "Emergency Stop. exiting from leader state" << endl;
+            return ev_stop; // emergency stop -> will exit leader state back to stop
+        }
+        else
+        {
+            cout << "New Direction: " << get_movement_direction_string(this->get_current_direction()) << endl;
+            cout << "New Speed: " << this->get_current_speed() << endl;
+            return self_truck->event_handler;
+        }
+    }
+    else
+    {
         return self_truck->event_handler;
     }
 
-    cout << "Speed: " << endl;
-    cin >> new_spd; cout << " " << endl;
-    speed = stoi(new_spd);
-    if (speed > 210){
-        cout << "input invalid" << endl;
-        return self_truck->event_handler;
-    }
 
-    movement new_movement = {new_direction, speed};
+    movement new_movement = {this->get_current_direction(), this->get_current_speed()};
 
     //TODO: send message.
     Message new_message = Message();
-    new_message.setDirection(new_direction);
-    new_message.setSpeed(speed);
+    new_message.setDirection(new_movement.direction);
+    new_message.setSpeed(new_movement.speed);
     new_message.setSenderId(self_truck->truck_id);
     //set receiver new_message.setReceiverId();
     self_truck->pending_send_message.push_back(new_message);
@@ -263,11 +257,32 @@ movement controller::get_current_movement(){
 controllerState controller::get_current_state(){
     return current_state;
 }
-void controller::set_current_movement(movementDirection new_movement_direction){
+void controller::set_current_direction(movementDirection new_movement_direction)
+{
     current_movement.direction = new_movement_direction;
 }
-void controller::set_current_speed(int new_movement_speed){
+movementDirection controller::get_current_direction(void)
+{
+    return current_movement.direction;
+}
+void controller::set_current_speed(int new_movement_speed)
+{
     current_movement.speed = new_movement_speed;
+}
+int controller::get_current_speed(void)
+{
+    return current_movement.speed;
+}
+void controller::set_current_role(truckRole varTruckRole)
+{
+    self_truck->role = varTruckRole;
+}
+truckRole controller::get_current_role()
+{
+    return self_truck->role;
+}
+void controller::set_current_movement(movementDirection new_movement_direction){
+    current_movement.direction = new_movement_direction;
 }
 
 // methods
