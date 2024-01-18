@@ -58,7 +58,7 @@ int main() {
             //Only queue a packet if it is not my own ID
             if(*dest_it != ID)
             {
-                //Making a example message with random logical clock content
+                //Making an example message with random logical clock content
                 Message msg;
                 msg.setReceiverId(*dest_it);
                 msg.setSenderId(ID);
@@ -78,8 +78,10 @@ int main() {
         //Sending the tx buffer
         cm.send_txBuffer();
 
-        //Receiving the rx buffer and printing all the messages
+        //Receiving the rx buffer
         cm.receive_rxBuffer();
+
+        //Printing all the messages
         cm.print_rx_messages_from_buffer();
 
         //Sleeping for 1s

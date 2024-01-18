@@ -20,7 +20,7 @@ int main()
         std::cout << "Initialization successful\n";
     }
 
-    std::cout << "Waiting for connection...\n";
+    std::cout << "Waiting for connections...\n";
 
 
     int result = 0;
@@ -34,12 +34,8 @@ int main()
 
         server.getMessagesFromAllSockets();
 
-        //server.processPackets();
-
-        //server.forwardPackets();
+        server.forwardPackets();
     }
-
-    system("pause");
 
     return 0;
 }

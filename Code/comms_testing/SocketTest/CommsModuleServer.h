@@ -12,7 +12,8 @@
 #include <iostream>
 #include <sstream>
 #include "SocketClientIDStruct.h"
-#include "MessageStruct.h"
+#include "Message.h"
+#include "MessageParser.h"
 
 //Linker should add "ws2_32.lib" to the list of libraries to be linked with the program
 #pragma comment(lib, "ws2_32.lib")
@@ -36,7 +37,6 @@ namespace Modules {
         int getMessageFromSocket(SOCKET& rxSocket, string& rx_message);
         int sendMessage(SOCKET& txSocket, string& tx_message);
         void getMessagesFromAllSockets();
-        void processPackets();
         void forwardPackets();
         int getNumOfConnectedClients();
     };

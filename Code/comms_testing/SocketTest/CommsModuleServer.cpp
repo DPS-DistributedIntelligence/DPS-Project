@@ -168,61 +168,47 @@ namespace Modules {
         while(curr_client != clientID_socket_map.end())
         {
             int result;
+            string rx_message;
 
-            while(true)
+            //Getting the message from the socket and storing the result
+            result = getMessageFromSocket((curr_client->clientSocket), rx_message);
+
+            //Checking result
+            if (result == -1) //Socket error occcured
             {
-                string rx_message;
+                //Close socket
+                closesocket(curr_client->clientSocket);
 
-                //Getting the message from the socket and storing the result
-                result = getMessageFromSocket((curr_client->clientSocket), rx_message);
+                //Remove client from list and continuing
+                curr_client = clientID_socket_map.erase(curr_client);
+                continue;
+            }
+            else if(result == 0) //Empty message
+            {
+                curr_client++;
+                continue;
+            }
 
-                //Checking result
-                if (result == -1) //Socket error occcured
+            //Separating all the messages
+            istringstream rx_message_stream(rx_message);
+            string rx_submessage;
+            while(getline(rx_message_stream, rx_submessage, '\n'))
+            {
+                cout << "Received: " << rx_submessage << endl;
+
+                //Parsing the message
+                Message msg;
+                msg = MessageParser::fromJSON(rx_submessage);
+
+                //Checking if current socket has no associated ID
+                if(curr_client->ID == 0)
                 {
-                    //Close socket
-                    closesocket(curr_client->clientSocket);
-
-                    //Remove client from list
-                    curr_client = clientID_socket_map.erase(curr_client);
-
-                    //cout << "Result -1 occured with client id " << curr_client->ID << "\n";
-                    break;
-                }
-                else if(result == 0) //Empty message
-                {
-                    //cout << "Result 0 occured with client id " << curr_client->ID << "\n";
-                    break;
+                    //Associating ID
+                    curr_client->ID = msg.getSenderId();
                 }
 
-                cout << "Received: " << rx_message << endl;
-
-                //If current client has no id (==0) and the packet starts with "signup-ID" (--> signup packet was detected)
-                if (curr_client->ID == 0 && rx_message.compare(0, 10, "signup-ID:") == 0) {
-                    //Extract the ID and store it in the current client
-                    string extracted_id = rx_message.substr(10);
-                    curr_client->ID = stoi(extracted_id);
-
-                    cout << "Signup detected with ID: " << curr_client->ID << "\n";
-                }
-                else //Otherwise it is a normal packet
-                {
-                    istringstream rx_messageStream(rx_message);
-
-                    string rx_submessage;
-                    while(getline(rx_messageStream, rx_submessage, '\n'))
-                    {
-                        //Creating empty struct and assigning source id and message string
-                        Message receivedSubMessage;
-                        receivedSubMessage.sourceID = curr_client->ID;
-                        receivedSubMessage.messagestr = rx_submessage;
-
-
-                        //Pushing received message into the vector
-                        messageBuffer.push_back(receivedSubMessage);
-
-                        cout << "[RX] from client " << curr_client->ID << ": \"" << rx_submessage << "\"\n";
-                    }
-                }
+                //Adding the parsed message to the buffer
+                messageBuffer.push_back(msg);
             }
 
             //Getting the next client
@@ -233,43 +219,23 @@ namespace Modules {
         }
     }
 
-    void CommsModuleServer::processPackets()
-    {
-        //Setting up an iterator and iterating over the messages
-        auto curr_message = messageBuffer.begin();
-        while(curr_message != messageBuffer.end())
-        {
-            //Check if message contains destination ID, otherwise discard
-            if(curr_message->messagestr.compare(0, 8, "dest-ID:") != 0)
-            {
-                curr_message = messageBuffer.erase(curr_message);
-            }
-
-            //Extracting the destination ID and writing it to the message
-            string extracted_dest_id = curr_message->messagestr.substr(8, 3);
-            curr_message->destID = stoi(extracted_dest_id);
-
-            //Get the next message
-            if(curr_message != messageBuffer.end())
-            {
-                curr_message++;
-            }
-        }
-    }
-
     void CommsModuleServer::forwardPackets()
     {
+        //Initalizing an iterator to iterate over the messages
         auto curr_message = messageBuffer.begin();
         while(curr_message != messageBuffer.end())
         {
             //Getting the destination socket
             SOCKET *destSocket = nullptr;
 
+            //Initializing an iterator to iterate over the sockets
             auto client = clientID_socket_map.begin();
             while(client != clientID_socket_map.end())
             {
-                if(client->ID == curr_message->destID)
+                //Checking if IDs are matching
+                if(client->ID == curr_message->getReceiverId())
                 {
+                    //Storing a pointer to the destination Socket if it was found
                     destSocket = &client->clientSocket;
                     break;
                 }
@@ -284,9 +250,11 @@ namespace Modules {
                 continue;
             }
 
-            string message_to_tx = curr_message->messagestr;
+            //Parsing the message to JSON and adding the separator
+            string message_to_tx = MessageParser::toJSON(*curr_message);
             message_to_tx += "\n";
 
+            //Sending the message and removing it if it was successfully sent
             if(sendMessage(*destSocket, message_to_tx) == 1)
             {
                 curr_message = messageBuffer.erase(curr_message);
@@ -297,6 +265,7 @@ namespace Modules {
         }
     }
 
+    //Public function that returns the number of the connected clients
     int CommsModuleServer::getNumOfConnectedClients()
     {
         return (int)clientID_socket_map.size();

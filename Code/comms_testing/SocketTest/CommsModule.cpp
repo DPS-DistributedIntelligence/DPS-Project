@@ -80,11 +80,13 @@ namespace Modules {
             }
         }
 
+        /*
         //Sending signup packet
         if(send_signup_packet() != 1)
         {
             return -1;
         }
+        */
 
         return 1;
     }
@@ -249,12 +251,14 @@ namespace Modules {
         auto rx_message = rx_messages.begin();
         while(rx_message != rx_messages.end())
         {
+            cout << "--------------------------------------------------------" << endl;
             cout << "Receiver ID: " << rx_message->getReceiverId() << endl;
             cout << "Sender ID: " << rx_message->getSenderId() << endl;
             cout << "Logical Clock: " << rx_message->getLogicalClock() << endl;
             cout << "Controller Serial Number: " << static_cast<int>(rx_message->getControllerSerialNumber()) << endl;
             cout << "Role: " << MessageParser::truckRoleToString(rx_message->getRole()) << endl;
             cout << "Speed: " << rx_message->getSpeed() << endl;
+            cout << "--------------------------------------------------------" << endl;
 
             rx_message = rx_messages.erase(rx_message);
         }
