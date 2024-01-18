@@ -16,46 +16,6 @@ controller::controller(int new_controller_id, TruckMetadata *new_self_truck){
     // this->antiCollisionSystem_class.set_EmergencyStop(varAnticollisionSystem);
 }
 
-void* controller::run_thread()
-{
-    while(true){
-        cout << "changing high level state" << endl;
-        next_state_computer(self_truck->event_handler); //set next state
-        self_truck->event_handler = ev_any; // reset event handler
-        switch(next_state){
-            case initial:
-                cout << "entering initial state" << endl;
-                cout << " " << endl;
-                self_truck->event_handler = state_initial();
-                break;
-            case waiting:
-                cout << "entering waiting state" << endl;
-                cout << " " << endl;
-                self_truck->event_handler = state_waiting();
-                break;
-            case leader:
-                cout << "entering leader state" << endl;
-                cout << " " << endl;
-                self_truck->event_handler = state_leader();
-                break;
-            case follower:
-                cout << "entering follower state" << endl;
-                cout << " " << endl;
-                self_truck->event_handler = state_follower();
-                break;
-            case system_stop:
-                cout << "entering system stop state" << endl;
-                cout << " " << endl;
-                self_truck->event_handler = state_system_stop();
-                break;
-            default:
-                cout << "Default" << endl;
-                break;
-        }
-    }
-    return 0;
-}
-
 // states -> high level states
 event controller::state_initial(){
     current_state = initial;
@@ -441,11 +401,46 @@ void controller::next_state_computer(event event_received){
 }
 
 ///enum controllerState {initial, waiting, leader, follower, moving, aligning, stop, system_stop};
-void *controller::run(void *context) {
-    return ((controller *)context)->run_thread();
+
+void* controller::controller_run_thread()
+{
+    while(true){
+        cout << "changing high level state" << endl;
+        next_state_computer(self_truck->event_handler); //set next state
+        self_truck->event_handler = ev_any; // reset event handler
+        switch(next_state){
+            case initial:
+                cout << "entering initial state" << endl;
+                cout << " " << endl;
+                self_truck->event_handler = state_initial();
+                break;
+            case waiting:
+                cout << "entering waiting state" << endl;
+                cout << " " << endl;
+                self_truck->event_handler = state_waiting();
+                break;
+            case leader:
+                cout << "entering leader state" << endl;
+                cout << " " << endl;
+                self_truck->event_handler = state_leader();
+                break;
+            case follower:
+                cout << "entering follower state" << endl;
+                cout << " " << endl;
+                self_truck->event_handler = state_follower();
+                break;
+            case system_stop:
+                cout << "entering system stop state" << endl;
+                cout << " " << endl;
+                self_truck->event_handler = state_system_stop();
+                break;
+            default:
+                cout << "Default" << endl;
+                break;
+        }
+    }
+    return 0;
 }
-
-
 void* controller::key_board_run_thread(){
     while(true)
     {
@@ -531,7 +526,9 @@ void* controller::key_board_run_thread(){
     }
     //return nullptr;
 }
-
+void *controller::controller_run(void* context) {
+    return ((controller *)context)->controller_run_thread();
+}
 void *controller::key_board_run(void* context) {
     return ((controller *)context)->key_board_run_thread();
 }

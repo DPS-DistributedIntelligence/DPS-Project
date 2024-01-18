@@ -54,8 +54,11 @@ public:
     void set_current_speed(int new_movement_speed);
 
     // methods
-    static void *run(void *context);
-    void *run_thread();
+    static void* controller_run(void* context);
+    static void* key_board_run(void* context);
+    void* key_board_run_thread();
+    void* controller_run_thread();
+
     bool find_leader();
     event move_leader();
     event move_follower();
@@ -70,8 +73,6 @@ public:
     const int cruiseDriverStep = 10;
     const int cruiseDriverLimit = 210;
 
-    static void* key_board_run(void* context);
-    void* key_board_run_thread();
     bool input_given = false;
 
     // variable that already moved to the truck
