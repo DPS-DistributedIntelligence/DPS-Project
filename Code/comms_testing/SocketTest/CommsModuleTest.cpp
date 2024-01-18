@@ -76,10 +76,16 @@ int main() {
         }
 
         //Sending the tx buffer
-        cm.send_txBuffer();
+        if(cm.send_txBuffer() != 1)
+        {
+            cout << "tx error" << endl;
+        }
 
         //Receiving the rx buffer
-        cm.receive_rxBuffer();
+        if(cm.receive_rxBuffer() == -1)
+        {
+            cout << "rx error" << endl;
+        }
 
         //Printing all the messages
         cm.print_rx_messages_from_buffer();

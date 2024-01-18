@@ -149,6 +149,9 @@ namespace Modules {
     //Internal function used to send a message
     int CommsModule::send_message(Message message)
     {
+        //Setting the ID of the sender to own ID (just to make sure)
+        message.setSenderId(ID);
+
         //Parsing to JSON string and sending
         string message_str = MessageParser::toJSON(message);
         message_str += "\n";
@@ -156,8 +159,21 @@ namespace Modules {
     }
 
     //Function to send the whole tx buffer
+    //return value 1: packets successfully transmitted
+    //return value 0: no packets transmitted
+    //return value -1: communication error
     int CommsModule::send_txBuffer()
     {
+        //Locking mutex
+        tx_vec_mutex.lock();
+
+        //Checking if there are messages to transmit; if not unlocking mutex and returning 0
+        if(tx_messages.empty())
+        {
+            tx_vec_mutex.unlock();
+            return 0;
+        }
+
         int result = 1;
 
         //Iterating over vector
@@ -177,12 +193,23 @@ namespace Modules {
             tx_message++;
         }
 
+        //Unlocking mutex
+        tx_vec_mutex.unlock();
+
         return result;
     }
 
     //Function to receive all waiting messages and adding them to the rx buffer
+    //return value 1: packets successfully received
+    //return value 0: no packets received
+    //return value -1: communication error
     int CommsModule::receive_rxBuffer()
     {
+        int result = 1;
+
+        //Locking the mutex
+        rx_vec_mutex.lock();
+
         while(true)
         {
             //Preparing a string the message could be stored to
@@ -193,11 +220,12 @@ namespace Modules {
             //Checking the result
             if(receiving_result == 0) //No messages
             {
-                return 1;
+                break;
             }
             else if(receiving_result == -1) //Error occured
             {
-                return -1;
+                result = -1;
+                break;
             }
 
             //Creating a string stream
@@ -215,21 +243,37 @@ namespace Modules {
             }
         }
 
-        return 1;
+        //Unlocking the mutex
+        rx_vec_mutex.unlock();
+
+        return result;
     }
 
+    //Function to add a message to the tx buffer
     int CommsModule::add_tx_message_to_buffer(Message tx_message)
     {
+        //Locking the mutex
+        tx_vec_mutex.lock();
+
         //Adding message to tx buffer
         tx_messages.push_back(tx_message);
 
+        //Unlocking the mutex
+        tx_vec_mutex.unlock();
+
         return 1;
     }
 
+    //Function to print all messages from the rx buffer
     int CommsModule::print_rx_messages_from_buffer()
     {
+        //Locking mutex
+        rx_vec_mutex.lock();
+
+        //Unlocking and returning 0 if there was no message
         if(rx_messages.empty())
         {
+            rx_vec_mutex.unlock();
             return 0;
         }
 
@@ -247,6 +291,9 @@ namespace Modules {
 
             rx_message = rx_messages.erase(rx_message);
         }
+
+        //Unlocking mutex
+        rx_vec_mutex.unlock();
 
         return 1;
     }
