@@ -440,7 +440,7 @@ void controller::next_state_computer(event event_received){
 }
 
 ///enum controllerState {initial, waiting, leader, follower, moving, aligning, stop, system_stop};
-
+/*
 void* controller::controller_run_thread()
 {
     while(true){
@@ -479,7 +479,7 @@ void* controller::controller_run_thread()
         }
     }
     return 0;
-}
+}*/
 void* controller::key_board_run_thread(){
     while(true)
     {
@@ -565,8 +565,8 @@ void* controller::key_board_run_thread(){
     }
     //return nullptr;
 }
-void *controller::controller_run(void* context) {
-    return ((controller *)context)->controller_run_thread();
+void *controller::run(void* context) {
+    return ((controller *)context)->run_thread();
 }
 void *controller::key_board_run(void* context) {
     return ((controller *)context)->key_board_run_thread();

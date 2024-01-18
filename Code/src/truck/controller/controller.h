@@ -54,10 +54,10 @@ public:
     void set_current_speed(int new_movement_speed);
 
     // methods
-    static void* controller_run(void* context);
+    static void* run(void* context);
     static void* key_board_run(void* context);
     void* key_board_run_thread();
-    void* controller_run_thread();
+    void* run_thread();
 
     bool find_leader();
     event move_leader();
