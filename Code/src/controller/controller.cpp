@@ -180,11 +180,16 @@ event controller::move_leader(){
     }
 
     //TODO: get direction and speed (input from console).done
+    while(!input_given){
 
+    }
+    input_given = false;
     if((prev_direction != this->get_current_direction()) || (prev_speed != this->get_current_speed()))
     {
         prev_direction = this->get_current_direction();
         prev_speed = this->get_current_speed();
+
+
 
         if(this->get_current_direction() == MOVE_EMERGENCY_STOP)
         {
@@ -521,6 +526,7 @@ void* controller::key_board_run_thread(){
                  * Do Nothing
                  */
             }
+            input_given = true;
         }
     }
     //return nullptr;

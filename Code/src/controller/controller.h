@@ -72,6 +72,7 @@ public:
 
     static void* key_board_run(void* context);
     void* key_board_run_thread();
+    bool input_given = false;
 
     // variable that already moved to the truck
     //movement_str *movement_st; // expected next movement
