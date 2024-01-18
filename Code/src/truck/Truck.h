@@ -2,6 +2,8 @@
 #define TRUCK_H
 
 #pragma once
+#include <winsock2.h>
+#include "../client/CommsModule.h"
 #include "../lib/TruckMetadata.h"
 #include "../truck/controller/controller.h"
 #include "../truck/interface/interface.h"
@@ -12,10 +14,12 @@ class Truck{
 public:
     pthread_t t_controller;
     pthread_t t_interface;
-    pthread_t t_communications;
+    pthread_t t_decryptor;
+    pthread_t t_communication;
+
     TruckMetadata self;
-    //Decryptor truck_decryptor = Decryptor(&self);
     controller truck_controller = controller(0, &self);
+    CommsModule truck_communications = CommsModule(0, 1000);
 
 
     // any other sub systems

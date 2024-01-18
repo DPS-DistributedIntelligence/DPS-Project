@@ -10,165 +10,10 @@ controller::controller(int new_controller_id, TruckMetadata *new_self_truck){
     id = new_controller_id;
     self_truck = new_self_truck;
     self_truck->watchdog = time(nullptr);
-}
+    //TODO: controller initialization
 
-void* controller::controller_run_thread()
-{
-    while(true){
-        cout << "changing high level state" << endl;
-        next_state_computer(self_truck->event_handler); //set next state
-        self_truck->event_handler = ev_any; // reset event handler
-        switch(next_state){
-            case initial:
-                cout << "entering initial state" << endl;
-                cout << " " << endl;
-                self_truck->event_handler = state_initial();
-                break;
-            case waiting:
-                cout << "entering waiting state" << endl;
-                cout << " " << endl;
-                self_truck->event_handler = state_waiting();
-                break;
-            case leader:
-                cout << "entering leader state" << endl;
-                cout << " " << endl;
-                self_truck->event_handler = state_leader();
-                break;
-            case follower:
-                cout << "entering follower state" << endl;
-                cout << " " << endl;
-                self_truck->event_handler = state_follower();
-                break;
-            case system_stop:
-                cout << "entering system stop state" << endl;
-                cout << " " << endl;
-                self_truck->event_handler = state_system_stop();
-                break;
-            default:
-                cout << "Default" << endl;
-                break;
-        }
-    }
-    return 0;
-}
-void* controller::communications_run_thread()
-{
-    //Init constructor for communications
-    Modules::CommsModule communications = Modules::CommsModule(id, 1000);
-    if(communications.initialize(ip_address, port))
-    {
-        cout << "Communications... Initialization failed" << endl;
-    }
-    else
-    {
-        cout << "Communications... Initialization successful" << endl;
-    }
-
-    if(communications.connect_to_Server() != 1)
-    {
-        cout << "Communications... Connecting failed" << endl;
-    }
-    else
-    {
-        cout << "Communications... Connecting successful" << endl;
-    }
-    while(true)
-    {
-        while(!self_truck->pending_send_message.empty())
-        {
-            //pthread_mutex_lock(&mutex);
-            //Adding it to the tx_buffer
-            communications.add_tx_message_to_buffer(self_truck->pending_send_message.front());
-            // Remove the first element from the vector
-            self_truck->pending_send_message.erase(self_truck->pending_send_message.begin());
-            //pthread_mutex_unlock(&mutex);
-        }
-    }
-}
-
-void* controller::key_board_run_thread(){
-    while(true)
-    {
-        if (_kbhit())
-        {
-            char inputChar = _getch();
-            if((inputChar == 'W') | (inputChar == 'w') |
-               (inputChar == 'S') | (inputChar == 's') |
-               (inputChar == 'A') | (inputChar == 'a') |
-               (inputChar == 'D') | (inputChar == 'd') |
-               (inputChar == 'E') | (inputChar == 'e') |
-               (inputChar == 'B') | (inputChar == 'b'))
-            {
-                switch (inputChar) {
-                    case 'W':
-                    case 'w':
-                        if(get_current_speed() > cruiseDriverLimit)
-                        {
-                            set_current_speed(cruiseDriverLimit);
-                        }
-                        else
-                        {
-                            set_current_speed(get_current_speed() + cruiseDriverStep);
-                        }
-                        set_current_direction(MOVE_FORWARD);
-                        break;
-                    case 'S':
-                    case 's':
-                        if(get_current_movement().speed == 0)
-                        {
-                            set_current_direction(MOVE_STOP);
-                        }
-                        else
-                        {
-                            if(get_current_movement().speed < 10)
-                            {
-                                set_current_speed(0);
-                                set_current_direction(MOVE_STOP);
-                            }
-                            else
-                            {
-                                set_current_speed(get_current_speed() - cruiseDriverStep);
-                                set_current_direction(MOVE_FORWARD);
-                            }
-                        }
-                        break;
-                    case 'A':
-                    case 'a':
-                        set_current_direction(MOVE_LEFT);
-                        break;
-                    case 'D':
-                    case 'd':
-                        set_current_direction(MOVE_RIGHT);
-                        break;
-                    case 'E':
-                    case 'e':
-                        set_current_direction(MOVE_EMERGENCY_STOP);
-                        set_current_speed(0);
-                        break;
-                    case 'B':
-                    case 'b':
-                        set_current_direction(MOVE_STOP);
-                        set_current_speed(0);
-                        break;
-                    default:
-                        break;
-                }
-                //pthread_mutex_unlock(&mutex);
-            }
-            else if((inputChar == 'P') | (inputChar == 'p'))
-            {
-                //TODO: break server comms
-            }
-            else
-            {
-                /*
-                 * Do Nothing
-                 */
-            }
-            input_given = true;
-        }
-    }
-    //return nullptr;
+    //subsystem will be further developed after integration is working
+    // this->antiCollisionSystem_class.set_EmergencyStop(varAnticollisionSystem);
 }
 
 // states -> high level states
@@ -176,9 +21,9 @@ event controller::state_initial(){
     current_state = initial;
     if(!initialized){
         cout << "initializing truck controller" << endl;
+        //TODO: initialization
         /* Start the logical clock ticks */
         self_truck->truck_logical_clock.logicalClockTick(); // initialized by the truck not controller.
-        set_truck_ID(1);
     }
     return ev_ready;
 }
@@ -191,8 +36,6 @@ event controller::state_waiting(){
         if (!leader_exist){
             cout << "no leader found!.setting truck role as leader" << endl;
             self_truck->role = LEADER;
-            // If this truck is leader, set ID as leader
-            set_truck_Leader_ID(get_truck_ID());
             return ev_be_leader;
         } else {
             cout << "leader found!.setting truck role as follower" << endl;
@@ -282,13 +125,13 @@ event controller::state_moving(){
         return self_truck->event_handler;
     }
 }
-event controller::move_leader()
-{
+event controller::move_leader(){
     // consider only one iteration ( event will be checked at every iteration by caller)
+
     static movementDirection prev_direction = MOVE_FORWARD;
     static int prev_speed = 0;
 
-    // always check for new leader.done
+    //TODO: always check for new leader.done
     bool leader_found = find_leader();
     if (leader_found){
         cout << "new leader found. truck role will be changed to follower" << endl;
@@ -296,7 +139,7 @@ event controller::move_leader()
         return ev_be_follower;
     }
 
-    // get direction and speed (input from console).done
+    //TODO: get direction and speed (input from console).done
     while(!input_given){
 
     }
@@ -317,19 +160,6 @@ event controller::move_leader()
         {
             cout << "New Direction: " << get_movement_direction_string(this->get_current_direction()) << endl;
             cout << "New Speed: " << this->get_current_speed() << endl;
-
-            movement new_movement = {this->get_current_direction(), this->get_current_speed()};
-
-            //TODO: send message.
-            Message new_message = Message();
-            new_message.setDirection(new_movement.direction);
-            new_message.setSpeed(new_movement.speed);
-            new_message.setSenderId(self_truck->truck_id);
-            //set receiver new_message.setReceiverId();
-            //Check this with Sheikh
-            self_truck->pending_send_message.push_back(new_message);
-            cout << "movement was sent to follower" << endl;
-
             return self_truck->event_handler;
         }
     }
@@ -337,11 +167,24 @@ event controller::move_leader()
     {
         return self_truck->event_handler;
     }
+
+
+    movement new_movement = {this->get_current_direction(), this->get_current_speed()};
+
+    //TODO: send message.
+    Message new_message = Message();
+    new_message.setDirection(new_movement.direction);
+    new_message.setSpeed(new_movement.speed);
+    new_message.setSenderId(self_truck->truck_id);
+    //set receiver new_message.setReceiverId();
+    self_truck->pending_send_message.push_back(new_message);
+    cout << "movement was sent to follower" << endl;
+    return self_truck->event_handler;
 }
 event controller::move_follower(){
     // consider only one iteration ( event will be checked at every iteration by caller)
     movement new_movement;
-    // receive message, encrypt message, move, print movement. done
+    //TODO: receive message, encrypt message, move, print movement. done
     for(auto i = self_truck->movement_leader.begin(); i != self_truck->movement_leader.end(); i++){
         new_movement = *i;
         set_current_movement(new_movement.direction);
@@ -351,7 +194,7 @@ event controller::move_follower(){
         break; // only read the latest one
     }
 
-    // watchdog: check for timeout (no new message received); if true: be leader (use counter) . done
+    //TODO: watchdog: check for timeout (no new message received); if true: be leader (use counter) . done
     if((time(nullptr) - self_truck->watchdog) > WATCHDOG_TIMEOUT_SECONDS){  //no new message within 1 minute
         self_truck->role = LEADER;
         return ev_be_leader;
@@ -407,22 +250,6 @@ truckRole controller::get_current_role()
 }
 void controller::set_current_movement(movementDirection new_movement_direction){
     current_movement.direction = new_movement_direction;
-}
-void controller::set_truck_ID(int varTruckID)
-{
-    self_truck->truck_id = varTruckID;
-}
-int controller::get_truck_ID(void)
-{
-    return self_truck->truck_id;
-}
-void controller::set_truck_Leader_ID(int varTruckID)
-{
-    self_truck->truck_leader_id = varTruckID;
-}
-int controller::get_truck_Leader_ID(void)
-{
-    return self_truck->truck_leader_id;
 }
 
 // methods
@@ -574,13 +401,167 @@ void controller::next_state_computer(event event_received){
 }
 
 ///enum controllerState {initial, waiting, leader, follower, moving, aligning, stop, system_stop};
-void *controller::controller_run(void *context) {
-    return ((controller *)context)->controller_run_thread();
+void* controller::key_board_run_thread(){
+    while(true)
+    {
+        if (_kbhit())
+        {
+            char inputChar = _getch();
+            if((inputChar == 'W') | (inputChar == 'w') |
+               (inputChar == 'S') | (inputChar == 's') |
+               (inputChar == 'A') | (inputChar == 'a') |
+               (inputChar == 'D') | (inputChar == 'd') |
+               (inputChar == 'E') | (inputChar == 'e') |
+               (inputChar == 'B') | (inputChar == 'b'))
+            {
+                //pthread_mutex_lock(&mutex);
+                switch (inputChar) {
+                    case 'W':
+                    case 'w':
+                        if(get_current_speed() > cruiseDriverLimit)
+                        {
+                            set_current_speed(cruiseDriverLimit);
+                        }
+                        else
+                        {
+                            set_current_speed(get_current_speed() + cruiseDriverStep);
+                        }
+                        set_current_direction(MOVE_FORWARD);
+                        break;
+                    case 'S':
+                    case 's':
+                        if(get_current_movement().speed == 0)
+                        {
+                            set_current_direction(MOVE_STOP);
+                        }
+                        else
+                        {
+                            if(get_current_movement().speed < 10)
+                            {
+                                set_current_speed(0);
+                                set_current_direction(MOVE_STOP);
+                            }
+                            else
+                            {
+                                set_current_speed(get_current_speed() - cruiseDriverStep);
+                                set_current_direction(MOVE_FORWARD);
+                            }
+                        }
+                        break;
+                    case 'A':
+                    case 'a':
+                        set_current_direction(MOVE_LEFT);
+                        break;
+                    case 'D':
+                    case 'd':
+                        set_current_direction(MOVE_RIGHT);
+                        break;
+                    case 'E':
+                    case 'e':
+                        set_current_direction(MOVE_EMERGENCY_STOP);
+                        set_current_speed(0);
+                        break;
+                    case 'B':
+                    case 'b':
+                        set_current_direction(MOVE_STOP);
+                        set_current_speed(0);
+                        break;
+                    default:
+                        break;
+                }
+                //pthread_mutex_unlock(&mutex);
+            }
+            else if((inputChar == 'P') | (inputChar == 'p'))
+            {
+                //TODO: break server comms
+            }
+            else
+            {
+                /*
+                 * Do Nothing
+                 */
+            }
+            input_given = true;
+        }
+    }
+    //return nullptr;
 }
-void *controller::communications_run(void *context) {
-    return ((controller *)context)->communications_run_thread();
+void* controller::controller_run_thread()
+{
+    while(true){
+        cout << "changing high level state" << endl;
+        next_state_computer(self_truck->event_handler); //set next state
+        self_truck->event_handler = ev_any; // reset event handler
+        switch(next_state){
+            case initial:
+                cout << "entering initial state" << endl;
+                cout << " " << endl;
+                self_truck->event_handler = state_initial();
+                break;
+            case waiting:
+                cout << "entering waiting state" << endl;
+                cout << " " << endl;
+                self_truck->event_handler = state_waiting();
+                break;
+            case leader:
+                cout << "entering leader state" << endl;
+                cout << " " << endl;
+                self_truck->event_handler = state_leader();
+                break;
+            case follower:
+                cout << "entering follower state" << endl;
+                cout << " " << endl;
+                self_truck->event_handler = state_follower();
+                break;
+            case system_stop:
+                cout << "entering system stop state" << endl;
+                cout << " " << endl;
+                self_truck->event_handler = state_system_stop();
+                break;
+            default:
+                cout << "Default" << endl;
+                break;
+        }
+    }
+    return 0;
 }
-
+void* controller::communications_run_thread()
+{
+    CommsModule local_communications = CommsModule(self_truck->truck_id, 1000);
+    if(local_communications.initialize("127.0.0.1", 8080))
+    {
+        cout << "Communications... Initialization failed" << endl;
+    }
+    else
+    {
+        cout << "Communications... Initialization successful" << endl;
+    }
+    if(local_communications.connect_to_Server() != 1)
+    {
+        cout << "Communications... Connecting failed" << endl;
+    }
+    else
+    {
+        cout << "Communications... Connecting successful" << endl;
+    }
+    while(true)
+    {
+        //pthread_mutex_lock(&mutex);
+        //Adding it to the tx_buffer
+        local_communications.add_tx_message_to_buffer(self_truck->pending_send_message.front());
+        // Remove the first element from the vector
+        self_truck->pending_send_message.erase(self_truck->pending_send_message.begin());
+        //pthread_mutex_unlock(&mutex);
+    }
+}
 void *controller::key_board_run(void* context) {
     return ((controller *)context)->key_board_run_thread();
 }
+void* controller::controller_run(void* context) {
+    return ((controller *)context)->controller_run_thread();
+}
+void* controller::communications_run(void* context)
+{
+    return ((controller *)context)->controller_run_thread();
+}
+
