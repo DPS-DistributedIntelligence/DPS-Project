@@ -1,5 +1,5 @@
 //
-// Created by leand on 16.01.2024.
+// Created by Mykyta on 18.01.2024.
 //
 
 #include "Message.h"
@@ -74,4 +74,13 @@ MovementDirection Message::getDirection() const {
 
 void Message::setDirection(MovementDirection direction) {
     direction = direction;
+}
+
+
+void MessageID::addReceiverId(int id) {
+    receiver_ids.push_back(id);
+}
+
+const std::vector<int>& MessageID::getReceiverIds() const {
+    return receiver_ids;
 }

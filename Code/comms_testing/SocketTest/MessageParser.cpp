@@ -1,5 +1,5 @@
 //
-// Created by leand on 16.01.2024.
+// Created by Mykyta on 18.01.2024.
 //
 
 #include "MessageParser.h"
@@ -57,6 +57,18 @@ string MessageParser::toJSON(const Message& msg) {
     return ss.str();
 }
 
+string MessageParser::toJSONID(const MessageID& messageId) {
+    std::stringstream ss;
+    ss << "{ \"type\": \"MessageID\", \"receiver_ids\": [";
+    const auto& ids = messageId.getReceiverIds();
+    for (size_t i = 0; i < ids.size(); ++i) {
+        ss << ids[i];
+        if (i < ids.size() - 1) ss << ", ";
+    }
+    ss << "] }";
+    return ss.str();
+}
+
 // Deserialize JSON string to Message object
 Message MessageParser::fromJSON(const string& jsonString) {
     Message msg;
@@ -93,4 +105,33 @@ Message MessageParser::fromJSON(const string& jsonString) {
     }
     return msg;
 
+}
+
+
+MessageID MessageParser::fromJSONMessageID(const std::string& jsonString) {
+    MessageID messageId;
+    std::string idListStr = jsonString.substr(jsonString.find("[") + 1);
+    idListStr = idListStr.substr(0, idListStr.find("]"));
+
+    std::istringstream iss(idListStr);
+    std::string idStr;
+    while (std::getline(iss, idStr, ',')) {
+        idStr.erase(std::remove_if(idStr.begin(), idStr.end(), [](unsigned char ch) { return std::isspace(ch); }), idStr.end());
+        if (!idStr.empty()) {
+            messageId.addReceiverId(std::stoi(idStr));
+        }
+    }
+    
+    return messageId;
+}
+
+// Overloaded fromJSON method to handle both Message and MessageID
+std::variant<Message, MessageID> MessageParser::fromJSONVariant(const std::string& jsonString) {
+    // Check the JSON string for a key to determine its type
+    if (jsonString.find("\"type\": \"MessageID\"") != std::string::npos) {
+        return fromJSONMessageID(jsonString);
+    } else {
+        // Assume it's a Message type
+        return fromJSON(jsonString); // This method needs to be implemented
+    }
 }

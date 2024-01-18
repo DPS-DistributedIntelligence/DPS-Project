@@ -1,5 +1,5 @@
 //
-// Created by leand on 16.01.2024.
+// Created by Mykyta on 18.01.2024.
 //
 
 #ifndef SOCKETTEST_MESSAGE_H
@@ -9,6 +9,7 @@
 
 #include <string>
 #include <cstdint>
+#include <vector>
 
 #include "truckRole_e.h"
 #include "MovementDirection.h"
@@ -46,6 +47,21 @@ class Message {
 
         MovementDirection getDirection() const;
         void setDirection(MovementDirection direction);
+};
+
+
+class MessageID {
+private:
+    std::vector<int> receiver_ids;
+
+public:
+    MessageID() = default;
+    void addReceiverId(int id);
+    const std::vector<int>& getReceiverIds() const;
+
+    // These will be implemented in Message.cpp
+    std::string toJSON() const;
+    static MessageID fromJSON(const std::string& jsonString);
 };
 
 
