@@ -42,6 +42,33 @@ MovementDirection MessageParser::stringToDirection(const std::string& directionS
     return MovementDirection::MOVE_STOP; // Assuming MOVE_STOP is your default case
 }
 
+std::string MessageParser::eventToString(event ev) {
+    switch (ev) {
+        case event::ev_any: return "ev_any";
+        case event::ev_stop: return "ev_stop";
+        case event::ev_reset: return "ev_reset";
+        case event::ev_ready: return "ev_ready";
+        case event::ev_be_leader: return "ev_be_leader";
+        case event::ev_be_follower: return "ev_be_follower";
+        case event::ev_leader_found: return "ev_leader_found";
+        case event::ev_no_leader_found: return "ev_no_leader_found";
+        default: return "unknown_event";
+    }
+}
+
+event MessageParser::stringToEvent(const std::string& evStr) {
+    if (evStr == "ev_any") return event::ev_any;
+    if (evStr == "ev_stop") return event::ev_stop;
+    if (evStr == "ev_reset") return event::ev_reset;
+    if (evStr == "ev_ready") return event::ev_ready;
+    if (evStr == "ev_be_leader") return event::ev_be_leader;
+    if (evStr == "ev_be_follower") return event::ev_be_follower;
+    if (evStr == "ev_leader_found") return event::ev_leader_found;
+    if (evStr == "ev_no_leader_found") return event::ev_no_leader_found;
+    // Add any additional handling for unknown or default case
+    return event::ev_any; // or another appropriate default value
+}
+
 // Serialize Message object to JSON string
 string MessageParser::toJSON(const Message& msg) {
     stringstream ss;
@@ -52,6 +79,7 @@ string MessageParser::toJSON(const Message& msg) {
        << "\"controllerSerialNumber_u8\":" << static_cast<int>(msg.getControllerSerialNumber()) << ","
        << "\"speed\":" << msg.getSpeed() << ","
        << "\"direction\":" << directionToString(msg.getDirection()) << ","
+       << "\"event\":" << eventToString(msg.getEvent()) << ","
        << "\"role_e\":\"" << truckRoleToString(msg.getRole()) << "\""
        << "}";
     return ss.str();
@@ -84,23 +112,25 @@ Message MessageParser::fromJSON(const string& jsonString) {
 
         key.erase(remove(key.begin(), key.end(), ' '), key.end());
         value.erase(remove(value.begin(), value.end(), ' '), value.end());
+        value.erase(remove(value.begin(), value.end(), '\"'), value.end());
 
-        if (key.find("receiver_id") != string::npos) {
+        if (key == "\"receiver_id\"") {
             msg.setReceiverId(stoi(value));
-        } else if (key.find("sender_id") != string::npos) {
+        } else if (key == "\"sender_id\"") {
             msg.setSenderId(stoi(value));
-        } else if (key.find("logicalClock_u64") != string::npos) {
+        } else if (key == "\"logicalClock_u64\"") {
             msg.setLogicalClock(stoull(value));
-        } else if (key.find("controllerSerialNumber_u8") != string::npos) {
+        } else if (key == "\"controllerSerialNumber_u8\"") {
             msg.setControllerSerialNumber(static_cast<uint8_t>(stoi(value)));
-        } else if (key.find("role_e") != string::npos) {
-            value.erase(remove(value.begin(), value.end(), '"'), value.end()); // Remove quotes
+        } else if (key == "\"role_e\"") {
             msg.setRole(stringToTruckRole(value));
-        } else if (key.find("speed") != string::npos) {
+        } else if (key == "\"speed\"") {
             msg.setSpeed(stoi(value));
-        } else if (key.find("direction") != string::npos) {
-            value.erase(remove(value.begin(), value.end(), '\"'), value.end()); // Remove quotes
+        } else if (key == "\"direction\"") {
             msg.setDirection(stringToDirection(value));
+        } else if (key == "\"event\"") {
+            // Parsing the event key if present
+            msg.setEvent(stringToEvent(value)); // Ensure Message class has setEvent method to handle this
         }
     }
     return msg;

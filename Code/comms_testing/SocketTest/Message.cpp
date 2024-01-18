@@ -60,6 +60,14 @@ void Message::setRole(truckRole_e role) {
     role_e = role;
 }
 
+event Message::getEvent() const {
+    return event_;
+};
+
+void Message::setEvent(event ev) {
+    event_ = ev;
+}
+
 int Message::getSpeed() const {
     return speed;
 }

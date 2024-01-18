@@ -11,8 +11,23 @@
 #include <cstdint>
 #include <vector>
 
+
+
 #include "truckRole_e.h"
 #include "MovementDirection.h"
+// #include "Event.h"
+
+// remove, don't have Event.h file
+enum class event {
+    ev_any,
+    ev_stop,
+    ev_reset,
+    ev_ready,
+    ev_be_leader,
+    ev_be_follower,
+    ev_leader_found,
+    ev_no_leader_found
+};
 
 class Message {
     private:
@@ -23,6 +38,7 @@ class Message {
         truckRole_e role_e;
         int speed;
         MovementDirection direction;
+        event event_;
     public:
         Message();
 
@@ -47,6 +63,9 @@ class Message {
 
         MovementDirection getDirection() const;
         void setDirection(MovementDirection direction);
+
+        event getEvent() const;
+        void setEvent(event ev);
 };
 
 

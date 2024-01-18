@@ -35,6 +35,10 @@ public:
 
     static MovementDirection stringToDirection(const std::string& directionStr);
 
+    static string eventToString(event ev);
+
+    static event stringToEvent(const std::string& evStr);
+
     // Deserialize a JSON string to a Message object
     static Message fromJSON(const std::string& jsonString);
 
