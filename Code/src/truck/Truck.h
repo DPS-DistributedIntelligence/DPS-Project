@@ -4,8 +4,9 @@
 #pragma once
 #include "../lib/TruckMetadata.h"
 #include "../controller/controller.h"
+#include "../lib/MessageParse.h"
 #include "../interface/interface.h"
-//#include "../communication/CommsModule.h"
+#include "../communication/CommsModule.h"
 #include "../decryptor/decryptor.h"
 #include <pthread.h>
 
@@ -14,7 +15,7 @@ public:
     pthread_t t_controller;
     pthread_t t_interface;
     TruckMetadata self;
-    //CommsModule truck_comms = CommsModule(0,100);
+    CommsModule truck_comms = CommsModule(0,1000);
     Decryptor truck_decryptor = Decryptor(&self);
     controller truck_controller = controller(0, &self);
 
