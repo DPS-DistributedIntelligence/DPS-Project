@@ -3,7 +3,6 @@
 #include <windows.h>
 #include "controller.h"
 #define WATCHDOG_TIMEOUT_SECONDS 60
-using namespace std;
 
 //constructor
 controller::controller(int new_controller_id, TruckMetadata *new_self_truck){
@@ -19,37 +18,37 @@ controller::controller(int new_controller_id, TruckMetadata *new_self_truck){
 void* controller::run_thread()
 {
     while(true){
-        cout << "changing high level state" << endl;
+        std::cout << "changing high level state" << std::endl;
         next_state_computer(self_truck->event_handler); //set next state
         self_truck->event_handler = ev_any; // reset event handler
         switch(next_state){
             case initial:
-                cout << "entering initial state" << endl;
-                cout << " " << endl;
+                std::cout << "entering initial state" << std::endl;
+                std::cout << " " << std::endl;
                 self_truck->event_handler = state_initial();
                 break;
             case waiting:
-                cout << "entering waiting state" << endl;
-                cout << " " << endl;
+                std::cout << "entering waiting state" << std::endl;
+                std::cout << " " << std::endl;
                 self_truck->event_handler = state_waiting();
                 break;
             case leader:
-                cout << "entering leader state" << endl;
-                cout << " " << endl;
+                std::cout << "entering leader state" << std::endl;
+                std::cout << " " << std::endl;
                 self_truck->event_handler = state_leader();
                 break;
             case follower:
-                cout << "entering follower state" << endl;
-                cout << " " << endl;
+                std::cout << "entering follower state" << std::endl;
+                std::cout << " " << std::endl;
                 self_truck->event_handler = state_follower();
                 break;
             case system_stop:
-                cout << "entering system stop state" << endl;
-                cout << " " << endl;
+                std::cout << "entering system stop state" << std::endl;
+                std::cout << " " << std::endl;
                 self_truck->event_handler = state_system_stop();
                 break;
             default:
-                cout << "Default" << endl;
+                std::cout << "Default" << std::endl;
                 break;
         }
     }
@@ -60,7 +59,7 @@ void* controller::run_thread()
 event controller::state_initial(){
     current_state = initial;
     if(!initialized){
-        cout << "initializing truck controller" << endl;
+        std::cout << "initializing truck controller" << std::endl;
         //TODO: initialization
         /* Start the logical clock ticks */
         self_truck->truck_logical_clock.logicalClockTick(); // initialized by the truck not controller.
@@ -70,20 +69,20 @@ event controller::state_initial(){
 event controller::state_waiting(){
     current_state = waiting;
     if(self_truck->role == NOT_SET){
-        cout << "finding leader ..." << endl;
+        std::cout << "finding leader ..." << std::endl;
         bool leader_exist = find_leader();
         // set role
         if (!leader_exist){
-            cout << "no leader found!.setting truck role as leader" << endl;
+            std::cout << "no leader found!.setting truck role as leader" << std::endl;
             self_truck->role = LEADER;
             return ev_be_leader;
         } else {
-            cout << "leader found!.setting truck role as follower" << endl;
+            std::cout << "leader found!.setting truck role as follower" << std::endl;
             self_truck->role = FOLLOWER;
             return ev_be_follower;
         }
     }else{
-        cout << "the truck role is already set" << endl;
+        std::cout << "the truck role is already set" << std::endl;
     }
     return ev_any;
 }
@@ -92,15 +91,15 @@ event controller::state_leader(){
     current_state = leader;
     while(true){
         if (self_truck->event_handler == ev_stop){
-            cout << "stop signal received" << endl;
+            std::cout << "stop signal received" << std::endl;
             return ev_stop;
         }
         else if(self_truck->event_handler == ev_reset){
-            cout << "reset signal received" << endl;
+            std::cout << "reset signal received" << std::endl;
             return ev_reset;
         }
         else if(self_truck->event_handler == ev_leader_found){
-            cout << "new leader found" << endl;
+            std::cout << "new leader found" << std::endl;
             return ev_leader_found;
         }
         switch(next_state_in_leader_state){
@@ -122,15 +121,15 @@ event controller::state_follower(){
     // run follower internal state
     while(true){
         if (self_truck->event_handler == ev_stop){
-            cout << "stop signal received" << endl;
+            std::cout << "stop signal received" << std::endl;
             return ev_stop;
         }
         else if(self_truck->event_handler == ev_reset){
-            cout << "reset signal received" << endl;
+            std::cout << "reset signal received" << std::endl;
             return ev_reset;
         }
         else if(self_truck->event_handler == ev_no_leader_found){
-            cout << "lost leader" << endl;
+            std::cout << "lost leader" << std::endl;
             return ev_no_leader_found;
         }
         switch(next_state_in_follower_state){
@@ -154,7 +153,7 @@ event controller::state_follower(){
 // states -> low level states / internal states
 event controller::state_moving(){
     current_state = moving;
-    cout << "entering moving state" << endl;
+    std::cout << "entering moving state" << std::endl;
     if(self_truck->event_handler != ev_stop || self_truck->event_handler != ev_reset || self_truck->event_handler != ev_leader_found || self_truck->event_handler != ev_no_leader_found){
         if(self_truck->role == LEADER){
             return move_leader();
@@ -174,7 +173,7 @@ event controller::move_leader(){
     //TODO: always check for new leader.done
     bool leader_found = find_leader();
     if (leader_found){
-        cout << "new leader found. truck role will be changed to follower" << endl;
+        std::cout << "new leader found. truck role will be changed to follower" << std::endl;
         self_truck->role = FOLLOWER;
         return ev_be_follower;
     }
@@ -193,13 +192,13 @@ event controller::move_leader(){
 
         if(this->get_current_direction() == MOVE_EMERGENCY_STOP)
         {
-            cout << "Emergency Stop. exiting from leader state" << endl;
+            std::cout << "Emergency Stop. exiting from leader state" << std::endl;
             return ev_stop; // emergency stop -> will exit leader state back to stop
         }
         else
         {
-            cout << "New Direction: " << get_movement_direction_string(this->get_current_direction()) << endl;
-            cout << "New Speed: " << this->get_current_speed() << endl;
+            std::cout << "New Direction: " << get_movement_direction_string(this->get_current_direction()) << std::endl;
+            std::cout << "New Speed: " << this->get_current_speed() << std::endl;
             return self_truck->event_handler;
         }
     }
@@ -218,7 +217,7 @@ event controller::move_leader(){
     new_message.setSenderId(self_truck->truck_id);
     //set receiver new_message.setReceiverId();
     self_truck->pending_send_message.push_back(new_message);
-    cout << "movement was sent to follower" << endl;
+    std::cout << "movement was sent to follower" << std::endl;
     return self_truck->event_handler;
 }
 event controller::move_follower(){
@@ -247,12 +246,12 @@ event controller::state_align(){
     return self_truck->event_handler; // no change
 }
 event controller::state_stop(){
-    cout << "entering stop state" << endl;
+    std::cout << "entering stop state" << std::endl;
     return ev_stop;
 }
 event controller::state_system_stop(){
     current_state = system_stop;
-    cout << "the system will be reset. it take ~5 seconds" << endl;
+    std::cout << "the system will be reset. it take ~5 seconds" << std::endl;
     Sleep(5000);
     return ev_reset; // no change
 }
@@ -301,7 +300,7 @@ bool controller::find_leader() {
     for(auto i = self_truck->surrounding_truck.begin(); i != self_truck->surrounding_truck.end(); i++){
         //TODO: find id with smallest value.done
         if(i->id < self_truck->truck_id){ // find front truck
-            min_id = min(min_id, i->id);// get the closest truck
+            min_id = std::min(min_id, i->id);// get the closest truck
             leader_found = true;
         }else{ // consider as follower
 
@@ -325,7 +324,7 @@ bool controller::find_leader() {
 event controller::move_stop(){
     // consider only one iteration ( event will be check at every iteration by caller)
     //TODO: print indicator. done
-    cout << "move_stop" << endl;
+    std::cout << "move_stop" << std::endl;
     set_current_movement(MOVE_FORWARD);
     set_current_speed(0);
     return self_truck->event_handler;
@@ -333,13 +332,13 @@ event controller::move_stop(){
 event controller::move_emergency_stop(){
     // consider only one iteration ( event will be check at every iteration by caller)
     //TODO: print indicator. done
-    cout << "move_emergency_stop" << endl;
+    std::cout << "move_emergency_stop" << std::endl;
     set_current_movement(MOVE_FORWARD);
     set_current_speed(0);
     return self_truck->event_handler;
 }
 event controller::move(movement new_movement){
-    cout << "new_movement-> direction: " << new_movement.direction << ", speed: "<< new_movement.speed << endl;
+    std::cout << "new_movement-> direction: " << new_movement.direction << ", speed: "<< new_movement.speed << std::endl;
     set_current_movement(new_movement.direction);
     set_current_speed(new_movement.speed);
     return self_truck->event_handler;

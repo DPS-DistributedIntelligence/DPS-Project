@@ -5,7 +5,7 @@ Decryptor::Decryptor(TruckMetadata* self_new_truck) {
 }
 
 void *Decryptor::run_thread() {
-    vector<int> surroundingTruckId;
+    std::vector<int> surroundingTruckId;
 
     while(true){
         for(auto i = self_truck->received_message.begin(); i != self_truck->received_message.end(); ++i){

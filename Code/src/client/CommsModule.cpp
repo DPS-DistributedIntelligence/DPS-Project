@@ -4,17 +4,20 @@
 
 #include "CommsModule.h"
 
-namespace Modules {
-    CommsModule::CommsModule(int id, long timeout_us)
+//namespace Modules {
+    CommsModule::CommsModule(int id, long timeout_us,TruckMetadata* new_self_truck)
     {
         ID = id;
-
         //Initializing the timeout
         timeout.tv_sec = 0;
         timeout.tv_usec = timeout_us;
+
+        self_truck = new_self_truck;
+        self_truck->surrounding_truck_IDs = &client_IDs;
+
     }
 
-    int CommsModule::initialize(const string& ip_address, u_short port) {
+    int CommsModule::initialize(const std::string& ip_address, u_short port) {
 
         //Initializing the winsock.dll
         WSADATA wsaData;
@@ -153,7 +156,7 @@ namespace Modules {
         message.setSenderId(ID);
 
         //Parsing to JSON string and sending
-        string message_str = MessageParser::toJSON(message);
+        std::string message_str = MessageParser::toJSON(message);
         message_str += "\n";
         return send_string(message_str);
     }
@@ -213,7 +216,7 @@ namespace Modules {
         while(true)
         {
             //Preparing a string the message could be stored to
-            string rx_message;
+            std::string rx_message;
 
             int receiving_result = receive_string(rx_message);
 
@@ -229,10 +232,10 @@ namespace Modules {
             }
 
             //Creating a string stream
-            istringstream rx_message_stream(rx_message);
+            std::istringstream rx_message_stream(rx_message);
 
             //Dissecting messages
-            string rx_submessage;
+            std::string rx_submessage;
             while(getline(rx_message_stream, rx_submessage, '\n'))
             {
                 //Parsing message from JSON to Message
@@ -266,7 +269,7 @@ namespace Modules {
 
     //Function for getting the last message of the vector
     //Argument: bool if element should be deleted afterward
-    optional<Message> CommsModule::get_last_rx_message_from_buffer(bool del)
+    std::optional<Message> CommsModule::get_last_rx_message_from_buffer(bool del)
     {
         //Locking mutex
         rx_vec_mutex.lock();
@@ -295,7 +298,7 @@ namespace Modules {
 
     //Function for getting the message of a certain position from the vector
     //Argument: bool if element should be deleted afterwards
-    optional<Message> CommsModule::get_rx_message_by_index_from_buffer(int index, bool del)
+    std::optional<Message> CommsModule::get_rx_message_by_index_from_buffer(int index, bool del)
     {
         //Locking mutex
         rx_vec_mutex.lock();
@@ -337,13 +340,13 @@ namespace Modules {
     }
 
     //Function to get a vector of all connected IDs
-    vector<int> CommsModule::get_connected_client_IDs()
+    std::vector<int> CommsModule::get_connected_client_IDs()
     {
         //Locking the mutex
         client_IDs_vec_mutex.lock();
 
         //Doing a deep copy
-        vector<int> ret_client_IDs(client_IDs);
+        std::vector<int> ret_client_IDs(client_IDs);
 
         //Unlocking the mutex
         client_IDs_vec_mutex.unlock();
@@ -367,14 +370,14 @@ namespace Modules {
         auto rx_message = rx_messages.begin();
         while(rx_message != rx_messages.end())
         {
-            cout << "--------------------------------------------------------" << endl;
-            cout << "Receiver ID: " << rx_message->getReceiverId() << endl;
-            cout << "Sender ID: " << rx_message->getSenderId() << endl;
-            cout << "Logical Clock: " << rx_message->getLogicalClock() << endl;
-            cout << "Controller Serial Number: " << static_cast<int>(rx_message->getControllerSerialNumber()) << endl;
-            cout << "Role: " << MessageParser::truckRoleToString(rx_message->getRole()) << endl;
-            cout << "Speed: " << rx_message->getSpeed() << endl;
-            cout << "--------------------------------------------------------" << endl;
+            std::cout << "--------------------------------------------------------" << std::endl;
+            std::cout << "Receiver ID: " << rx_message->getReceiverId() << std::endl;
+            std::cout << "Sender ID: " << rx_message->getSenderId() << std::endl;
+            std::cout << "Logical Clock: " << rx_message->getLogicalClock() << std::endl;
+            std::cout << "Controller Serial Number: " << static_cast<int>(rx_message->getControllerSerialNumber()) << std::endl;
+            std::cout << "Role: " << MessageParser::truckRoleToString(rx_message->getRole()) << std::endl;
+            std::cout << "Speed: " << rx_message->getSpeed() << std::endl;
+            std::cout << "--------------------------------------------------------" << std::endl;
 
             rx_message = rx_messages.erase(rx_message);
         }
@@ -384,4 +387,4 @@ namespace Modules {
 
         return 1;
     }
-} // Modules
+//} // Modules
