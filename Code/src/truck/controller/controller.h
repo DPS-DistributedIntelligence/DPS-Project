@@ -3,8 +3,8 @@
 #define CONTROLLER_H
 
 #pragma once
-#include "../lib/lib.h"
-#include "../lib/TruckMetadata.h"
+#include "../../lib/lib.h"
+#include "../../lib/TruckMetadata.h"
 #include <ctime>
 
 enum controllerState {initial, waiting, leader, follower, moving, aligning, stop, system_stop};

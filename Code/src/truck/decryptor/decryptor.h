@@ -2,7 +2,7 @@
 #ifndef DECRYPTOR_H
 #define DECRYPTOR_H
 
-#include "../lib/TruckMetadata.h"
+#include "../../lib/TruckMetadata.h"
 
 class Decryptor{
     TruckMetadata* self_truck;

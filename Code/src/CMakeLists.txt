@@ -5,14 +5,14 @@ set(CMAKE_CXX_STANDARD 23)
 
 add_executable(
         Code main.cpp
-        controller/controller.cpp
-        controller/controller.h
+        truck/controller/controller.cpp
+        truck/controller/controller.h
         lib/Message.cpp
-        decryptor/decryptor.cpp
+        truck/decryptor/decryptor.cpp
 
         Truck/Truck.cpp
         lib/LogicalClock.cpp
-        interface/interface.h
-        interface/interface.cpp
+        truck/interface/interface.h
+        truck/interface/interface.cpp
         lib/Movement.cpp
 )
