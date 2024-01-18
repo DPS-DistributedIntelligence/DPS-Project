@@ -3,7 +3,7 @@
 void Truck::run(){
     //TODO: init, initalize logic clock
     // init
-    //pthread_create(&t_communication, NULL, &CommsModule::run, &truck_communication);
+    pthread_create(&t_communication, NULL, &CommsModule::run, &truck_communication);
     pthread_create(&t_controller, NULL, &controller::run, &truck_controller);
     pthread_create(&t_interface, NULL, &controller::key_board_run, &truck_controller);
     pthread_create(&t_decryptor, NULL, &Decryptor::run, &truck_decryptor);

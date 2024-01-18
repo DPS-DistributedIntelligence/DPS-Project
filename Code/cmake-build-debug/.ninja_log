@@ -65,3 +65,7 @@
 8	3110	7273229512486951	CMakeFiles/Code.dir/src/truck/controller/controller.cpp.obj	b2bf9c37bd6387d6
 13	3553	7273229516658825	CMakeFiles/Code.dir/src/truck/Truck.cpp.obj	b31485e4670e9db6
 3555	4202	7273229522479246	Code.exe	a0c2fb0880f84ae1
+19	4799	7273231428800915	CMakeFiles/Code.dir/src/truck/Truck.cpp.obj	b31485e4670e9db6
+10	4899	7273231429766970	CMakeFiles/Code.dir/src/main.cpp.obj	8969e6036ac612ef
+24	5170	7273231432327820	CMakeFiles/Code.dir/src/client/CommsModule.cpp.obj	71ff2661aae5bfd7
+5172	5546	7273231435963878	Code.exe	a0c2fb0880f84ae1

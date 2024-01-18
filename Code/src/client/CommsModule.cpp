@@ -387,4 +387,20 @@
 
         return 1;
     }
+
+
+
+void *CommsModule::run_thread() {
+    {
+        while(true){
+
+        }
+    }
+    return nullptr;
+}
+
+void *CommsModule::run(void *context) {
+    return ((CommsModule *)context)->run_thread();
+    return nullptr;
+}
 //} // Modules

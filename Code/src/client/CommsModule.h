@@ -47,6 +47,8 @@
         std::vector<int> client_IDs;
         TruckMetadata* self_truck;
 
+        static void* run(void* context);
+        void* run_thread();
 
         CommsModule(int id, long timeout, TruckMetadata* self_truck);
         int initialize(const std::string& ip_address, u_short port);
@@ -64,4 +66,4 @@
     };
 //} // Modules
 
-#endif //SOCKETTEST_COMMSMODULE_H
+#endif
