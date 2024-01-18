@@ -13,8 +13,6 @@ class controller{
 public:
     // constructors
     controller(int controller_id, TruckMetadata *new_own_truck_metadata);
-    ~controller();
-    pthread_t thread_controllerID;
 
     // attribute
     int id = -1;
@@ -42,24 +40,22 @@ public:
     event state_stop();
     event state_system_stop();
 
-    // setters and getters
-    void set_current_role(truckRole varTruckRole);
-    truckRole get_current_role();
 
     // setters and getters
-    void set_current_movement(movementDirection new_movement_direction);
+    truckRole get_current_role();
     movement get_current_movement();
-    // getter
+    int get_current_speed();
+    movementDirection get_current_direction();
     controllerState get_current_state();
-    // setters and getters
+
     void set_current_direction(movementDirection new_movement_direction);
-    movementDirection get_current_direction(void);
+    void set_current_role(truckRole varTruckRole);
+    void set_current_movement(movementDirection new_movement_direction);
     void set_current_speed(int new_movement_speed);
-    int get_current_speed(void);
 
     // methods
-    void run();
-    //void* thread_controller(void*);
+    static void *run(void *context);
+    void *run_thread();
     bool find_leader();
     event move_leader();
     event move_follower();
@@ -67,7 +63,10 @@ public:
     event move_emergency_stop();
     event move(movement new_movement);
 
-    static void next_state_computer(event handler);
+    void next_state_computer(event handler);
+
+    void* key_board_run();
+    static void* key_board_run_thread();
 
     // variable that already moved to the truck
     //movement_str *movement_st; // expected next movement

@@ -1,0 +1,15 @@
+# ninja log v5
+844	1270	7272838140346684	Code.exe	3547569f6349bc79
+4	705	7272933154064182	build.ninja	7bf2175e629dfb41
+1	105	0	clean	849ce62d9c46ca00
+207	4170	7272933228934255	CMakeFiles/Code.dir/src/lib/Message.cpp.obj	2b85114489ef5036
+183	4924	7272933236301508	CMakeFiles/Code.dir/src/lib/LogicalClock.cpp.obj	aaef55d518fae879
+127	6794	7272933255473323	CMakeFiles/Code.dir/src/decryptor/decryptor.cpp.obj	4eab48651c874130
+4931	8913	7272933276552754	CMakeFiles/Code.dir/src/lib/MessageParse.cpp.obj	19ec0c3098f78614
+48	13943	7272933327058699	CMakeFiles/Code.dir/src/controller/controller.cpp.obj	a63c3519575ef9bb
+54	677	7272936115071542	CMakeFiles/Code.dir/src/interface/interface.cpp.obj	7e7e5e8f656776c3
+12	594	7272937182290946	CMakeFiles/Code.dir/src/truck/Truck.cpp.obj	f287d4de7f55fec1
+14	615	7272938123757995	CMakeFiles/Code.dir/src/interface/interface.cpp.obj	7e7e5e8f656776c3
+14	557	7272939286698199	CMakeFiles/Code.dir/src/truck/Truck.cpp.obj	f287d4de7f55fec1
+20	605	7272939287113311	CMakeFiles/Code.dir/src/interface/interface.cpp.obj	7e7e5e8f656776c3
+13	559	7272940600342312	CMakeFiles/Code.dir/src/interface/interface.cpp.obj	7e7e5e8f656776c3

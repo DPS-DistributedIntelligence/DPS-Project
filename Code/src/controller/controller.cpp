@@ -1,4 +1,5 @@
 #include <iostream>
+#include <conio.h>
 #include <windows.h>
 #include "controller.h"
 #define WATCHDOG_TIMEOUT_SECONDS 60
@@ -14,18 +15,8 @@ controller::controller(int new_controller_id, TruckMetadata *new_self_truck){
     //subsystem will be further developed after integration is working
     // this->antiCollisionSystem_class.set_EmergencyStop(varAnticollisionSystem);
 }
-controller::~controller()
-{
-    pthread_join(thread_controllerID, nullptr);
-}
-// run the high level state
-/*void controller::run()
-{
-    pthread_create(&thread_controllerID, nullptr, &controller::thread_controller, this);
-}
 
-void* controller::thread_controller(void*)*/
-void controller::run()
+void* controller::run_thread()
 {
     while(true){
         cout << "changing high level state" << endl;
@@ -61,6 +52,7 @@ void controller::run()
                 break;
         }
     }
+    return 0;
 }
 
 // states -> high level states
@@ -187,6 +179,7 @@ event controller::move_leader(){
     }
 
     //TODO: get direction and speed (input from console).done
+
     if((prev_direction != this->get_current_direction()) || (prev_speed != this->get_current_speed()))
     {
         prev_direction = this->get_current_direction();
@@ -442,3 +435,97 @@ void controller::next_state_computer(event event_received){
 }
 
 ///enum controllerState {initial, waiting, leader, follower, moving, aligning, stop, system_stop};
+void *controller::run(void *context) {
+    return ((controller *)context)->run_thread();
+}
+
+
+void* controller::key_board_run_thread(){
+    while(true)
+    {
+        if (_kbhit())
+        {
+            inputChar = _getch();
+            if((inputChar == 'W') | (inputChar == 'w') |
+               (inputChar == 'S') | (inputChar == 's') |
+               (inputChar == 'A') | (inputChar == 'a') |
+               (inputChar == 'D') | (inputChar == 'd') |
+               (inputChar == 'E') | (inputChar == 'e') |
+               (inputChar == 'B') | (inputChar == 'b'))
+            {
+                //pthread_mutex_lock(&mutex);
+                switch (inputChar) {
+                    case 'W':
+                    case 'w':
+                        if(get_current_speed() > cruiseDriverLimit)
+                        {
+                            set_current_speed(cruiseDriverLimit);
+                        }
+                        else
+                        {
+                            set_current_speed(get_current_speed() + cruiseDriverStep);
+                        }
+                        set_current_direction(MOVE_FORWARD);
+                        break;
+                    case 'S':
+                    case 's':
+                        if(get_current_movement().speed == 0)
+                        {
+                            set_current_direction(MOVE_STOP);
+                        }
+                        else
+                        {
+                            if(get_current_movement().speed < 10)
+                            {
+                                set_current_speed(0);
+                                set_current_direction(MOVE_STOP);
+                            }
+                            else
+                            {
+                                set_current_speed(get_current_speed() - cruiseDriverStep);
+                                set_current_direction(MOVE_FORWARD);
+                            }
+                        }
+                        break;
+                    case 'A':
+                    case 'a':
+                        set_current_direction(MOVE_LEFT);
+                        break;
+                    case 'D':
+                    case 'd':
+                        set_current_direction(MOVE_RIGHT);
+                        break;
+                    case 'E':
+                    case 'e':
+                        set_current_direction(MOVE_EMERGENCY_STOP);
+                        set_current_speed(0);
+                        break;
+                    case 'B':
+                    case 'b':
+                        set_current_direction(MOVE_STOP);
+                        set_current_speed(0);
+                        break;
+                    default:
+                        break;
+                }
+                //pthread_mutex_unlock(&mutex);
+            }
+            else if((inputChar == 'P') | (inputChar == 'p'))
+            {
+                //TODO: break server comms
+            }
+            else
+            {
+                /*
+                 * Do Nothing
+                 */
+            }
+        }
+    }
+    //return nullptr;
+}
+
+void *controller::key_board_run(void* context) {
+    return ((controller *)context)->key_board_run_thread();
+    return nullptr;
+}

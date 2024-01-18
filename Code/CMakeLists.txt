@@ -3,13 +3,14 @@ project(Code)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(
-        Code main.cpp
-        truck/controller/controller.cpp
-        lib/Message.cpp
-        decryptor/decryptor.cpp
-        Truck/Truck.cpp
-        lib/LogicalClock.cpp
-        truck/interface/interface.cpp
-        truck/interface/interface.h
+add_executable( Code
+        src/main.cpp
+        src/controller/controller.cpp
+        src/lib/Message.cpp
+        src/decryptor/decryptor.cpp
+        src/Truck/Truck.cpp
+        src/lib/LogicalClock.cpp
+        src/interface/interface.cpp
+        src/interface/interface.h
+        src/lib/MessageParse.cpp
 )
