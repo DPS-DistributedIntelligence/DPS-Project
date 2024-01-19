@@ -26,6 +26,9 @@ public:
     bool initialized = false;
 
 
+    pthread_mutex_t input_mutex;
+
+
     // parts
     TruckMetadata *self_truck{};
 

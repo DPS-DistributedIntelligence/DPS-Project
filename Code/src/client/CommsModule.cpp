@@ -15,7 +15,7 @@
         self_truck = new_self_truck;
         self_truck->truck_id = ID;
         self_truck->surrounding_truck_IDs = &client_IDs;
-        self_truck->client_IDs_vec_mutex_ = &client_IDs_vec_mutex;
+        //self_truck->client_IDs_vec_mutex_ = &client_IDs_vec_mutex;
 
     }
 

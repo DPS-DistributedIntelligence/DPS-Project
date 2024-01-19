@@ -9,6 +9,7 @@ controller::controller(int new_controller_id, TruckMetadata *new_self_truck){
     id = new_controller_id;
     self_truck = new_self_truck;
     self_truck->watchdog = time(nullptr);
+    input_mutex = PTHREAD_MUTEX_INITIALIZER;
     //TODO: controller initialization
 
     //subsystem will be further developed after integration is working
@@ -164,13 +165,17 @@ event controller::state_moving(){
         return self_truck->event_handler;
     }
 }
+
 event controller::move_leader(){
     // consider only one iteration ( event will be checked at every iteration by caller)
+
+    std::cout << "entering moving > leader" << std::endl;
 
     static movementDirection prev_direction = MOVE_FORWARD;
     static int prev_speed = 0;
 
     //TODO: always check for new leader.done
+    std::cout << "looking for new leader" << std::endl;
     bool leader_found = find_leader();
     if (leader_found){
         std::cout << "new leader found. truck role will be changed to follower" << std::endl;
@@ -179,10 +184,17 @@ event controller::move_leader(){
     }
 
     //TODO: get direction and speed (input from console).done
-    while(!input_given){
+    std::cout << "reading driver input" << std::endl;
+    while(true){
+        pthread_mutex_lock(&input_mutex);
+        if(input_given){
+            input_given = false;
+            pthread_mutex_unlock(&input_mutex);
+            break;
+        }
+        pthread_mutex_unlock(&input_mutex);
 
     }
-    input_given = false;
     if((prev_direction != this->get_current_direction()) || (prev_speed != this->get_current_speed()))
     {
         prev_direction = this->get_current_direction();
@@ -195,7 +207,7 @@ event controller::move_leader(){
             //TODO: send message.
             Message new_message = Message();
             new_message.setEvent(ev_stop);
-            //send_message_to_follower(new_message);
+            send_message_to_follower(new_message);
 
 
             std::cout << "Emergency Stop. exiting from leader state" << std::endl;
@@ -215,9 +227,7 @@ event controller::move_leader(){
             new_message.setDirection(new_movement.direction);
             new_message.setSpeed(new_movement.speed);
             new_message.setEvent(ev_any);
-            //send_message_to_follower(new_message);
-
-            return self_truck->event_handler;
+            send_message_to_follower(new_message);
 
             return self_truck->event_handler;
         }
@@ -232,16 +242,18 @@ event controller::move_follower(){
     // consider only one iteration ( event will be checked at every iteration by caller)
     movement new_movement;
     //TODO: receive message, encrypt message, move, print movement. done
-    self_truck->movement_leader_vec_mutex.lock();
+
+    pthread_mutex_lock(&self_truck->movement_leader_vec_mutex);
     for(auto i = self_truck->movement_leader.begin(); i != self_truck->movement_leader.end(); i++){
         new_movement = *i;
         set_current_movement(new_movement.direction);
         set_current_speed(new_movement.speed);
         self_truck->watchdog = time(nullptr); // reset watchdog
         move(new_movement);
+
         break; // only read the latest one
     }
-    self_truck->movement_leader_vec_mutex.unlock();
+    pthread_mutex_unlock(&self_truck->movement_leader_vec_mutex);
 
     //TODO: watchdog: check for timeout (no new message received); if true: be leader (use counter) . done
     if((time(nullptr) - self_truck->watchdog) > WATCHDOG_TIMEOUT_SECONDS){  //no new message within 1 minute
@@ -306,30 +318,34 @@ bool controller::find_leader() {
     bool leader_found = false;
     int leader_id = -1;
     int min_id = 10000;
-    self_truck->client_IDs_vec_mutex_->lock();
-    for(auto i = self_truck->surrounding_truck.begin(); i != self_truck->surrounding_truck.end(); i++){
+
+    std::cout << "searching for new leader" << std::endl;
+    pthread_mutex_lock(self_truck->client_IDs_vec_mutex);
+    for(auto i = self_truck->surrounding_truck_IDs->begin(); i != self_truck->surrounding_truck_IDs->end(); i++){
         //TODO: find id with smallest value.done
-        if(i->id < self_truck->truck_id){ // find front truck
-            min_id = std::min(min_id, i->id);// get the closest truck
+        if(*i < self_truck->truck_id){ // find front truck
+            min_id = std::min(min_id, *i);// get the closest truck
             leader_found = true;
         }else{ // consider as follower
-
         }
     }
 
     if(leader_found){
         // TODO: get leader id; done
-        for(auto i = self_truck->surrounding_truck.begin(); i != self_truck->surrounding_truck.end(); i++){
-            if(i->id == min_id) {
-                leader_id = i->id;
+        for(auto i = self_truck->surrounding_truck_IDs->begin(); i != self_truck->surrounding_truck_IDs->end(); i++){
+            if(*i == min_id) {
+                leader_id = *i;
             }
         }
         self_truck->truck_leader_id = leader_id;
+
+        pthread_mutex_unlock(self_truck->client_IDs_vec_mutex);
         return !(min_id == 10000 && leader_found); // return false if something went wrong
     }else{
+
+        pthread_mutex_unlock(self_truck->client_IDs_vec_mutex);
         return false;
     }
-    self_truck->client_IDs_vec_mutex_->unlock();
 
 }
 event controller::move_stop(){
@@ -497,6 +513,9 @@ void* controller::key_board_run_thread(){
         if (_kbhit())
         {
             char inputChar = _getch();
+            while(_kbhit()){
+                char unused = _getch();
+            }
             if((inputChar == 'W') | (inputChar == 'w') |
                (inputChar == 'S') | (inputChar == 's') |
                (inputChar == 'A') | (inputChar == 'a') |
@@ -571,7 +590,13 @@ void* controller::key_board_run_thread(){
                  * Do Nothing
                  */
             }
+
+            pthread_mutex_lock(&input_mutex);
             input_given = true;
+            pthread_mutex_unlock(&input_mutex);
+            std::cout << " input received" << std::endl;
+            std::cout << input_given << std::endl;
+
         }
     }
     //return nullptr;
@@ -584,17 +609,20 @@ void *controller::key_board_run(void* context) {
 }
 
 void controller::send_message_to_follower(Message message) {
+    std::cout << "compiling message ... " << std::endl;
     message.setSenderId(self_truck->truck_id);
-    self_truck->client_IDs_vec_mutex_->lock();
+
+    pthread_mutex_lock(self_truck->client_IDs_vec_mutex);
     for(auto i = self_truck->surrounding_truck_IDs->begin(); i != self_truck->surrounding_truck_IDs->end(); i++){
         if(*i != self_truck->truck_id){
             message.setReceiverId(*i);
-            self_truck->send_messsage_vector_guard.lock();
+
+            pthread_mutex_lock(&self_truck->send_message_vector_mutex);
             self_truck->pending_send_message.push_back(message);
-            self_truck->send_messsage_vector_guard.unlock();
+            pthread_mutex_unlock(&self_truck->send_message_vector_mutex);
         }
     }
-    self_truck->client_IDs_vec_mutex_->unlock();
+    pthread_mutex_unlock(self_truck->client_IDs_vec_mutex);
 
     std::cout << "movement was sent to follower" << std::endl;
 

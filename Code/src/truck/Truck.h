@@ -12,6 +12,8 @@
 
 class Truck{
 public:
+    pthread_mutex_t dummy_client_IDs_vec_mutex;
+
     pthread_t t_controller;
     pthread_t t_interface;
     pthread_t t_decryptor;
