@@ -49,10 +49,10 @@ public:
         void setRole(truckRole role);
 
         int getSpeed();
-        void setSpeed(int speed);
+        void setSpeed(int varSpeed);
 
         movementDirection getDirection() const;
-        void setDirection(movementDirection direction);
+        void setDirection(movementDirection varDirection);
 };
 
 

@@ -64,16 +64,16 @@ int Message::getSpeed() {
     return speed;
 }
 
-void Message::setSpeed(int speed) {
-    speed = speed;
+void Message::setSpeed(int varSpeed) {
+    speed = varSpeed;
 }
 
 movementDirection Message::getDirection() const {
     return direction;
 }
 
-void Message::setDirection(movementDirection direction) {
-    direction = direction;
+void Message::setDirection(movementDirection varDirection) {
+    direction = varDirection;
 }
 
 event Message::getEvent() const {
