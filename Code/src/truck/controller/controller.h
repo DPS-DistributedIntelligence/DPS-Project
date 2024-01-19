@@ -66,6 +66,8 @@ public:
     event move_emergency_stop();
     event move(movement new_movement);
 
+    void send_message_to_follower(Message new_essage);
+
     void next_state_computer(event handler);
 
 

@@ -192,9 +192,14 @@ event controller::move_leader(){
 
         if(this->get_current_direction() == MOVE_EMERGENCY_STOP)
         {
+            //TODO: send message.
+            Message new_message = Message();
+            new_message.setEvent(ev_stop);
+            //send_message_to_follower(new_message);
+
+
             std::cout << "Emergency Stop. exiting from leader state" << std::endl;
             return ev_stop; // emergency stop -> will exit leader state back to stop
-            //TODO: send message.
 
         }
         else
@@ -209,14 +214,9 @@ event controller::move_leader(){
             Message new_message = Message();
             new_message.setDirection(new_movement.direction);
             new_message.setSpeed(new_movement.speed);
-            new_message.setSenderId(self_truck->truck_id);
-            //set receiver new_message.setReceiverId();
+            new_message.setEvent(ev_any);
+            //send_message_to_follower(new_message);
 
-            self_truck->send_messsage_vector_guard.lock();
-            self_truck->pending_send_message.push_back(new_message);
-            self_truck->send_messsage_vector_guard.unlock();
-
-            std::cout << "movement was sent to follower" << std::endl;
             return self_truck->event_handler;
 
             return self_truck->event_handler;
@@ -581,4 +581,21 @@ void *controller::run(void* context) {
 }
 void *controller::key_board_run(void* context) {
     return ((controller *)context)->key_board_run_thread();
+}
+
+void controller::send_message_to_follower(Message message) {
+    message.setSenderId(self_truck->truck_id);
+    self_truck->client_IDs_vec_mutex_->lock();
+    for(auto i = self_truck->surrounding_truck_IDs->begin(); i != self_truck->surrounding_truck_IDs->end(); i++){
+        if(*i != self_truck->truck_id){
+            message.setReceiverId(*i);
+            self_truck->send_messsage_vector_guard.lock();
+            self_truck->pending_send_message.push_back(message);
+            self_truck->send_messsage_vector_guard.unlock();
+        }
+    }
+    self_truck->client_IDs_vec_mutex_->unlock();
+
+    std::cout << "movement was sent to follower" << std::endl;
+
 }
