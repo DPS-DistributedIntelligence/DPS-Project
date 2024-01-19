@@ -13,7 +13,7 @@ int main() {
     //std::cout << duration <<endl;
 
 
-    Truck truck1 = Truck(1);
+    Truck truck1 = Truck(6);
     truck1.run();
     return 0;
 }

@@ -207,16 +207,7 @@ event controller::move_leader(){
             std::cout << "New Speed: " << this->get_current_speed() << std::endl;
 
 
-            movement new_movement = {this->get_current_direction(), this->get_current_speed()};
-
-            //TODO: send message.
-            Message new_message = Message();
-            new_message.setDirection(new_movement.direction);
-            new_message.setSpeed(new_movement.speed);
-            new_message.setEvent(ev_any);
-            //send_message_to_follower(new_message);
-
-            return self_truck->event_handler;
+            self_truck->truckMovement = {this->get_current_direction(), this->get_current_speed()};
 
             return self_truck->event_handler;
         }

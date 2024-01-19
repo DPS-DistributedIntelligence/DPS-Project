@@ -25,7 +25,7 @@ public:
     static truckRole stringToTruckRole(const std::string& roleStr);
 
     // Serialize a Message object to a JSON string
-    static std::string toJSON(const Message& msg);
+    static std::string toJSON(Message msg);
 
     static std::string directionToString(movementDirection direction);
 

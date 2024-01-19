@@ -60,7 +60,7 @@ void Message::setRole(truckRole role) {
     role_e = role;
 }
 
-int Message::getSpeed() const {
+int Message::getSpeed() {
     return speed;
 }
 

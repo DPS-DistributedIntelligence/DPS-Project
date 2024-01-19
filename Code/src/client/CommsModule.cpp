@@ -442,6 +442,9 @@ void *CommsModule::run_thread() {
             Message msg;
             msg.setReceiverId(self_truck->truck_id);
             msg.setLogicalClock(self_truck->truck_logical_clock.get_logicalClock());
+            msg.setRole(self_truck->role);
+            msg.setSpeed((uint8_t)(self_truck->truckMovement.speed));
+            msg.setDirection(self_truck->truckMovement.direction);
             add_tx_message_to_buffer(msg);
             send_txBuffer();
 

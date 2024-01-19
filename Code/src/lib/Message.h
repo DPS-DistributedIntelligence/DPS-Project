@@ -48,7 +48,7 @@ public:
         truckRole getRole() const;
         void setRole(truckRole role);
 
-        int getSpeed() const;
+        int getSpeed();
         void setSpeed(int speed);
 
         movementDirection getDirection() const;

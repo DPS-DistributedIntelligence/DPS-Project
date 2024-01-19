@@ -16,6 +16,7 @@ typedef struct TruckMetadata
     int truck_id = -1;
     truckRole role = NOT_SET;
     logicalClock truck_logical_clock;
+    movement truckMovement;
     int truck_leader_id = -1;
     event event_handler = ev_any;
 

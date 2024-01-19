@@ -43,13 +43,12 @@ movementDirection MessageParser::stringToDirection(const std::string& directionS
 }
 
 // Serialize Message object to JSON string
-std::string MessageParser::toJSON(const Message& msg) {
+std::string MessageParser::toJSON(Message msg) {
     std::stringstream ss;
     ss << "{"
        << "\"receiver_id\":" << msg.getReceiverId() << ","
        << "\"sender_id\":" << msg.getSenderId() << ","
        << "\"logicalClock_u64\":" << msg.getLogicalClock() << ","
-       << "\"controllerSerialNumber_u8\":" << static_cast<int>(msg.getControllerSerialNumber()) << ","
        << "\"speed\":" << msg.getSpeed() << ","
        << "\"direction\":" << directionToString(msg.getDirection()) << ","
        << "\"role_e\":\"" << truckRoleToString(msg.getRole()) << "\""
@@ -79,13 +78,11 @@ Message MessageParser::fromJSON(const std::string& jsonString) {
             msg.setSenderId(stoi(value));
         } else if (key.find("logicalClock_u64") != std::string::npos) {
             msg.setLogicalClock(stoull(value));
-        } else if (key.find("controllerSerialNumber_u8") != std::string::npos) {
-            msg.setControllerSerialNumber(static_cast<uint8_t>(stoi(value)));
+        } else if (key.find("speed") != std::string::npos) {
+            msg.setSpeed(stoi(value));
         } else if (key.find("role_e") != std::string::npos) {
             value.erase(remove(value.begin(), value.end(), '"'), value.end()); // Remove quotes
             msg.setRole(stringToTruckRole(value));
-        } else if (key.find("speed") != std::string::npos) {
-            msg.setSpeed(stoi(value));
         } else if (key.find("direction") != std::string::npos) {
             value.erase(remove(value.begin(), value.end(), '\"'), value.end()); // Remove quotes
             msg.setDirection(stringToDirection(value));
