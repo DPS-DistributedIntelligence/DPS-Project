@@ -210,14 +210,14 @@ event controller::move_leader(){
             movement new_movement = {this->get_current_direction(), this->get_current_speed()};
 
             //TODO: send message.
-            Message new_message = Message();
-            new_message.setDirection(new_movement.direction);
-            new_message.setSpeed(new_movement.speed);
-            new_message.setEvent(ev_any);
-            //send_message_to_follower(new_message);
-
-            return self_truck->event_handler;
-
+            if(get_current_speed() > 10)
+            {
+                self_truck->truck_message = Message();
+                self_truck->truck_message.setReceiverId(self_truck->truck_id);
+                self_truck->truck_message.setLogicalClock(self_truck->truck_logical_clock.get_logicalClock());
+                self_truck->truck_message.setDirection(new_movement.direction);
+                self_truck->truck_message.setSpeed(new_movement.speed);
+            }
             return self_truck->event_handler;
         }
     }

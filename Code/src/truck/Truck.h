@@ -12,15 +12,18 @@
 
 class Truck{
 public:
+    explicit Truck(int varTruckId);
+
+    int truckID;
     pthread_t t_controller;
     pthread_t t_interface;
     pthread_t t_decryptor;
     pthread_t t_communication;
 
     TruckMetadata self;
-    controller truck_controller = controller(0, &self);
+    controller truck_controller = controller(truckID, &self);
     Decryptor truck_decryptor = Decryptor(&self);
-    CommsModule truck_communication = CommsModule(0,100,&self);
+    CommsModule truck_communication = CommsModule(truckID,100,&self);
 
 
     // any other sub systems

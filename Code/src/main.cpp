@@ -4,16 +4,12 @@
 #include "Truck/Truck.h"
 
 int main() {
-    //std::cout << "Hello, World!" << std::endl;
+    int mainTruckID;
 
+    std::cout << "Enter truck ID... ";
+    std::cin >> mainTruckID;
 
-    //time_t  start = time(nullptr);
-    //Sleep(1000);
-    //time_t  duration = time(nullptr) - start;
-    //std::cout << duration <<endl;
-
-
-    Truck truck1 = Truck();
+    Truck truck1 = Truck(mainTruckID);
     truck1.run();
     return 0;
 }

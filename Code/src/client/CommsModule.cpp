@@ -439,13 +439,10 @@ void *CommsModule::run_thread() {
 
         while(true){
 
-            Message msg;
-            msg.setReceiverId(self_truck->truck_id);
-            msg.setLogicalClock(self_truck->truck_logical_clock.get_logicalClock());
-            add_tx_message_to_buffer(msg);
+            add_tx_message_to_buffer(self_truck->truck_message);
             send_txBuffer();
 
-            receive_rxBuffer();
+            //receive_rxBuffer();
             //print_rx_messages_from_buffer();
 
 

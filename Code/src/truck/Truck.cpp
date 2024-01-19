@@ -16,6 +16,11 @@ void Truck::run(){
     //start communication -> new thread
 }
 
+Truck::Truck(int varTruckId) : truckID(varTruckId)
+{
+    truckID = varTruckId;
+}
+
 
 
 
