@@ -394,6 +394,17 @@ void *CommsModule::run_thread() {
     {
         while(true){
 
+            //TODO:send message from this vector and pop when sent
+            self_truck->pending_send_message; //vector <Message>
+            self_truck->send_messsage_vector_guard; //the mutex
+
+            //TODO: update this message vector
+
+            self_truck->received_message; //vector <Message>
+            self_truck->received_message_vector_guard; //the mutex
+
+            //TODO: always update client_IDs vector
+
         }
     }
     return nullptr;
