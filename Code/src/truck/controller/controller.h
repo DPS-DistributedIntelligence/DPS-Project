@@ -13,6 +13,7 @@ class controller{
 public:
     // constructors
     controller(int controller_id, TruckMetadata *new_own_truck_metadata);
+    controller();
 
     // attribute
     int id = -1;
@@ -75,8 +76,8 @@ public:
 
 
 
-    const int cruiseDriverStep = 10;
-    const int cruiseDriverLimit = 210;
+    int cruiseDriverStep = 10;
+    int cruiseDriverLimit = 210;
 
     bool input_given = false;
 

@@ -51,6 +51,8 @@
         void* run_thread();
 
         CommsModule(int id, long timeout, TruckMetadata* self_truck);
+
+        CommsModule();
         int initialize(const std::string& ip_address, u_short port);
         int connect_to_Server();
         int send_txBuffer();

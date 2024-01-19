@@ -9,7 +9,7 @@ void *Decryptor::run_thread() {
 
     while(true){
         pthread_mutex_lock(&self_truck->received_message_vector_mutex);
-        for(auto i = self_truck->received_message.begin(); i != self_truck->received_message.end(); ++i){
+        for(auto i = self_truck->received_message.rbegin(); i != self_truck->received_message.rend(); ++i){
             // follower only interest in new event and new movement from leader
             if(self_truck->role == FOLLOWER){
                 if(i->getSenderId() == self_truck->truck_leader_id){
@@ -17,6 +17,7 @@ void *Decryptor::run_thread() {
                     int speed_received = i->getSpeed();
                     movementDirection direction_received = i->getDirection();
                     if (event_received != ev_any){
+                        std::cout << "specific event received" <<std::endl;
                         self_truck->event_handler = event_received;
                         self_truck->received_message.pop_back();
                     }else{
@@ -46,6 +47,10 @@ void *Decryptor::run_thread() {
 
 void *Decryptor::run(void *context) {
     return ((Decryptor *)context)->run_thread();
+}
+
+Decryptor::Decryptor() {
+
 }
 
 

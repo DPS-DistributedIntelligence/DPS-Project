@@ -39,10 +39,6 @@ typedef struct TruckMetadata
 
     // address to any other subsystems
 
-    // will be removed soon and replaced with pthread_mutex_t
-    std::mutex send_messsage_vector_guard;
-    std::mutex received_message_vector_guard;
-
 }TruckMetadata;
 
 #endif

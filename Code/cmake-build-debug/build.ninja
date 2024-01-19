@@ -51,7 +51,7 @@ build cmake_object_order_depends_target_Code: phony || CMakeFiles/Code.dir
 
 build CMakeFiles/Code.dir/src/main.cpp.obj: CXX_COMPILER__Code_unscanned_Debug D$:/OneDrive/FH$ Dortmund/Sem1/Distributed$ and$ Parallel$ Systems/Projects/DPS-Project/Code/src/main.cpp || cmake_object_order_depends_target_Code
   DEP_FILE = CMakeFiles\Code.dir\src\main.cpp.obj.d
-  FLAGS = -g -std=gnu++23 -fdiagnostics-color=always
+  FLAGS = -g -std=gnu++1z -fdiagnostics-color=always
   OBJECT_DIR = CMakeFiles\Code.dir
   OBJECT_FILE_DIR = CMakeFiles\Code.dir\src
   TARGET_COMPILE_PDB = CMakeFiles\Code.dir\
@@ -59,7 +59,7 @@ build CMakeFiles/Code.dir/src/main.cpp.obj: CXX_COMPILER__Code_unscanned_Debug D
 
 build CMakeFiles/Code.dir/src/truck/controller/controller.cpp.obj: CXX_COMPILER__Code_unscanned_Debug D$:/OneDrive/FH$ Dortmund/Sem1/Distributed$ and$ Parallel$ Systems/Projects/DPS-Project/Code/src/truck/controller/controller.cpp || cmake_object_order_depends_target_Code
   DEP_FILE = CMakeFiles\Code.dir\src\truck\controller\controller.cpp.obj.d
-  FLAGS = -g -std=gnu++23 -fdiagnostics-color=always
+  FLAGS = -g -std=gnu++1z -fdiagnostics-color=always
   OBJECT_DIR = CMakeFiles\Code.dir
   OBJECT_FILE_DIR = CMakeFiles\Code.dir\src\truck\controller
   TARGET_COMPILE_PDB = CMakeFiles\Code.dir\
@@ -67,7 +67,7 @@ build CMakeFiles/Code.dir/src/truck/controller/controller.cpp.obj: CXX_COMPILER_
 
 build CMakeFiles/Code.dir/src/lib/Message.cpp.obj: CXX_COMPILER__Code_unscanned_Debug D$:/OneDrive/FH$ Dortmund/Sem1/Distributed$ and$ Parallel$ Systems/Projects/DPS-Project/Code/src/lib/Message.cpp || cmake_object_order_depends_target_Code
   DEP_FILE = CMakeFiles\Code.dir\src\lib\Message.cpp.obj.d
-  FLAGS = -g -std=gnu++23 -fdiagnostics-color=always
+  FLAGS = -g -std=gnu++1z -fdiagnostics-color=always
   OBJECT_DIR = CMakeFiles\Code.dir
   OBJECT_FILE_DIR = CMakeFiles\Code.dir\src\lib
   TARGET_COMPILE_PDB = CMakeFiles\Code.dir\
@@ -75,7 +75,7 @@ build CMakeFiles/Code.dir/src/lib/Message.cpp.obj: CXX_COMPILER__Code_unscanned_
 
 build CMakeFiles/Code.dir/src/truck/decryptor/decryptor.cpp.obj: CXX_COMPILER__Code_unscanned_Debug D$:/OneDrive/FH$ Dortmund/Sem1/Distributed$ and$ Parallel$ Systems/Projects/DPS-Project/Code/src/truck/decryptor/decryptor.cpp || cmake_object_order_depends_target_Code
   DEP_FILE = CMakeFiles\Code.dir\src\truck\decryptor\decryptor.cpp.obj.d
-  FLAGS = -g -std=gnu++23 -fdiagnostics-color=always
+  FLAGS = -g -std=gnu++1z -fdiagnostics-color=always
   OBJECT_DIR = CMakeFiles\Code.dir
   OBJECT_FILE_DIR = CMakeFiles\Code.dir\src\truck\decryptor
   TARGET_COMPILE_PDB = CMakeFiles\Code.dir\
@@ -83,7 +83,7 @@ build CMakeFiles/Code.dir/src/truck/decryptor/decryptor.cpp.obj: CXX_COMPILER__C
 
 build CMakeFiles/Code.dir/src/truck/Truck.cpp.obj: CXX_COMPILER__Code_unscanned_Debug D$:/OneDrive/FH$ Dortmund/Sem1/Distributed$ and$ Parallel$ Systems/Projects/DPS-Project/Code/src/truck/Truck.cpp || cmake_object_order_depends_target_Code
   DEP_FILE = CMakeFiles\Code.dir\src\truck\Truck.cpp.obj.d
-  FLAGS = -g -std=gnu++23 -fdiagnostics-color=always
+  FLAGS = -g -std=gnu++1z -fdiagnostics-color=always
   OBJECT_DIR = CMakeFiles\Code.dir
   OBJECT_FILE_DIR = CMakeFiles\Code.dir\src\truck
   TARGET_COMPILE_PDB = CMakeFiles\Code.dir\
@@ -91,7 +91,7 @@ build CMakeFiles/Code.dir/src/truck/Truck.cpp.obj: CXX_COMPILER__Code_unscanned_
 
 build CMakeFiles/Code.dir/src/lib/LogicalClock.cpp.obj: CXX_COMPILER__Code_unscanned_Debug D$:/OneDrive/FH$ Dortmund/Sem1/Distributed$ and$ Parallel$ Systems/Projects/DPS-Project/Code/src/lib/LogicalClock.cpp || cmake_object_order_depends_target_Code
   DEP_FILE = CMakeFiles\Code.dir\src\lib\LogicalClock.cpp.obj.d
-  FLAGS = -g -std=gnu++23 -fdiagnostics-color=always
+  FLAGS = -g -std=gnu++1z -fdiagnostics-color=always
   OBJECT_DIR = CMakeFiles\Code.dir
   OBJECT_FILE_DIR = CMakeFiles\Code.dir\src\lib
   TARGET_COMPILE_PDB = CMakeFiles\Code.dir\
@@ -99,7 +99,7 @@ build CMakeFiles/Code.dir/src/lib/LogicalClock.cpp.obj: CXX_COMPILER__Code_unsca
 
 build CMakeFiles/Code.dir/src/truck/interface/interface.cpp.obj: CXX_COMPILER__Code_unscanned_Debug D$:/OneDrive/FH$ Dortmund/Sem1/Distributed$ and$ Parallel$ Systems/Projects/DPS-Project/Code/src/truck/interface/interface.cpp || cmake_object_order_depends_target_Code
   DEP_FILE = CMakeFiles\Code.dir\src\truck\interface\interface.cpp.obj.d
-  FLAGS = -g -std=gnu++23 -fdiagnostics-color=always
+  FLAGS = -g -std=gnu++1z -fdiagnostics-color=always
   OBJECT_DIR = CMakeFiles\Code.dir
   OBJECT_FILE_DIR = CMakeFiles\Code.dir\src\truck\interface
   TARGET_COMPILE_PDB = CMakeFiles\Code.dir\
@@ -107,7 +107,7 @@ build CMakeFiles/Code.dir/src/truck/interface/interface.cpp.obj: CXX_COMPILER__C
 
 build CMakeFiles/Code.dir/src/lib/MessageParser.cpp.obj: CXX_COMPILER__Code_unscanned_Debug D$:/OneDrive/FH$ Dortmund/Sem1/Distributed$ and$ Parallel$ Systems/Projects/DPS-Project/Code/src/lib/MessageParser.cpp || cmake_object_order_depends_target_Code
   DEP_FILE = CMakeFiles\Code.dir\src\lib\MessageParser.cpp.obj.d
-  FLAGS = -g -std=gnu++23 -fdiagnostics-color=always
+  FLAGS = -g -std=gnu++1z -fdiagnostics-color=always
   OBJECT_DIR = CMakeFiles\Code.dir
   OBJECT_FILE_DIR = CMakeFiles\Code.dir\src\lib
   TARGET_COMPILE_PDB = CMakeFiles\Code.dir\
@@ -115,7 +115,7 @@ build CMakeFiles/Code.dir/src/lib/MessageParser.cpp.obj: CXX_COMPILER__Code_unsc
 
 build CMakeFiles/Code.dir/src/lib/Movement.cpp.obj: CXX_COMPILER__Code_unscanned_Debug D$:/OneDrive/FH$ Dortmund/Sem1/Distributed$ and$ Parallel$ Systems/Projects/DPS-Project/Code/src/lib/Movement.cpp || cmake_object_order_depends_target_Code
   DEP_FILE = CMakeFiles\Code.dir\src\lib\Movement.cpp.obj.d
-  FLAGS = -g -std=gnu++23 -fdiagnostics-color=always
+  FLAGS = -g -std=gnu++1z -fdiagnostics-color=always
   OBJECT_DIR = CMakeFiles\Code.dir
   OBJECT_FILE_DIR = CMakeFiles\Code.dir\src\lib
   TARGET_COMPILE_PDB = CMakeFiles\Code.dir\
@@ -123,7 +123,7 @@ build CMakeFiles/Code.dir/src/lib/Movement.cpp.obj: CXX_COMPILER__Code_unscanned
 
 build CMakeFiles/Code.dir/src/client/CommsModule.cpp.obj: CXX_COMPILER__Code_unscanned_Debug D$:/OneDrive/FH$ Dortmund/Sem1/Distributed$ and$ Parallel$ Systems/Projects/DPS-Project/Code/src/client/CommsModule.cpp || cmake_object_order_depends_target_Code
   DEP_FILE = CMakeFiles\Code.dir\src\client\CommsModule.cpp.obj.d
-  FLAGS = -g -std=gnu++23 -fdiagnostics-color=always
+  FLAGS = -g -std=gnu++1z -fdiagnostics-color=always
   OBJECT_DIR = CMakeFiles\Code.dir
   OBJECT_FILE_DIR = CMakeFiles\Code.dir\src\client
   TARGET_COMPILE_PDB = CMakeFiles\Code.dir\
@@ -159,7 +159,7 @@ build cmake_object_order_depends_target_Server: phony || CMakeFiles/Server.dir
 
 build CMakeFiles/Server.dir/src/server/CommsModuleServerMain.cpp.obj: CXX_COMPILER__Server_unscanned_Debug D$:/OneDrive/FH$ Dortmund/Sem1/Distributed$ and$ Parallel$ Systems/Projects/DPS-Project/Code/src/server/CommsModuleServerMain.cpp || cmake_object_order_depends_target_Server
   DEP_FILE = CMakeFiles\Server.dir\src\server\CommsModuleServerMain.cpp.obj.d
-  FLAGS = -g -std=gnu++23 -fdiagnostics-color=always
+  FLAGS = -g -std=gnu++1z -fdiagnostics-color=always
   OBJECT_DIR = CMakeFiles\Server.dir
   OBJECT_FILE_DIR = CMakeFiles\Server.dir\src\server
   TARGET_COMPILE_PDB = CMakeFiles\Server.dir\
@@ -167,7 +167,7 @@ build CMakeFiles/Server.dir/src/server/CommsModuleServerMain.cpp.obj: CXX_COMPIL
 
 build CMakeFiles/Server.dir/src/server/CommsModuleServer.cpp.obj: CXX_COMPILER__Server_unscanned_Debug D$:/OneDrive/FH$ Dortmund/Sem1/Distributed$ and$ Parallel$ Systems/Projects/DPS-Project/Code/src/server/CommsModuleServer.cpp || cmake_object_order_depends_target_Server
   DEP_FILE = CMakeFiles\Server.dir\src\server\CommsModuleServer.cpp.obj.d
-  FLAGS = -g -std=gnu++23 -fdiagnostics-color=always
+  FLAGS = -g -std=gnu++1z -fdiagnostics-color=always
   OBJECT_DIR = CMakeFiles\Server.dir
   OBJECT_FILE_DIR = CMakeFiles\Server.dir\src\server
   TARGET_COMPILE_PDB = CMakeFiles\Server.dir\
@@ -175,7 +175,7 @@ build CMakeFiles/Server.dir/src/server/CommsModuleServer.cpp.obj: CXX_COMPILER__
 
 build CMakeFiles/Server.dir/src/lib/MessageParser.cpp.obj: CXX_COMPILER__Server_unscanned_Debug D$:/OneDrive/FH$ Dortmund/Sem1/Distributed$ and$ Parallel$ Systems/Projects/DPS-Project/Code/src/lib/MessageParser.cpp || cmake_object_order_depends_target_Server
   DEP_FILE = CMakeFiles\Server.dir\src\lib\MessageParser.cpp.obj.d
-  FLAGS = -g -std=gnu++23 -fdiagnostics-color=always
+  FLAGS = -g -std=gnu++1z -fdiagnostics-color=always
   OBJECT_DIR = CMakeFiles\Server.dir
   OBJECT_FILE_DIR = CMakeFiles\Server.dir\src\lib
   TARGET_COMPILE_PDB = CMakeFiles\Server.dir\
@@ -183,7 +183,7 @@ build CMakeFiles/Server.dir/src/lib/MessageParser.cpp.obj: CXX_COMPILER__Server_
 
 build CMakeFiles/Server.dir/src/lib/Message.cpp.obj: CXX_COMPILER__Server_unscanned_Debug D$:/OneDrive/FH$ Dortmund/Sem1/Distributed$ and$ Parallel$ Systems/Projects/DPS-Project/Code/src/lib/Message.cpp || cmake_object_order_depends_target_Server
   DEP_FILE = CMakeFiles\Server.dir\src\lib\Message.cpp.obj.d
-  FLAGS = -g -std=gnu++23 -fdiagnostics-color=always
+  FLAGS = -g -std=gnu++1z -fdiagnostics-color=always
   OBJECT_DIR = CMakeFiles\Server.dir
   OBJECT_FILE_DIR = CMakeFiles\Server.dir\src\lib
   TARGET_COMPILE_PDB = CMakeFiles\Server.dir\

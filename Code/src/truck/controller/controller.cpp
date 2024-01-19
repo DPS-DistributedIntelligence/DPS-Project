@@ -2,7 +2,11 @@
 #include <conio.h>
 #include <windows.h>
 #include "controller.h"
-#define WATCHDOG_TIMEOUT_SECONDS 60
+
+#ifndef WATCHDOG_TIMEOUT_SECONDS
+#define WATCHDOG_TIMEOUT_SECONDS 10
+#endif
+
 
 //constructor
 controller::controller(int new_controller_id, TruckMetadata *new_self_truck){
@@ -11,9 +15,6 @@ controller::controller(int new_controller_id, TruckMetadata *new_self_truck){
     self_truck->watchdog = time(nullptr);
     input_mutex = PTHREAD_MUTEX_INITIALIZER;
     //TODO: controller initialization
-
-    //subsystem will be further developed after integration is working
-    // this->antiCollisionSystem_class.set_EmergencyStop(varAnticollisionSystem);
 }
 
 void* controller::run_thread()
@@ -157,8 +158,10 @@ event controller::state_moving(){
     std::cout << "entering moving state" << std::endl;
     if(self_truck->event_handler != ev_stop || self_truck->event_handler != ev_reset || self_truck->event_handler != ev_leader_found || self_truck->event_handler != ev_no_leader_found){
         if(self_truck->role == LEADER){
+            self_truck->event_handler = ev_any;
             return move_leader();
         }else{
+            self_truck->event_handler = ev_any;
             return move_follower();
         }
     }else{
@@ -206,7 +209,7 @@ event controller::move_leader(){
             //TODO: send message.
             Message new_message = Message();
             new_message.setEvent(ev_stop);
-            //send_message_to_follower(new_message);
+            send_message_to_follower(new_message);
 
 
             std::cout << "Emergency Stop. exiting from leader state" << std::endl;
@@ -226,7 +229,7 @@ event controller::move_leader(){
             new_message.setDirection(new_movement.direction);
             new_message.setSpeed(new_movement.speed);
             new_message.setEvent(ev_any);
-            //send_message_to_follower(new_message);
+            send_message_to_follower(new_message);
 
             return self_truck->event_handler;
 
@@ -242,9 +245,22 @@ event controller::move_leader(){
 event controller::move_follower(){
     // consider only one iteration ( event will be checked at every iteration by caller)
     movement new_movement;
+    while(self_truck->movement_leader.size() == 0 && self_truck->event_handler == ev_any){
+        //TODO: watchdog: check for timeout (no new message received); if true: be leader (use counter) . done
+        if((time(nullptr) - self_truck->watchdog) > WATCHDOG_TIMEOUT_SECONDS){  //no new message within 1 minute
+            self_truck->role = LEADER;
+            self_truck->watchdog = time(nullptr);
+            self_truck->truck_logical_clock.logicalClockTick();
+            return ev_be_leader;
+        }
+    }
+    self_truck->truck_logical_clock.logicalClockTick();
+    if (self_truck->event_handler != ev_any){
+        return self_truck->event_handler;
+    }
     //TODO: receive message, encrypt message, move, print movement. done
     pthread_mutex_lock(&self_truck->movement_leader_vec_mutex);
-    for(auto i = self_truck->movement_leader.begin(); i != self_truck->movement_leader.end(); i++){
+    for(auto i = self_truck->movement_leader.rbegin(); i != self_truck->movement_leader.rend(); i++){
         new_movement = *i;
         set_current_movement(new_movement.direction);
         set_current_speed(new_movement.speed);
@@ -254,12 +270,6 @@ event controller::move_follower(){
         break; // only read the latest one
     }
     pthread_mutex_unlock(&self_truck->movement_leader_vec_mutex);
-
-    //TODO: watchdog: check for timeout (no new message received); if true: be leader (use counter) . done
-    if((time(nullptr) - self_truck->watchdog) > WATCHDOG_TIMEOUT_SECONDS){  //no new message within 1 minute
-        self_truck->role = LEADER;
-        return ev_be_leader;
-    }
 
     return self_truck->event_handler;
 }
@@ -322,7 +332,7 @@ bool controller::find_leader() {
     //self_truck->client_IDs_vec_mutex_->lock();
     pthread_mutex_lock(self_truck->client_IDs_vec_mutex);
     std::cout << "searching for new leader" << std::endl;
-    for(auto i = self_truck->surrounding_truck.begin(); i != self_truck->surrounding_truck.end(); i++){
+    for(auto i = self_truck->surrounding_truck_IDs->begin(); i != self_truck->surrounding_truck_IDs->end(); i++){
         //TODO: find id with smallest value.done
         if(*i < self_truck->truck_id){ // find front truck
             min_id = std::min(min_id, *i);// get the closest truck
@@ -618,7 +628,7 @@ void controller::send_message_to_follower(Message message) {
     for(auto i = self_truck->surrounding_truck_IDs->begin(); i != self_truck->surrounding_truck_IDs->end(); i++){
         if(*i != self_truck->truck_id){
             message.setReceiverId(*i);
-
+            message.setLogicalClock(self_truck->truck_logical_clock.get_logicalClock());
             pthread_mutex_lock(&self_truck->send_message_vector_mutex);
             self_truck->pending_send_message.push_back(message);
             pthread_mutex_unlock(&self_truck->send_message_vector_mutex);
@@ -627,5 +637,9 @@ void controller::send_message_to_follower(Message message) {
     pthread_mutex_unlock(self_truck->client_IDs_vec_mutex);
 
     std::cout << "movement was sent to follower" << std::endl;
+
+}
+
+controller::controller() {
 
 }

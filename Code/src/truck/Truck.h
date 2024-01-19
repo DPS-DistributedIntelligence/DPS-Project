@@ -12,17 +12,20 @@
 
 class Truck{
 public:
-    pthread_mutex_t dummy_client_IDs_vec_mutex;
+    int id;
+    Truck(int new_id);
 
     pthread_t t_controller;
     pthread_t t_interface;
     pthread_t t_decryptor;
     pthread_t t_communication;
 
+
     TruckMetadata self;
-    controller truck_controller = controller(0, &self);
-    Decryptor truck_decryptor = Decryptor(&self);
-    CommsModule truck_communication = CommsModule(0,100,&self);
+
+    bool test_follower_exist_controller_behaviour = false;
+    bool test_leader_exist_controller_behaviour = false;
+
 
 
     // any other sub systems

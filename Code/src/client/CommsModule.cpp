@@ -19,7 +19,7 @@
         self_truck = new_self_truck;
         self_truck->truck_id = ID;
         self_truck->surrounding_truck_IDs = &client_IDs;
-        self_truck->client_IDs_vec_mutex_ = &client_IDs_vec_mutex;
+        self_truck->client_IDs_vec_mutex = &client_IDs_vec_mutex;
 
     }
 
@@ -439,27 +439,41 @@ void *CommsModule::run_thread() {
 
         while(true){
 
-            Message msg;
-            msg.setReceiverId(self_truck->truck_id);
-            msg.setLogicalClock(self_truck->truck_logical_clock.get_logicalClock());
-            add_tx_message_to_buffer(msg);
-            send_txBuffer();
+            //Message msg;
+            //msg.setReceiverId(self_truck->truck_id);
+            //msg.setLogicalClock(self_truck->truck_logical_clock.get_logicalClock());
+            //add_tx_message_to_buffer(msg);
+            //send_txBuffer();
 
-            receive_rxBuffer();
+            //receive_rxBuffer();
             //print_rx_messages_from_buffer();
 
 
+            //std::cout << "communication module" << std::endl;
             //TODO:send message from this vector and pop when sent
-            self_truck->pending_send_message; //vector <Message>
-            self_truck->send_messsage_vector_guard; //the mutex
+            pthread_mutex_lock(&self_truck->send_message_vector_mutex);
+            for(auto i = self_truck->pending_send_message.rbegin(); i != self_truck->pending_send_message.rend(); i++){
+                std::cout << "new message uploaded by communication module" << std::endl;
+                Message m = *i;
+                self_truck->pending_send_message.pop_back();
+                add_tx_message_to_buffer(m);
+                send_txBuffer();
+            }
+            pthread_mutex_unlock(&self_truck->send_message_vector_mutex);
 
-            //TODO: update this message vector
-
-            self_truck->received_message; //vector <Message>
-            self_truck->received_message_vector_guard; //the mutex
-
-            //TODO: always update client_IDs vector
-
+            //TODO: update this received message vector
+            receive_rxBuffer();
+            pthread_mutex_lock(&self_truck->received_message_vector_mutex);
+            for(auto i = rx_messages.rbegin(); i != rx_messages.rend(); i++){
+                std::cout << "new message received" << std::endl;
+                Message m = *i;
+                self_truck->received_message.push_back(m);
+                pthread_mutex_lock(&rx_vec_mutex);
+                rx_messages.pop_back();
+                pthread_mutex_unlock(&rx_vec_mutex);
+            }
+            ; //vector <Message>
+            pthread_mutex_unlock(&self_truck->received_message_vector_mutex);
         }
     }
     return nullptr;
@@ -468,5 +482,9 @@ void *CommsModule::run_thread() {
 void *CommsModule::run(void *context) {
     return ((CommsModule *)context)->run_thread();
     return nullptr;
+}
+
+CommsModule::CommsModule() {
+
 }
 //} // Modules
