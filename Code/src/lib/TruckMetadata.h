@@ -24,8 +24,8 @@ typedef struct TruckMetadata
     pthread_mutex_t send_message_vector_mutex;
 
     // Message received (update by communication, used by controller)
-    pthread_mutex_t received_message_vector_mutex;
     std::vector<Message> received_message;
+    pthread_mutex_t received_message_vector_mutex;
 
     // this movement used if the truck is a follower. this movement is updated by decryptor from the received message
     std::vector<movement> movement_leader;
@@ -33,8 +33,9 @@ typedef struct TruckMetadata
     time_t watchdog;
 
     // list of truck -> used to find leader
-    std::vector<int>* surrounding_truck_IDs;
     pthread_mutex_t* client_IDs_vec_mutex;
+    std::vector<int>* surrounding_truck_IDs;
+    std::vector<SurroundingTruck> surrounding_truck; //initially -> vector<controllerSystem> vehicle_list_vector;
 
     // address to any other subsystems
 

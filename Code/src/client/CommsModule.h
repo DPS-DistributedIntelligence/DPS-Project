@@ -31,14 +31,14 @@
     class CommsModule {
     private:
         int ID;
-        std::mutex client_IDs_vec_mutex;
+        pthread_mutex_t client_IDs_vec_mutex;
         sockaddr_in serverAddr{};
         SOCKET clientSocket{};
         timeval timeout{};
         std::vector<Message> tx_messages;
         std::vector<Message> rx_messages;
-        std::mutex tx_vec_mutex;
-        std::mutex rx_vec_mutex;
+        pthread_mutex_t tx_vec_mutex;
+        pthread_mutex_t rx_vec_mutex;
         int send_string(const std::string& message_str);
         int receive_string(std::string& rx_message);
         int send_message(Message message);

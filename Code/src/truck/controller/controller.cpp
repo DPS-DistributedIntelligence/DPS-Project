@@ -197,17 +197,16 @@ event controller::move_leader(){
     }
     if((prev_direction != this->get_current_direction()) || (prev_speed != this->get_current_speed()))
     {
+        self_truck->truck_logical_clock.logicalClockTick(); // initialized by the truck not controller.
         prev_direction = this->get_current_direction();
         prev_speed = this->get_current_speed();
-
-
 
         if(this->get_current_direction() == MOVE_EMERGENCY_STOP)
         {
             //TODO: send message.
             Message new_message = Message();
             new_message.setEvent(ev_stop);
-            send_message_to_follower(new_message);
+            //send_message_to_follower(new_message);
 
 
             std::cout << "Emergency Stop. exiting from leader state" << std::endl;
@@ -227,7 +226,9 @@ event controller::move_leader(){
             new_message.setDirection(new_movement.direction);
             new_message.setSpeed(new_movement.speed);
             new_message.setEvent(ev_any);
-            send_message_to_follower(new_message);
+            //send_message_to_follower(new_message);
+
+            return self_truck->event_handler;
 
             return self_truck->event_handler;
         }
@@ -242,7 +243,6 @@ event controller::move_follower(){
     // consider only one iteration ( event will be checked at every iteration by caller)
     movement new_movement;
     //TODO: receive message, encrypt message, move, print movement. done
-
     pthread_mutex_lock(&self_truck->movement_leader_vec_mutex);
     for(auto i = self_truck->movement_leader.begin(); i != self_truck->movement_leader.end(); i++){
         new_movement = *i;
@@ -318,10 +318,11 @@ bool controller::find_leader() {
     bool leader_found = false;
     int leader_id = -1;
     int min_id = 10000;
-
-    std::cout << "searching for new leader" << std::endl;
+    //TODO needs to use pthread locking and unlocking
+    //self_truck->client_IDs_vec_mutex_->lock();
     pthread_mutex_lock(self_truck->client_IDs_vec_mutex);
-    for(auto i = self_truck->surrounding_truck_IDs->begin(); i != self_truck->surrounding_truck_IDs->end(); i++){
+    std::cout << "searching for new leader" << std::endl;
+    for(auto i = self_truck->surrounding_truck.begin(); i != self_truck->surrounding_truck.end(); i++){
         //TODO: find id with smallest value.done
         if(*i < self_truck->truck_id){ // find front truck
             min_id = std::min(min_id, *i);// get the closest truck
@@ -346,6 +347,8 @@ bool controller::find_leader() {
         pthread_mutex_unlock(self_truck->client_IDs_vec_mutex);
         return false;
     }
+    //TODO needs to use pthread locking and unlocking
+    //self_truck->client_IDs_vec_mutex_->unlock();
 
 }
 event controller::move_stop(){
@@ -611,7 +614,6 @@ void *controller::key_board_run(void* context) {
 void controller::send_message_to_follower(Message message) {
     std::cout << "compiling message ... " << std::endl;
     message.setSenderId(self_truck->truck_id);
-
     pthread_mutex_lock(self_truck->client_IDs_vec_mutex);
     for(auto i = self_truck->surrounding_truck_IDs->begin(); i != self_truck->surrounding_truck_IDs->end(); i++){
         if(*i != self_truck->truck_id){
