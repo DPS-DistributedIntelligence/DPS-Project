@@ -18,7 +18,6 @@ controller::controller(int new_controller_id, TruckMetadata *new_self_truck){
 void* controller::run_thread()
 {
     while(true){
-        self_truck->truck_logical_clock.logicalClockTick();
         std::cout << "changing high level state" << std::endl;
         next_state_computer(self_truck->event_handler); //set next state
         self_truck->event_handler = ev_any; // reset event handler
@@ -186,6 +185,7 @@ event controller::move_leader(){
     input_given = false;
     if((prev_direction != this->get_current_direction()) || (prev_speed != this->get_current_speed()))
     {
+        self_truck->truck_logical_clock.logicalClockTick(); // initialized by the truck not controller.
         prev_direction = this->get_current_direction();
         prev_speed = this->get_current_speed();
 
