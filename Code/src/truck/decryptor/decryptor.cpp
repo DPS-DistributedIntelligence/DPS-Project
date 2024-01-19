@@ -8,6 +8,7 @@ void *Decryptor::run_thread() {
     std::vector<int> surroundingTruckId;
 
     while(true){
+        self_truck->received_message_vector_guard.lock();
         for(auto i = self_truck->received_message.begin(); i != self_truck->received_message.end(); ++i){
             // follower only interest in new event and new movement from leader
             if(self_truck->role == FOLLOWER){
@@ -39,6 +40,7 @@ void *Decryptor::run_thread() {
             }
 
         }
+        self_truck->received_message_vector_guard.unlock();
     }
 }
 

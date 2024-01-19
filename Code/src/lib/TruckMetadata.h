@@ -29,11 +29,13 @@ typedef struct TruckMetadata
 
     // this movement used if the truck is a follower. this movement is updated by decryptor from the received message
     std::vector<movement> movement_leader;
+    std::mutex movement_leader_vec_mutex;
     time_t watchdog;
 
     // list of truck -> used to find leader
     std::vector<SurroundingTruck> surrounding_truck; //initially -> vector<controllerSystem> vehicle_list_vector;
     std::vector<int>* surrounding_truck_IDs;
+    std::mutex* client_IDs_vec_mutex_;
 
     // address to any other subsystems
 

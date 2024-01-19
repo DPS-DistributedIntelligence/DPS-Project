@@ -194,36 +194,45 @@ event controller::move_leader(){
         {
             std::cout << "Emergency Stop. exiting from leader state" << std::endl;
             return ev_stop; // emergency stop -> will exit leader state back to stop
+            //TODO: send message.
+
         }
         else
         {
             std::cout << "New Direction: " << get_movement_direction_string(this->get_current_direction()) << std::endl;
             std::cout << "New Speed: " << this->get_current_speed() << std::endl;
+
+
+            movement new_movement = {this->get_current_direction(), this->get_current_speed()};
+
+            //TODO: send message.
+            Message new_message = Message();
+            new_message.setDirection(new_movement.direction);
+            new_message.setSpeed(new_movement.speed);
+            new_message.setSenderId(self_truck->truck_id);
+            //set receiver new_message.setReceiverId();
+
+            self_truck->send_messsage_vector_guard.lock();
+            self_truck->pending_send_message.push_back(new_message);
+            self_truck->send_messsage_vector_guard.unlock();
+
+            std::cout << "movement was sent to follower" << std::endl;
+            return self_truck->event_handler;
+
             return self_truck->event_handler;
         }
     }
     else
     {
+
         return self_truck->event_handler;
     }
-
-
-    movement new_movement = {this->get_current_direction(), this->get_current_speed()};
-
-    //TODO: send message.
-    Message new_message = Message();
-    new_message.setDirection(new_movement.direction);
-    new_message.setSpeed(new_movement.speed);
-    new_message.setSenderId(self_truck->truck_id);
-    //set receiver new_message.setReceiverId();
-    self_truck->pending_send_message.push_back(new_message);
-    std::cout << "movement was sent to follower" << std::endl;
-    return self_truck->event_handler;
 }
 event controller::move_follower(){
     // consider only one iteration ( event will be checked at every iteration by caller)
     movement new_movement;
     //TODO: receive message, encrypt message, move, print movement. done
+    self_truck->movement_leader_vec_mutex.lock();
     for(auto i = self_truck->movement_leader.begin(); i != self_truck->movement_leader.end(); i++){
         new_movement = *i;
         set_current_movement(new_movement.direction);
@@ -232,6 +241,7 @@ event controller::move_follower(){
         move(new_movement);
         break; // only read the latest one
     }
+    self_truck->movement_leader_vec_mutex.unlock();
 
     //TODO: watchdog: check for timeout (no new message received); if true: be leader (use counter) . done
     if((time(nullptr) - self_truck->watchdog) > WATCHDOG_TIMEOUT_SECONDS){  //no new message within 1 minute
@@ -296,7 +306,7 @@ bool controller::find_leader() {
     bool leader_found = false;
     int leader_id = -1;
     int min_id = 10000;
-
+    self_truck->client_IDs_vec_mutex_->lock();
     for(auto i = self_truck->surrounding_truck.begin(); i != self_truck->surrounding_truck.end(); i++){
         //TODO: find id with smallest value.done
         if(i->id < self_truck->truck_id){ // find front truck
@@ -319,6 +329,7 @@ bool controller::find_leader() {
     }else{
         return false;
     }
+    self_truck->client_IDs_vec_mutex_->unlock();
 
 }
 event controller::move_stop(){
