@@ -19,6 +19,7 @@ add_executable(
         truck/Truck.cpp
         truck/controller/controller.cpp
         truck/interface/interface.cpp
+        truck/decryptor/decryptor.cpp
 
         lib/LogicalClock.cpp
         lib/Movement.cpp

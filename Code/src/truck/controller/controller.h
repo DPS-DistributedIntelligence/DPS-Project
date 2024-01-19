@@ -5,7 +5,6 @@
 #pragma once
 #include "../../lib/lib.h"
 #include "../../lib/TruckMetadata.h"
-#include "../../client/CommsModule.h"
 #include <ctime>
 
 enum controllerState {initial, waiting, leader, follower, moving, aligning, stop, system_stop};
@@ -13,7 +12,7 @@ enum controllerState {initial, waiting, leader, follower, moving, aligning, stop
 class controller{
 public:
     // constructors
-    controller(int controller_id, TruckMetadata *new_own_truck_metadata, CommsModule *new_self_comms);
+    controller(int controller_id, TruckMetadata *new_own_truck_metadata);
 
     // attribute
     int id = -1;
@@ -25,13 +24,10 @@ public:
     controllerState next_state_in_follower_state = moving;
     controllerState current_state_in_follower_state = moving;
     bool initialized = false;
-    bool new_command = false;
-    pthread_mutex_t mutex;
 
 
     // parts
     TruckMetadata *self_truck{};
-    CommsModule *self_communications;
 
     // states
     event state_initial();
@@ -58,12 +54,10 @@ public:
     void set_current_speed(int new_movement_speed);
 
     // methods
-    static void* controller_run(void* context);
+    static void* run(void* context);
     static void* key_board_run(void* context);
-    static void* communications_run(void* context);
     void* key_board_run_thread();
-    void* controller_run_thread();
-    void* communications_run_thread();
+    void* run_thread();
 
     bool find_leader();
     event move_leader();
@@ -71,6 +65,8 @@ public:
     event move_stop();
     event move_emergency_stop();
     event move(movement new_movement);
+
+    void send_message_to_follower(Message new_essage);
 
     void next_state_computer(event handler);
 

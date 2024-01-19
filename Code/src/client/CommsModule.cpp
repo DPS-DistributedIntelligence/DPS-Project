@@ -4,17 +4,26 @@
 
 #include "CommsModule.h"
 
-namespace Modules {
-    CommsModule::CommsModule(int id, long timeout_us)
+//namespace Modules {
+    CommsModule::CommsModule(int id, long timeout_us,TruckMetadata* new_self_truck)
     {
-        ID = id;
+        pthread_mutex_init(&rx_vec_mutex, nullptr);
+        pthread_mutex_init(&tx_vec_mutex, nullptr);
+        pthread_mutex_init(&client_IDs_vec_mutex, nullptr);
 
+        ID = id;
         //Initializing the timeout
         timeout.tv_sec = 0;
         timeout.tv_usec = timeout_us;
+
+        self_truck = new_self_truck;
+        self_truck->truck_id = ID;
+        self_truck->surrounding_truck_IDs = &client_IDs;
+        self_truck->client_IDs_vec_mutex_ = &client_IDs_vec_mutex;
+
     }
 
-    int CommsModule::initialize(const string& ip_address, u_short port) {
+    int CommsModule::initialize(const std::string& ip_address, u_short port) {
 
         //Initializing the winsock.dll
         WSADATA wsaData;
@@ -153,7 +162,7 @@ namespace Modules {
         message.setSenderId(ID);
 
         //Parsing to JSON string and sending
-        string message_str = MessageParser::toJSON(message);
+        std::string message_str = MessageParser::toJSON(message);
         message_str += "\n";
         return send_string(message_str);
     }
@@ -165,12 +174,14 @@ namespace Modules {
     int CommsModule::send_txBuffer()
     {
         //Locking mutex
-        tx_vec_mutex.lock();
+        pthread_mutex_lock(&tx_vec_mutex);
+        //tx_vec_mutex.lock();
 
         //Checking if there are messages to transmit; if not unlocking mutex and returning 0
         if(tx_messages.empty())
         {
-            tx_vec_mutex.unlock();
+            pthread_mutex_unlock(&tx_vec_mutex);
+            //tx_vec_mutex.unlock();
             return 0;
         }
 
@@ -194,7 +205,8 @@ namespace Modules {
         }
 
         //Unlocking mutex
-        tx_vec_mutex.unlock();
+        pthread_mutex_unlock(&tx_vec_mutex);
+        //tx_vec_mutex.unlock();
 
         return result;
     }
@@ -208,12 +220,13 @@ namespace Modules {
         int result = 1;
 
         //Locking the mutex
-        rx_vec_mutex.lock();
+        pthread_mutex_lock(&rx_vec_mutex);
+        //rx_vec_mutex.lock();
 
         while(true)
         {
             //Preparing a string the message could be stored to
-            string rx_message;
+            std::string rx_message;
 
             int receiving_result = receive_string(rx_message);
 
@@ -229,10 +242,10 @@ namespace Modules {
             }
 
             //Creating a string stream
-            istringstream rx_message_stream(rx_message);
+            std::istringstream rx_message_stream(rx_message);
 
             //Dissecting messages
-            string rx_submessage;
+            std::string rx_submessage;
             while(getline(rx_message_stream, rx_submessage, '\n'))
             {
                 //Parsing message from JSON to Message
@@ -244,7 +257,8 @@ namespace Modules {
         }
 
         //Unlocking the mutex
-        rx_vec_mutex.unlock();
+        pthread_mutex_unlock(&rx_vec_mutex);
+        //rx_vec_mutex.unlock();
 
         return result;
     }
@@ -253,28 +267,32 @@ namespace Modules {
     int CommsModule::add_tx_message_to_buffer(Message tx_message)
     {
         //Locking the mutex
-        tx_vec_mutex.lock();
+        pthread_mutex_lock(&tx_vec_mutex);
+        //tx_vec_mutex.lock();
 
         //Adding message to tx buffer
         tx_messages.push_back(tx_message);
 
         //Unlocking the mutex
-        tx_vec_mutex.unlock();
+        pthread_mutex_unlock(&tx_vec_mutex);
+        //tx_vec_mutex.unlock();
 
         return 1;
     }
 
     //Function for getting the last message of the vector
     //Argument: bool if element should be deleted afterward
-    optional<Message> CommsModule::get_last_rx_message_from_buffer(bool del)
+    std::optional<Message> CommsModule::get_last_rx_message_from_buffer(bool del)
     {
         //Locking mutex
-        rx_vec_mutex.lock();
+        pthread_mutex_lock(&rx_vec_mutex);
+        //rx_vec_mutex.lock();
 
         //If vector is empty, unlock mutex and return empty
         if(rx_messages.empty())
         {
-            rx_vec_mutex.unlock();
+            pthread_mutex_unlock(&rx_vec_mutex);
+            //rx_vec_mutex.unlock();
             return{};
         }
 
@@ -288,22 +306,25 @@ namespace Modules {
         }
 
         //Unlocking the mutex
-        rx_vec_mutex.unlock();
+        pthread_mutex_unlock(&rx_vec_mutex);
+        //rx_vec_mutex.unlock();
 
         return msg;
     }
 
     //Function for getting the message of a certain position from the vector
     //Argument: bool if element should be deleted afterwards
-    optional<Message> CommsModule::get_rx_message_by_index_from_buffer(int index, bool del)
+    std::optional<Message> CommsModule::get_rx_message_by_index_from_buffer(int index, bool del)
     {
         //Locking mutex
-        rx_vec_mutex.lock();
+        pthread_mutex_lock(&rx_vec_mutex);
+        //rx_vec_mutex.lock();
 
         //Unlocking and returning empty if out of bounds
         if(index < 0 || index > (rx_messages.size() - 1))
         {
-            rx_vec_mutex.unlock();
+            pthread_mutex_unlock(&rx_vec_mutex);
+            //rx_vec_mutex.unlock();
             return{};
         }
 
@@ -317,7 +338,8 @@ namespace Modules {
         }
 
         //Unlocking the mutex
-        rx_vec_mutex.unlock();
+        pthread_mutex_unlock(&rx_vec_mutex);
+        //rx_vec_mutex.unlock();
 
         return msg;
     }
@@ -325,28 +347,32 @@ namespace Modules {
     int CommsModule::get_length_of_rx_buffer()
     {
         //Locking mutex
-        rx_vec_mutex.lock();
+        pthread_mutex_lock(&rx_vec_mutex);
+        //rx_vec_mutex.lock();
 
         //Getting the length
         int length = (int)rx_messages.size();
 
         //Unlocking the mutex
-        rx_vec_mutex.unlock();
+        pthread_mutex_unlock(&rx_vec_mutex);
+        //rx_vec_mutex.unlock();
 
         return length;
     }
 
     //Function to get a vector of all connected IDs
-    vector<int> CommsModule::get_connected_client_IDs()
+    std::vector<int> CommsModule::get_connected_client_IDs()
     {
         //Locking the mutex
-        client_IDs_vec_mutex.lock();
+        pthread_mutex_lock(&client_IDs_vec_mutex);
+        //client_IDs_vec_mutex.lock();
 
         //Doing a deep copy
-        vector<int> ret_client_IDs(client_IDs);
+        std::vector<int> ret_client_IDs(client_IDs);
 
         //Unlocking the mutex
-        client_IDs_vec_mutex.unlock();
+        pthread_mutex_unlock(&client_IDs_vec_mutex);
+        //client_IDs_vec_mutex.unlock();
 
         return ret_client_IDs;
     }
@@ -355,33 +381,92 @@ namespace Modules {
     int CommsModule::print_rx_messages_from_buffer()
     {
         //Locking mutex
-        rx_vec_mutex.lock();
+        pthread_mutex_lock(&rx_vec_mutex);
+        //rx_vec_mutex.lock();
 
         //Unlocking and returning 0 if there was no message
         if(rx_messages.empty())
         {
-            rx_vec_mutex.unlock();
+            pthread_mutex_unlock(&rx_vec_mutex);
+            //rx_vec_mutex.unlock();
             return 0;
         }
 
         auto rx_message = rx_messages.begin();
         while(rx_message != rx_messages.end())
         {
-            cout << "--------------------------------------------------------" << endl;
-            cout << "Receiver ID: " << rx_message->getReceiverId() << endl;
-            cout << "Sender ID: " << rx_message->getSenderId() << endl;
-            cout << "Logical Clock: " << rx_message->getLogicalClock() << endl;
-            cout << "Controller Serial Number: " << static_cast<int>(rx_message->getControllerSerialNumber()) << endl;
-            cout << "Role: " << MessageParser::truckRoleToString(rx_message->getRole()) << endl;
-            cout << "Speed: " << rx_message->getSpeed() << endl;
-            cout << "--------------------------------------------------------" << endl;
+            std::cout << "--------------------------------------------------------" << std::endl;
+            std::cout << "Receiver ID: " << rx_message->getReceiverId() << std::endl;
+            std::cout << "Sender ID: " << rx_message->getSenderId() << std::endl;
+            std::cout << "Logical Clock: " << rx_message->getLogicalClock() << std::endl;
+            std::cout << "Controller Serial Number: " << static_cast<int>(rx_message->getControllerSerialNumber()) << std::endl;
+            std::cout << "Role: " << MessageParser::truckRoleToString(rx_message->getRole()) << std::endl;
+            std::cout << "Speed: " << rx_message->getSpeed() << std::endl;
+            std::cout << "--------------------------------------------------------" << std::endl;
 
             rx_message = rx_messages.erase(rx_message);
         }
 
         //Unlocking mutex
-        rx_vec_mutex.unlock();
+        pthread_mutex_unlock(&rx_vec_mutex);
+        //rx_vec_mutex.unlock();
 
         return 1;
     }
-} // Modules
+
+
+
+void *CommsModule::run_thread() {
+    {
+        if(initialize("127.0.0.1", 8080) == 1)
+        {
+            std::cout << "intialization worked" << std::endl;
+        }
+        else
+        {
+            std::cout << "Initialization failed" << std::endl;
+
+        }
+
+        if(connect_to_Server() == 1)
+        {
+            std::cout << "Connected!" << std::endl;
+        }
+        else
+        {
+            std::cout << "Connection failed!" << std::endl;
+        }
+
+        while(true){
+
+            Message msg;
+            msg.setReceiverId(self_truck->truck_id);
+            msg.setLogicalClock(self_truck->truck_logical_clock.get_logicalClock());
+            add_tx_message_to_buffer(msg);
+            send_txBuffer();
+
+            receive_rxBuffer();
+            //print_rx_messages_from_buffer();
+
+
+            //TODO:send message from this vector and pop when sent
+            self_truck->pending_send_message; //vector <Message>
+            self_truck->send_messsage_vector_guard; //the mutex
+
+            //TODO: update this message vector
+
+            self_truck->received_message; //vector <Message>
+            self_truck->received_message_vector_guard; //the mutex
+
+            //TODO: always update client_IDs vector
+
+        }
+    }
+    return nullptr;
+}
+
+void *CommsModule::run(void *context) {
+    return ((CommsModule *)context)->run_thread();
+    return nullptr;
+}
+//} // Modules
