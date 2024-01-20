@@ -258,6 +258,7 @@
                 }
                 else if(std::holds_alternative<MessageID>(parsed_message))
                 {
+                    std::cout << "[RX] Vector information: " << rx_submessage << std::endl;
                     MessageID decoded_message = std::get<MessageID>(parsed_message);
                 }
 
@@ -441,14 +442,7 @@ void *CommsModule::run_thread() {
         if(connect_to_Server() == 1)
         {
             std::cout << "Connected!" << std::endl;
-        }
-        else
-        {
-            std::cout << "Connection failed!" << std::endl;
-        }
 
-        while(true)
-        {
             Message msg;
             msg.setReceiverId(self_truck->truck_id+1);
             msg.setLogicalClock(self_truck->truck_logical_clock.get_logicalClock());
@@ -457,7 +451,14 @@ void *CommsModule::run_thread() {
             msg.setDirection(self_truck->truckMovement.direction);
             add_tx_message_to_buffer(msg);
             send_txBuffer();
+        }
+        else
+        {
+            std::cout << "Connection failed!" << std::endl;
+        }
 
+        while(true)
+        {
             receive_rxBuffer();
 
             std::optional<Message> rx_msg;

@@ -1,7 +1,7 @@
 #include <iostream>
 #include <thread>
-#include <windows.h>
 #include "Truck/Truck.h"
+#include <windows.h>
 
 int main() {
     //std::cout << "Hello, World!" << std::endl;

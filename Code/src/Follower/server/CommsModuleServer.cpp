@@ -265,6 +265,33 @@ namespace Modules {
         }
     }
 
+    void CommsModuleServer::sendClientIDVector()
+    {
+        MessageID msg;
+        auto client = clientID_socket_map.begin();
+        while(client != clientID_socket_map.end())
+        {
+            if(client->ID == 0)
+            {
+                client++;
+                continue;
+            }
+
+            msg.addReceiverId(client->ID);
+            client++;
+        }
+
+        std::string msg_str = MessageParser::toJSONID(msg);
+        msg_str += "\n";
+
+        client = clientID_socket_map.begin();
+        while(client != clientID_socket_map.end())
+        {
+            sendMessage(client->clientSocket, msg_str);
+            client++;
+        }
+    }
+
     //Public function that returns the number of the connected clients
     int CommsModuleServer::getNumOfConnectedClients()
     {
