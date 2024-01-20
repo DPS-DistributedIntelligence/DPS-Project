@@ -248,11 +248,19 @@
             std::string rx_submessage;
             while(getline(rx_message_stream, rx_submessage, '\n'))
             {
-                //Parsing message from JSON to Message
-                Message parsed_message = MessageParser::fromJSON(rx_submessage);
 
-                //Adding parsed message to buffer
-                rx_messages.push_back(parsed_message);
+                std::variant<Message, MessageID> parsed_message = MessageParser::fromJSONVariant(rx_submessage);
+
+                if(std::holds_alternative<Message>(parsed_message))
+                {
+                    Message decoded_message = std::get<Message>(parsed_message);
+                    rx_messages.push_back(decoded_message);
+                }
+                else if(std::holds_alternative<MessageID>(parsed_message))
+                {
+                    MessageID decoded_message = std::get<MessageID>(parsed_message);
+                }
+
             }
         }
 
