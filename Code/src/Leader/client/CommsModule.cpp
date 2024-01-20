@@ -248,11 +248,19 @@
             std::string rx_submessage;
             while(getline(rx_message_stream, rx_submessage, '\n'))
             {
-                //Parsing message from JSON to Message
-                Message parsed_message = MessageParser::fromJSON(rx_submessage);
 
-                //Adding parsed message to buffer
-                rx_messages.push_back(parsed_message);
+                std::variant<Message, MessageID> parsed_message = MessageParser::fromJSONVariant(rx_submessage);
+
+                if(std::holds_alternative<Message>(parsed_message))
+                {
+                    Message decoded_message = std::get<Message>(parsed_message);
+                    rx_messages.push_back(decoded_message);
+                }
+                else if(std::holds_alternative<MessageID>(parsed_message))
+                {
+                    MessageID decoded_message = std::get<MessageID>(parsed_message);
+                }
+
             }
         }
 
@@ -402,7 +410,9 @@
             std::cout << "Controller Serial Number: " << static_cast<int>(rx_message->getControllerSerialNumber()) << std::endl;
             std::cout << "Role: " << MessageParser::truckRoleToString(rx_message->getRole()) << std::endl;
             std::cout << "Speed: " << rx_message->getSpeed() << std::endl;
+            std::cout << "Direction: " << MessageParser::directionToString(rx_message->getDirection()) << std::endl;
             std::cout << "--------------------------------------------------------" << std::endl;
+
 
             rx_message = rx_messages.erase(rx_message);
         }
@@ -440,7 +450,7 @@ void *CommsModule::run_thread() {
         while(true)
         {
             Message msg;
-            msg.setReceiverId(self_truck->truck_id + 1);
+            msg.setReceiverId(self_truck->truck_id+1);
             msg.setLogicalClock(self_truck->truck_logical_clock.get_logicalClock());
             msg.setRole(self_truck->role);
             msg.setSpeed((uint8_t)(self_truck->truckMovement.speed));
@@ -449,20 +459,26 @@ void *CommsModule::run_thread() {
             send_txBuffer();
 
             receive_rxBuffer();
-            //print_rx_messages_from_buffer();
+
+            std::optional<Message> rx_msg;
+            rx_msg = get_last_rx_message_from_buffer(false);
+
+            /*
+             * Update values of follower
+             */
+            self_truck->truckMovement.direction = rx_msg->getDirection();
+            self_truck->truckMovement.speed = rx_msg->getSpeed();
+
+            if(self_truck->truck_logical_clock.get_logicalClock() < rx_msg->getLogicalClock())
+            {
+                if(!self_truck->truck_logical_clock.logicalClockTickCompare(rx_msg->getLogicalClock()))
+                {
+                    self_truck->truck_logical_clock.logicalClockUpdate(rx_msg->getLogicalClock());
+                    print_rx_messages_from_buffer();
+                }
+            }
+
             usleep(500000);
-
-            //TODO:send message from this vector and pop when sent
-            self_truck->pending_send_message; //vector <Message>
-            self_truck->send_messsage_vector_guard; //the mutex
-
-            //TODO: update this message vector
-
-            self_truck->received_message; //vector <Message>
-            self_truck->received_message_vector_guard; //the mutex
-
-            //TODO: always update client_IDs vector
-
         }
     }
     return nullptr;

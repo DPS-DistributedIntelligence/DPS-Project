@@ -32,7 +32,7 @@ std::string MessageParser::directionToString(movementDirection direction) {
     }
 }
 
-movementDirection MessageParser::stringToDirection(const std::string& directionStr) {
+movementDirection MessageParser::stringToDirection(std::string& directionStr) {
     if (directionStr == "MOVE_FORWARD") return movementDirection::MOVE_FORWARD;
     if (directionStr == "MOVE_BACK") return movementDirection::MOVE_BACK;
     if (directionStr == "MOVE_LEFT") return movementDirection::MOVE_LEFT;
@@ -90,4 +90,33 @@ Message MessageParser::fromJSON(const std::string& jsonString) {
     }
     return msg;
 
+}
+
+MessageID MessageParser::fromJSONMessageID(const std::string& jsonString) {
+    MessageID messageId;
+    std::string idListStr = jsonString.substr(jsonString.find("[") + 1);
+    idListStr = idListStr.substr(0, idListStr.find("]"));
+
+    std::istringstream iss(idListStr);
+    std::string idStr;
+    while (std::getline(iss, idStr, ',')) {
+        idStr.erase(std::remove_if(idStr.begin(), idStr.end(), [](unsigned char ch) { return std::isspace(ch); }), idStr.end());
+        if (!idStr.empty()) {
+            messageId.addReceiverId(std::stoi(idStr));
+        }
+    }
+
+    return messageId;
+}
+
+
+// Overloaded fromJSON method to handle both Message and MessageID
+std::variant<Message, MessageID> MessageParser::fromJSONVariant(const std::string& jsonString) {
+    // Check the JSON string for a key to determine its type
+    if (jsonString.find("\"type\": \"MessageID\"") != std::string::npos) {
+        return fromJSONMessageID(jsonString);
+    } else {
+        // Assume it's a Message type
+        return fromJSON(jsonString); // This method needs to be implemented
+    }
 }

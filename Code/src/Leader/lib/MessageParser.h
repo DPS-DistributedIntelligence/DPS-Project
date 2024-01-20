@@ -13,6 +13,7 @@
 #include <iostream>
 #include <algorithm>
 #include <cstdint>
+#include <variant>
 
 
 
@@ -27,12 +28,20 @@ public:
     // Serialize a Message object to a JSON string
     static std::string toJSON(Message msg);
 
+    // Serialize a MessageID object to a JSON string
+    static std::string toJSONID(const MessageID& messageId);
+
     static std::string directionToString(movementDirection direction);
 
-    static movementDirection stringToDirection(const std::string& directionStr);
+    static movementDirection stringToDirection(std::string& directionStr);
 
     // Deserialize a JSON string to a Message object
     static Message fromJSON(const std::string& jsonString);
+
+    // Deserialize a MessageID string to MessageID object
+    static MessageID fromJSONMessageID(const std::string& jsonString);
+
+    static std::variant<Message, MessageID> fromJSONVariant (const std::string& jsonString);
 };
 
 

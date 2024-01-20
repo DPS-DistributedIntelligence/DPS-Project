@@ -11,7 +11,7 @@ Message::Message()
 }
 
 // Getter for receiver_id
-int Message::getReceiverId() const {
+int Message::getReceiverId() {
     return receiver_id;
 }
 
@@ -21,7 +21,7 @@ void Message::setReceiverId(int id) {
 }
 
 // Getter for sender_id
-int Message::getSenderId() const {
+int Message::getSenderId() {
     return sender_id;
 }
 
@@ -31,7 +31,7 @@ void Message::setSenderId(int id) {
 }
 
 // Getter for logicalClock_u64
-uint64_t Message::getLogicalClock() const {
+uint64_t Message::getLogicalClock() {
     return logicalClock_u64;
 }
 
@@ -41,7 +41,7 @@ void Message::setLogicalClock(uint64_t clock) {
 }
 
 // Getter for controllerSerialNumber_u8
-uint8_t Message::getControllerSerialNumber() const {
+uint8_t Message::getControllerSerialNumber() {
     return controllerSerialNumber_u8;
 }
 
@@ -51,7 +51,7 @@ void Message::setControllerSerialNumber(uint8_t serialNumber) {
 }
 
 // Getter for role_e
-truckRole Message::getRole() const {
+truckRole Message::getRole() {
     return role_e;
 }
 
@@ -68,7 +68,7 @@ void Message::setSpeed(int varSpeed) {
     speed = varSpeed;
 }
 
-movementDirection Message::getDirection() const {
+movementDirection Message::getDirection() {
     return direction;
 }
 
@@ -76,10 +76,18 @@ void Message::setDirection(movementDirection varDirection) {
     direction = varDirection;
 }
 
-event Message::getEvent() const {
+event Message::getEvent() {
     return event_;
 }
 
 void Message::setEvent(event event) {
     event_ = event;
+}
+
+void MessageID::addReceiverId(int id) {
+    receiver_ids.push_back(id);
+}
+
+const std::vector<int>& MessageID::getReceiverIds() {
+    return receiver_ids;
 }
