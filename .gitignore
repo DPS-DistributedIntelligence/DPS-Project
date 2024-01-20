@@ -2,3 +2,6 @@
 *.log
 !Code/src/*
 !Code/CMakeLists
+
+Code/src/Follower/cmake-build-debug/
+Code/src/Leader/cmake-build-debug/

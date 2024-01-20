@@ -258,8 +258,8 @@
                 }
                 else if(std::holds_alternative<MessageID>(parsed_message))
                 {
-                    //std::cout << "[RX] Vector information: " << rx_submessage << std::endl;
                     MessageID decoded_message = std::get<MessageID>(parsed_message);
+                    client_IDs = decoded_message.getReceiverIds();
                 }
 
             }
