@@ -437,10 +437,10 @@ void *CommsModule::run_thread() {
             std::cout << "Connection failed!" << std::endl;
         }
 
-        while(true){
-
+        while(true)
+        {
             Message msg;
-            msg.setReceiverId(self_truck->truck_id);
+            msg.setReceiverId(self_truck->truck_id + 1);
             msg.setLogicalClock(self_truck->truck_logical_clock.get_logicalClock());
             msg.setRole(self_truck->role);
             msg.setSpeed((uint8_t)(self_truck->truckMovement.speed));
@@ -450,7 +450,7 @@ void *CommsModule::run_thread() {
 
             receive_rxBuffer();
             //print_rx_messages_from_buffer();
-
+            usleep(500000);
 
             //TODO:send message from this vector and pop when sent
             self_truck->pending_send_message; //vector <Message>

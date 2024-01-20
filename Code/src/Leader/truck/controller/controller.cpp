@@ -63,6 +63,8 @@ event controller::state_initial(){
         //TODO: initialization
         /* Start the logical clock ticks */
         self_truck->truck_logical_clock.logicalClockTick(); // initialized by the truck not controller.
+        self_truck->truckMovement.direction = MOVE_STOP;
+        self_truck->truckMovement.speed = 0;
     }
     return ev_ready;
 }

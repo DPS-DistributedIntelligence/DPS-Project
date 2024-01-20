@@ -14,6 +14,7 @@
 #include <mutex>
 #include <pthread.h>
 #include <optional>
+#include <unistd.h>
 
 #include "../lib/Message.h"
 #include "../lib/MessageParser.h"
