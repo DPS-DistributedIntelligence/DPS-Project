@@ -18,8 +18,8 @@
 
         self_truck = new_self_truck;
         self_truck->truck_id = ID;
-        self_truck->surrounding_truck_IDs = &client_IDs;
-        self_truck->client_IDs_vec_mutex = &client_IDs_vec_mutex;
+        self_truck->surrounding_truck_IDs = client_IDs;
+        self_truck->client_IDs_vec_mutex_ = &client_IDs_vec_mutex;
 
     }
 
@@ -248,11 +248,21 @@
             std::string rx_submessage;
             while(getline(rx_message_stream, rx_submessage, '\n'))
             {
-                //Parsing message from JSON to Message
-                Message parsed_message = MessageParser::fromJSON(rx_submessage);
 
-                //Adding parsed message to buffer
-                rx_messages.push_back(parsed_message);
+                std::variant<Message, MessageID> parsed_message = MessageParser::fromJSONVariant(rx_submessage);
+
+                if(std::holds_alternative<Message>(parsed_message))
+                {
+                    Message decoded_message = std::get<Message>(parsed_message);
+                    rx_messages.push_back(decoded_message);
+                }
+                else if(std::holds_alternative<MessageID>(parsed_message))
+                {
+                    MessageID decoded_message = std::get<MessageID>(parsed_message);
+                    client_IDs = decoded_message.getReceiverIds();
+                    self_truck->surrounding_truck_IDs = client_IDs;
+                }
+
             }
         }
 
@@ -402,7 +412,9 @@
             std::cout << "Controller Serial Number: " << static_cast<int>(rx_message->getControllerSerialNumber()) << std::endl;
             std::cout << "Role: " << MessageParser::truckRoleToString(rx_message->getRole()) << std::endl;
             std::cout << "Speed: " << rx_message->getSpeed() << std::endl;
+            std::cout << "Direction: " << MessageParser::directionToString(rx_message->getDirection()) << std::endl;
             std::cout << "--------------------------------------------------------" << std::endl;
+
 
             rx_message = rx_messages.erase(rx_message);
         }
@@ -431,49 +443,45 @@ void *CommsModule::run_thread() {
         if(connect_to_Server() == 1)
         {
             std::cout << "Connected!" << std::endl;
+
         }
         else
         {
             std::cout << "Connection failed!" << std::endl;
         }
 
-        while(true){
+        while(true)
+        {
+            Message msg;
+            msg.setReceiverId(self_truck->truck_id+1);
+            msg.setLogicalClock(self_truck->truck_logical_clock.get_logicalClock());
+            msg.setRole(self_truck->role);
+            msg.setSpeed((uint8_t)(self_truck->truckMovement.speed));
+            msg.setDirection(self_truck->truckMovement.direction);
+            add_tx_message_to_buffer(msg);
+            send_txBuffer();
 
-            //Message msg;
-            //msg.setReceiverId(self_truck->truck_id);
-            //msg.setLogicalClock(self_truck->truck_logical_clock.get_logicalClock());
-            //add_tx_message_to_buffer(msg);
-            //send_txBuffer();
-
-            //receive_rxBuffer();
-            //print_rx_messages_from_buffer();
-
-
-            //std::cout << "communication module" << std::endl;
-            //TODO:send message from this vector and pop when sent
-            pthread_mutex_lock(&self_truck->send_message_vector_mutex);
-            for(auto i = self_truck->pending_send_message.rbegin(); i != self_truck->pending_send_message.rend(); i++){
-                std::cout << "new message uploaded by communication module" << std::endl;
-                Message m = *i;
-                self_truck->pending_send_message.pop_back();
-                add_tx_message_to_buffer(m);
-                send_txBuffer();
-            }
-            pthread_mutex_unlock(&self_truck->send_message_vector_mutex);
-
-            //TODO: update this received message vector
             receive_rxBuffer();
-            pthread_mutex_lock(&self_truck->received_message_vector_mutex);
-            for(auto i = rx_messages.rbegin(); i != rx_messages.rend(); i++){
-                std::cout << "new message received" << std::endl;
-                Message m = *i;
-                self_truck->received_message.push_back(m);
-                pthread_mutex_lock(&rx_vec_mutex);
-                rx_messages.pop_back();
-                pthread_mutex_unlock(&rx_vec_mutex);
+
+            std::optional<Message> rx_msg;
+            rx_msg = get_last_rx_message_from_buffer(false);
+
+            /*
+             * Update values of follower
+             */
+            self_truck->truckMovement.direction = rx_msg->getDirection();
+            self_truck->truckMovement.speed = rx_msg->getSpeed();
+
+            if(self_truck->truck_logical_clock.get_logicalClock() < rx_msg->getLogicalClock())
+            {
+                if(!self_truck->truck_logical_clock.logicalClockTickCompare(rx_msg->getLogicalClock()))
+                {
+                    self_truck->truck_logical_clock.logicalClockUpdate(rx_msg->getLogicalClock());
+                    print_rx_messages_from_buffer();
+                }
             }
-            ; //vector <Message>
-            pthread_mutex_unlock(&self_truck->received_message_vector_mutex);
+
+            usleep(500000);
         }
     }
     return nullptr;
@@ -482,9 +490,5 @@ void *CommsModule::run_thread() {
 void *CommsModule::run(void *context) {
     return ((CommsModule *)context)->run_thread();
     return nullptr;
-}
-
-CommsModule::CommsModule() {
-
 }
 //} // Modules

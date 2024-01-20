@@ -6,7 +6,6 @@
 #define SOCKETTEST_COMMSMODULE_H
 
 #pragma once
-#include <winsock.h>
 #include <winsock2.h>
 #include <string>
 #include <vector>
@@ -15,6 +14,7 @@
 #include <mutex>
 #include <pthread.h>
 #include <optional>
+#include <unistd.h>
 
 #include "../lib/Message.h"
 #include "../lib/MessageParser.h"
@@ -51,8 +51,6 @@
         void* run_thread();
 
         CommsModule(int id, long timeout, TruckMetadata* self_truck);
-
-        CommsModule();
         int initialize(const std::string& ip_address, u_short port);
         int connect_to_Server();
         int send_txBuffer();

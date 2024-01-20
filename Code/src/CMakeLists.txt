@@ -6,11 +6,11 @@ set(CMAKE_CXX_STANDARD 23)
 add_executable(
         Server
 
-        server/CommsModuleServerMain.cpp
-        server/CommsModuleServer.cpp
-
         lib/MessageParser.cpp
         lib/Message.cpp
+
+        server/CommsModuleServerMain.cpp
+        server/CommsModuleServer.cpp
 )
 
 add_executable(

@@ -13,7 +13,6 @@ class controller{
 public:
     // constructors
     controller(int controller_id, TruckMetadata *new_own_truck_metadata);
-    controller();
 
     // attribute
     int id = -1;
@@ -25,9 +24,6 @@ public:
     controllerState next_state_in_follower_state = moving;
     controllerState current_state_in_follower_state = moving;
     bool initialized = false;
-
-
-    pthread_mutex_t input_mutex;
 
 
     // parts
@@ -76,8 +72,8 @@ public:
 
 
 
-    int cruiseDriverStep = 10;
-    int cruiseDriverLimit = 210;
+    const int cruiseDriverStep = 10;
+    const int cruiseDriverLimit = 210;
 
     bool input_given = false;
 

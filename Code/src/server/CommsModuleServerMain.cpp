@@ -35,6 +35,8 @@ int main()
         server.getMessagesFromAllSockets();
 
         server.forwardPackets();
+
+        server.sendClientIDVector();
     }
 
     return 0;

@@ -38,6 +38,7 @@ namespace Modules {
         int sendMessage(SOCKET& txSocket, string& tx_message);
         void getMessagesFromAllSockets();
         void forwardPackets();
+        void sendClientIDVector();
         int getNumOfConnectedClients();
     };
 

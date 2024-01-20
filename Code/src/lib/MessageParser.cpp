@@ -32,7 +32,7 @@ std::string MessageParser::directionToString(movementDirection direction) {
     }
 }
 
-movementDirection MessageParser::stringToDirection(const std::string& directionStr) {
+movementDirection MessageParser::stringToDirection(std::string& directionStr) {
     if (directionStr == "MOVE_FORWARD") return movementDirection::MOVE_FORWARD;
     if (directionStr == "MOVE_BACK") return movementDirection::MOVE_BACK;
     if (directionStr == "MOVE_LEFT") return movementDirection::MOVE_LEFT;
@@ -43,17 +43,28 @@ movementDirection MessageParser::stringToDirection(const std::string& directionS
 }
 
 // Serialize Message object to JSON string
-std::string MessageParser::toJSON(const Message& msg) {
+std::string MessageParser::toJSON(Message msg) {
     std::stringstream ss;
     ss << "{"
        << "\"receiver_id\":" << msg.getReceiverId() << ","
        << "\"sender_id\":" << msg.getSenderId() << ","
        << "\"logicalClock_u64\":" << msg.getLogicalClock() << ","
-       << "\"controllerSerialNumber_u8\":" << static_cast<int>(msg.getControllerSerialNumber()) << ","
        << "\"speed\":" << msg.getSpeed() << ","
        << "\"direction\":" << directionToString(msg.getDirection()) << ","
        << "\"role_e\":\"" << truckRoleToString(msg.getRole()) << "\""
        << "}";
+    return ss.str();
+}
+
+std::string MessageParser::toJSONID(MessageID& messageId) {
+    std::stringstream ss;
+    ss << "{ \"type\": \"MessageID\", \"receiver_ids\": [";
+    const auto& ids = messageId.getReceiverIds();
+    for (size_t i = 0; i < ids.size(); ++i) {
+        ss << ids[i];
+        if (i < ids.size() - 1) ss << ", ";
+    }
+    ss << "] }";
     return ss.str();
 }
 
@@ -79,13 +90,11 @@ Message MessageParser::fromJSON(const std::string& jsonString) {
             msg.setSenderId(stoi(value));
         } else if (key.find("logicalClock_u64") != std::string::npos) {
             msg.setLogicalClock(stoull(value));
-        } else if (key.find("controllerSerialNumber_u8") != std::string::npos) {
-            msg.setControllerSerialNumber(static_cast<uint8_t>(stoi(value)));
+        } else if (key.find("speed") != std::string::npos) {
+            msg.setSpeed(stoi(value));
         } else if (key.find("role_e") != std::string::npos) {
             value.erase(remove(value.begin(), value.end(), '"'), value.end()); // Remove quotes
             msg.setRole(stringToTruckRole(value));
-        } else if (key.find("speed") != std::string::npos) {
-            msg.setSpeed(stoi(value));
         } else if (key.find("direction") != std::string::npos) {
             value.erase(remove(value.begin(), value.end(), '\"'), value.end()); // Remove quotes
             msg.setDirection(stringToDirection(value));
@@ -93,4 +102,33 @@ Message MessageParser::fromJSON(const std::string& jsonString) {
     }
     return msg;
 
+}
+
+MessageID MessageParser::fromJSONMessageID(const std::string& jsonString) {
+    MessageID messageId;
+    std::string idListStr = jsonString.substr(jsonString.find("[") + 1);
+    idListStr = idListStr.substr(0, idListStr.find("]"));
+
+    std::istringstream iss(idListStr);
+    std::string idStr;
+    while (std::getline(iss, idStr, ',')) {
+        idStr.erase(std::remove_if(idStr.begin(), idStr.end(), [](unsigned char ch) { return std::isspace(ch); }), idStr.end());
+        if (!idStr.empty()) {
+            messageId.addReceiverId(std::stoi(idStr));
+        }
+    }
+
+    return messageId;
+}
+
+
+// Overloaded fromJSON method to handle both Message and MessageID
+std::variant<Message, MessageID> MessageParser::fromJSONVariant(const std::string& jsonString) {
+    // Check the JSON string for a key to determine its type
+    if (jsonString.find("\"type\": \"MessageID\"") != std::string::npos) {
+        return fromJSONMessageID(jsonString);
+    } else {
+        // Assume it's a Message type
+        return fromJSON(jsonString); // This method needs to be implemented
+    }
 }

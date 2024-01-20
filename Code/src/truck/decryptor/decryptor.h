@@ -9,7 +9,6 @@ class Decryptor{
 
 public:
     Decryptor(TruckMetadata*);
-    Decryptor();
     void run();
     static void* run(void* context);
     void* run_thread();

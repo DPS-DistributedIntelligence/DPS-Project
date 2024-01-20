@@ -12,20 +12,18 @@
 
 class Truck{
 public:
-    int id;
-    Truck(int new_id);
+    explicit Truck(int truckId);
 
+    int truckID;
     pthread_t t_controller;
     pthread_t t_interface;
     pthread_t t_decryptor;
     pthread_t t_communication;
 
-
     TruckMetadata self;
-
-    bool test_follower_exist_controller_behaviour = false;
-    bool test_leader_exist_controller_behaviour = false;
-
+    controller truck_controller = controller(truckID, &self);
+    Decryptor truck_decryptor = Decryptor(&self);
+    CommsModule truck_communication = CommsModule(truckID,100,&self);
 
 
     // any other sub systems

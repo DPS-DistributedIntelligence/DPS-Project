@@ -1,4 +1,0 @@
-D:/OneDrive/FH Dortmund/Sem1/Distributed and Parallel Systems/Projects/DPS-Project/Code/src/cmake-build-debug/CMakeFiles/Server.dir
-D:/OneDrive/FH Dortmund/Sem1/Distributed and Parallel Systems/Projects/DPS-Project/Code/src/cmake-build-debug/CMakeFiles/Truck.dir
-D:/OneDrive/FH Dortmund/Sem1/Distributed and Parallel Systems/Projects/DPS-Project/Code/src/cmake-build-debug/CMakeFiles/edit_cache.dir
-D:/OneDrive/FH Dortmund/Sem1/Distributed and Parallel Systems/Projects/DPS-Project/Code/src/cmake-build-debug/CMakeFiles/rebuild_cache.dir
