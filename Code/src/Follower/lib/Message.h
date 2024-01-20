@@ -39,7 +39,7 @@ public:
         int getSenderId() const;
         void setSenderId(int id);
 
-        uint64_t getLogicalClock() const;
+        uint64_t getLogicalClock();
         void setLogicalClock(uint64_t clock);
 
         uint8_t getControllerSerialNumber() const;

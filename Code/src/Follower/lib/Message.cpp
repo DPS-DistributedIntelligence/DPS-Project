@@ -31,7 +31,7 @@ void Message::setSenderId(int id) {
 }
 
 // Getter for logicalClock_u64
-uint64_t Message::getLogicalClock() const {
+uint64_t Message::getLogicalClock() {
     return logicalClock_u64;
 }
 

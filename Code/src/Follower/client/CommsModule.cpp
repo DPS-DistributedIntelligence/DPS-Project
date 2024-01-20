@@ -405,6 +405,7 @@
             std::cout << "Direction: " << MessageParser::directionToString(rx_message->getDirection()) << std::endl;
             std::cout << "--------------------------------------------------------" << std::endl;
 
+
             rx_message = rx_messages.erase(rx_message);
         }
 
@@ -450,7 +451,24 @@ void *CommsModule::run_thread() {
             send_txBuffer();
 
             receive_rxBuffer();
-            print_rx_messages_from_buffer();
+
+            std::optional<Message> rx_msg;
+            rx_msg = get_last_rx_message_from_buffer(false);
+
+            /*
+             * Update values of follower
+             */
+            self_truck->truckMovement.direction = rx_msg->getDirection();
+            self_truck->truckMovement.speed = rx_msg->getSpeed();
+
+            if(self_truck->truck_logical_clock.get_logicalClock() < rx_msg->getLogicalClock())
+            {
+                if(!self_truck->truck_logical_clock.logicalClockTickCompare(rx_msg->getLogicalClock()))
+                {
+                    self_truck->truck_logical_clock.logicalClockUpdate(rx_msg->getLogicalClock());
+                    print_rx_messages_from_buffer();
+                }
+            }
 
             usleep(500000);
         }
