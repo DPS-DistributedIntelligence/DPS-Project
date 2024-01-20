@@ -29,7 +29,7 @@ public:
     static std::string toJSON(Message msg);
 
     // Serialize a MessageID object to a JSON string
-    static std::string toJSONID(const MessageID& messageId);
+    static std::string toJSONID(MessageID& messageId);
 
     static std::string directionToString(movementDirection direction);
 

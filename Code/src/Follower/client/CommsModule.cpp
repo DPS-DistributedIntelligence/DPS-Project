@@ -258,7 +258,7 @@
                 }
                 else if(std::holds_alternative<MessageID>(parsed_message))
                 {
-                    std::cout << "[RX] Vector information: " << rx_submessage << std::endl;
+                    //std::cout << "[RX] Vector information: " << rx_submessage << std::endl;
                     MessageID decoded_message = std::get<MessageID>(parsed_message);
                 }
 
@@ -443,14 +443,6 @@ void *CommsModule::run_thread() {
         {
             std::cout << "Connected!" << std::endl;
 
-            Message msg;
-            msg.setReceiverId(self_truck->truck_id+1);
-            msg.setLogicalClock(self_truck->truck_logical_clock.get_logicalClock());
-            msg.setRole(self_truck->role);
-            msg.setSpeed((uint8_t)(self_truck->truckMovement.speed));
-            msg.setDirection(self_truck->truckMovement.direction);
-            add_tx_message_to_buffer(msg);
-            send_txBuffer();
         }
         else
         {
@@ -459,6 +451,15 @@ void *CommsModule::run_thread() {
 
         while(true)
         {
+            Message msg;
+            msg.setReceiverId(self_truck->truck_id+1);
+            msg.setLogicalClock(self_truck->truck_logical_clock.get_logicalClock());
+            msg.setRole(self_truck->role);
+            msg.setSpeed((uint8_t)(self_truck->truckMovement.speed));
+            msg.setDirection(self_truck->truckMovement.direction);
+            add_tx_message_to_buffer(msg);
+            send_txBuffer();
+
             receive_rxBuffer();
 
             std::optional<Message> rx_msg;

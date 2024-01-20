@@ -56,6 +56,18 @@ std::string MessageParser::toJSON(Message msg) {
     return ss.str();
 }
 
+std::string MessageParser::toJSONID(MessageID& messageId) {
+    std::stringstream ss;
+    ss << "{ \"type\": \"MessageID\", \"receiver_ids\": [";
+    const auto& ids = messageId.getReceiverIds();
+    for (size_t i = 0; i < ids.size(); ++i) {
+        ss << ids[i];
+        if (i < ids.size() - 1) ss << ", ";
+    }
+    ss << "] }";
+    return ss.str();
+}
+
 // Deserialize JSON string to Message object
 Message MessageParser::fromJSON(const std::string& jsonString) {
     Message msg;
