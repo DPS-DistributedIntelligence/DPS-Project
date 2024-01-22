@@ -1,19 +1,21 @@
 #include "Truck.h"
 
 void Truck::run(){
-    //TODO: init, initalize logic clock
-    // init
+    /*
+     * Create the threads that will be run in the system called: Truck
+     */
     pthread_create(&t_communication, NULL, &CommsModule::run, &truck_communication);
     pthread_create(&t_controller, NULL, &controller::run, &truck_controller);
     pthread_create(&t_interface, NULL, &controller::key_board_run, &truck_controller);
-    //pthread_create(&t_decryptor, NULL, &Decryptor::run, &truck_decryptor);
-
+    /*
+     * Run the threads so the actual simulation can be run through the thread id called:
+     * - t_controller
+     * - t_interface
+     * - t_communications
+     */
     pthread_join(t_controller, NULL);
     pthread_join(t_interface, NULL);
-    //pthread_join(t_decryptor, NULL);
     pthread_join(t_communication, NULL);
-
-    //start communication -> new thread
 }
 
 Truck::Truck(int truckId) : truckID(truckId)
