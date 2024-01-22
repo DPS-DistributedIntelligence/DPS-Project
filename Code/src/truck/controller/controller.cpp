@@ -467,11 +467,20 @@ void controller::next_state_computer(event event_received){
 ///enum controllerState {initial, waiting, leader, follower, moving, aligning, stop, system_stop};
 
 void* controller::key_board_run_thread(){
+    char inputChar;
     while(true)
     {
         if (_kbhit())
         {
-            char inputChar = _getch();
+            if(self_truck->role == LEADER)
+            {
+                inputChar = _getch();
+            }
+            else
+            {
+                inputChar;
+            }
+
             if((inputChar == 'W') | (inputChar == 'w') |
                (inputChar == 'S') | (inputChar == 's') |
                (inputChar == 'A') | (inputChar == 'a') |
