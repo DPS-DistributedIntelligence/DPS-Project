@@ -6,7 +6,7 @@
 int main() {
 
     int truckid;
-    std::cout << "Enter Follower ID: ";
+    std::cout << "Enter New Truck ID: ";
     std::cin >> truckid;
     Truck truckFollower = Truck(truckid);
     truckFollower.run();

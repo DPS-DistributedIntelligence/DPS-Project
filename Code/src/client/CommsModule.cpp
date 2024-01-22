@@ -18,7 +18,7 @@
 
         self_truck = new_self_truck;
         self_truck->truck_id = ID;
-        self_truck->surrounding_truck_IDs = client_IDs;
+        self_truck->surrounding_truck_IDs = &client_IDs;
         self_truck->client_IDs_vec_mutex_ = &client_IDs_vec_mutex;
 
     }
@@ -260,7 +260,7 @@
                 {
                     MessageID decoded_message = std::get<MessageID>(parsed_message);
                     client_IDs = decoded_message.getReceiverIds();
-                    self_truck->surrounding_truck_IDs = client_IDs;
+                    self_truck->surrounding_truck_IDs = &client_IDs;
                 }
 
             }
@@ -427,7 +427,6 @@
     }
 
 
-
 void *CommsModule::run_thread() {
     {
         if(initialize("127.0.0.1", 8080) == 1)
@@ -450,37 +449,47 @@ void *CommsModule::run_thread() {
             std::cout << "Connection failed!" << std::endl;
         }
 
+        logicalClock guard_clock = logicalClock();
+        logicalClock guard_clock_rec = logicalClock();
+        std::optional<Message> guard_value_rec = {};
+
         while(true)
         {
-            Message msg;
-            msg.setReceiverId(self_truck->truck_id+1);
-            msg.setLogicalClock(self_truck->truck_logical_clock.get_logicalClock());
-            msg.setRole(self_truck->role);
-            msg.setSpeed((uint8_t)(self_truck->truckMovement.speed));
-            msg.setDirection(self_truck->truckMovement.direction);
-            add_tx_message_to_buffer(msg);
-            send_txBuffer();
+            if(guard_clock.get_logicalClock() < self_truck->truck_logical_clock.get_logicalClock()){
+                guard_clock.logicalClockUpdate(self_truck->truck_logical_clock.get_logicalClock());
+                Message msg;
+                msg.setReceiverId(self_truck->truck_id+1);
+                msg.setLogicalClock(self_truck->truck_logical_clock.get_logicalClock());
+                msg.setEvent(self_truck->event_handler);
+                msg.setRole(self_truck->role);
+                msg.setSpeed((uint8_t)(self_truck->truckMovement.speed));
+                msg.setDirection(self_truck->truckMovement.direction);
+
+                add_tx_message_to_buffer(msg);
+                send_txBuffer();
+            }
 
             receive_rxBuffer();
 
-            std::optional<Message> rx_msg;
-            rx_msg = get_last_rx_message_from_buffer(false);
+            if(self_truck->role == FOLLOWER){
+                receive_rxBuffer();
+                std::optional<Message> rx_msg;
+                rx_msg = get_last_rx_message_from_buffer(false);
+                self_truck->truckMovement.direction = rx_msg->getDirection();
+                self_truck->truckMovement.speed = rx_msg->getSpeed();
+                if (rx_msg->getDirection() == MOVE_EMERGENCY_STOP){
+                    self_truck->event_handler = ev_stop;
+                }
 
-            /*
-             * Update values of follower
-             */
-            self_truck->truckMovement.direction = rx_msg->getDirection();
-            self_truck->truckMovement.speed = rx_msg->getSpeed();
-
-            if(self_truck->truck_logical_clock.get_logicalClock() < rx_msg->getLogicalClock())
-            {
-                if(!self_truck->truck_logical_clock.logicalClockTickCompare(rx_msg->getLogicalClock()))
+                if(self_truck->truck_logical_clock.get_logicalClock() < rx_msg->getLogicalClock())
                 {
-                    self_truck->truck_logical_clock.logicalClockUpdate(rx_msg->getLogicalClock());
-                    print_rx_messages_from_buffer();
+                    if(!self_truck->truck_logical_clock.logicalClockTickCompare(rx_msg->getLogicalClock()))
+                    {
+                        self_truck->truck_logical_clock.logicalClockUpdate(rx_msg->getLogicalClock());
+                        print_rx_messages_from_buffer();
+                    }
                 }
             }
-
             usleep(500000);
         }
     }

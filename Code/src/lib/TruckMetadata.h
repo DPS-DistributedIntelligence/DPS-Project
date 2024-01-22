@@ -35,7 +35,7 @@ typedef struct TruckMetadata
 
     // list of truck -> used to find leader
     std::vector<SurroundingTruck> surrounding_truck; //initially -> vector<controllerSystem> vehicle_list_vector;
-    std::vector<int> surrounding_truck_IDs;
+    std::vector<int>* surrounding_truck_IDs;
     pthread_mutex_t * client_IDs_vec_mutex_;
 
     // address to any other subsystems

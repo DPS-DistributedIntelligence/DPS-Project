@@ -2,7 +2,7 @@
 #include <conio.h>
 #include <windows.h>
 #include "controller.h"
-#define WATCHDOG_TIMEOUT_SECONDS 60
+#define WATCHDOG_TIMEOUT_SECONDS 15
 
 //constructor
 controller::controller(int new_controller_id, TruckMetadata *new_self_truck){
@@ -182,6 +182,12 @@ event controller::move_leader(){
 
     //TODO: get direction and speed (input from console).done
     while(!input_given){
+        bool leader_found_ = find_leader();
+        if (leader_found_){
+            std::cout << "new leader found. truck role will be changed to follower" << std::endl;
+            self_truck->role = FOLLOWER;
+            return ev_be_follower;
+        }
 
     }
     input_given = false;
@@ -223,7 +229,7 @@ event controller::move_leader(){
 event controller::move_follower(){
     // consider only one iteration ( event will be checked at every iteration by caller)
     movement new_movement;
-    while(self_truck->movement_leader.size() == 0 && self_truck->event_handler == ev_any){
+    while(self_truck->movement_leader.size() == 0 ){
         //TODO: watchdog: check for timeout (no new message received); if true: be leader (use counter) . done
         if((time(nullptr) - self_truck->watchdog) > WATCHDOG_TIMEOUT_SECONDS){  //no new message within 1 minute
             self_truck->role = LEADER;
@@ -232,6 +238,9 @@ event controller::move_follower(){
             return ev_be_leader;
         }
     }
+
+
+
     self_truck->truck_logical_clock.logicalClockTick();
     if (self_truck->event_handler != ev_any){
         return self_truck->event_handler;
@@ -244,6 +253,7 @@ event controller::move_follower(){
         set_current_speed(new_movement.speed);
         self_truck->watchdog = time(nullptr); // reset watchdog
         move(new_movement);
+        self_truck->movement_leader.pop_back();
 
         break; // only read the latest one
     }
@@ -308,10 +318,10 @@ bool controller::find_leader() {
     int min_id = 10000;
     //TODO needs to use pthread locking and unlocking
     //self_truck->client_IDs_vec_mutex_->lock();
-    for(auto i = self_truck->surrounding_truck_IDs.begin(); i < self_truck->surrounding_truck_IDs.end(); i++)
+    for(auto i = self_truck->surrounding_truck_IDs->begin(); i < self_truck->surrounding_truck_IDs->end(); i++)
     {
         //TODO: find id with smallest value.done
-        if(*i < self_truck->truck_id){ // find front truck
+        if(*i < self_truck->truck_id && *i > 0){ // find front truck
             min_id = std::min(min_id, *i);// get the closest truck
             leader_found = true;
 
@@ -322,9 +332,9 @@ bool controller::find_leader() {
 
     if(leader_found){
         // TODO: get leader id; done
-        for(auto i = self_truck->surrounding_truck.begin(); i != self_truck->surrounding_truck.end(); i++){
-            if(i->id == min_id) {
-                leader_id = i->id;
+        for(auto i = self_truck->surrounding_truck_IDs->begin(); i != self_truck->surrounding_truck_IDs->end(); i++){
+            if(*i == min_id) {
+                leader_id = *i;
             }
         }
         self_truck->truck_leader_id = leader_id;
@@ -455,46 +465,7 @@ void controller::next_state_computer(event event_received){
 }
 
 ///enum controllerState {initial, waiting, leader, follower, moving, aligning, stop, system_stop};
-/*
-void* controller::controller_run_thread()
-{
-    while(true){
-        cout << "changing high level state" << endl;
-        next_state_computer(self_truck->event_handler); //set next state
-        self_truck->event_handler = ev_any; // reset event handler
-        switch(next_state){
-            case initial:
-                cout << "entering initial state" << endl;
-                cout << " " << endl;
-                self_truck->event_handler = state_initial();
-                break;
-            case waiting:
-                cout << "entering waiting state" << endl;
-                cout << " " << endl;
-                self_truck->event_handler = state_waiting();
-                break;
-            case leader:
-                cout << "entering leader state" << endl;
-                cout << " " << endl;
-                self_truck->event_handler = state_leader();
-                break;
-            case follower:
-                cout << "entering follower state" << endl;
-                cout << " " << endl;
-                self_truck->event_handler = state_follower();
-                break;
-            case system_stop:
-                cout << "entering system stop state" << endl;
-                cout << " " << endl;
-                self_truck->event_handler = state_system_stop();
-                break;
-            default:
-                cout << "Default" << endl;
-                break;
-        }
-    }
-    return 0;
-}*/
+
 void* controller::key_board_run_thread(){
     while(true)
     {
@@ -554,6 +525,7 @@ void* controller::key_board_run_thread(){
                     case 'e':
                         set_current_direction(MOVE_EMERGENCY_STOP);
                         set_current_speed(0);
+                        self_truck->event_handler = ev_stop;
                         break;
                     case 'B':
                     case 'b':
@@ -591,7 +563,7 @@ void controller::send_message_to_follower(Message message) {
     message.setSenderId(self_truck->truck_id);
     //TODO needs to use pthread locking and unlocking
     //self_truck->client_IDs_vec_mutex_->lock();
-    for(auto i = self_truck->surrounding_truck_IDs.begin(); i != self_truck->surrounding_truck_IDs.end(); i++){
+    for(auto i = self_truck->surrounding_truck_IDs->begin(); i != self_truck->surrounding_truck_IDs->end(); i++){
         if(*i != self_truck->truck_id){
             message.setReceiverId(*i);
             self_truck->send_messsage_vector_guard.lock();
