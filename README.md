@@ -11,7 +11,7 @@ Group project.
   > [x] State Machine Follower.
 - [x] Set Communication Protocol.
   > TCP/IP
-- [ ] Create Class Diagram
+- [x] Create Class Diagram
 - [x] Set Lenguage to be used
   > C++
   > > Concurrency
@@ -21,7 +21,7 @@ Group project.
   > > Parallelism
   > > 
   > > > CUDA
-- [ ] Simulation model
+- [x] Simulation model
   > refer [our diagram](https://drive.google.com/file/d/1gNeNTzplQIQAvc6RsRsR8JvbSZtf4c4z/view)
   > [!Note]
   > Some suggestions are added 
@@ -57,7 +57,7 @@ Group project.
 
 ## Leander
 
-> [!Note]
+> ### Communication
 > blah labh
 > blah
 
@@ -68,7 +68,7 @@ Group project.
 
 ## Mykyta
 
-> [!Note]
+> ### Communication
 > blah labh
 > blah
 
@@ -79,7 +79,7 @@ Group project.
 
 ## Sheikh
 
-> [!Note]
+> ### Truck / Controller
 > blah labh
 > blah
 
@@ -90,7 +90,7 @@ Group project.
 
 ## Luis
 
-> [!Note]
+> ### Truck / Controller
 > blah labh
 > blah
 
