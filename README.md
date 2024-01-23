@@ -85,6 +85,7 @@ Group project.
 > - [x] State Machine.
 > > - [x] Optimization of the state machine. 
 > - [x] Threads.
+> - [x] Client optimization to avoid print multiple messages
 
 ## Luis
 
