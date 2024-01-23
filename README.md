@@ -58,19 +58,16 @@ Group project.
 ## Leander
 
 > ### Communication
-> blah labh
-> blah
+> Implementation of a server like to simulate the communication to a leader truck, so follower truck may be able to communicate with each other.
 
 > Workload:
-> - [ ] Task 1
-> > - [x] Task 1.1
-> > - [ ] Task 1.2 
+> - [x] Server
+> - [x] Client
 
 ## Mykyta
 
 > ### Communication
-> blah labh
-> blah
+> Implementation of a server like to simulate the communication to a leader truck, so follower truck may be able to communicate with each other.
 
 > Workload:
 > - [ ] Task 1
@@ -80,24 +77,28 @@ Group project.
 ## Sheikh
 
 > ### Truck / Controller
-> blah labh
-> blah
+> Implementation of the Truck ecosystem, the truck will be able to be a LEADER or a FOLLOWER depending on the scenario.
+> Implementaiton of the internal state machine, creating the scenarios for a truck to be a leader or a follower.
+> Implementation of a thread system to have a concurrent system.
 
 > Workload:
-> - [ ] Task 1
-> > - [x] Task 1.1
-> > - [ ] Task 1.2
+> - [x] State Machine.
+> > - [x] Optimization of the state machine. 
+> - [x] Threads.
 
 ## Luis
 
 > ### Truck / Controller
-> blah labh
-> blah
+> Implementation of the Truck ecosystem, the truck will be able to be a LEADER or a FOLLOWER depending on the scenario.
+> Implementaiton of the internal state machine, creating the scenarios for a truck to be a leader or a follower.
+> Implementation of a thread system to have a concurrent system.
+> Implementation of user interface to interact with the simulation.
 
 > Workload:
-> - [ ] Task 1
-> > - [x] Task 1.1
-> > - [ ] Task 1.2
+> - [x] State Machine.
+> - [x] User interface.
+> - [x] Threads.
+> - [x] Client base implementation.
 
 ## Aditya
 
